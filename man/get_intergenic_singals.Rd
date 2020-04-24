@@ -27,7 +27,7 @@ gff_file <- system.file("extdata" ,
 package = "parcutils")
 oo <- parcutils::get_intergenic_singals(bw_file = bw_file,gff_file  = gff_file)
 oo \%>\%
-    export.bed(con = file(paste(bw_file_name,"_intergenic", ".bed",sep = "")))
+    rtracklayer::export.bed(con = file(paste("intergenic", ".bed",sep = "")))
 oo \%>\%
-   export.bedGraph(con = file(paste(bw_file_name,"_intergenic", ".bdg",sep = "")))
+   rtracklayer::export.bedGraph(con = file(paste("intergenic", ".bdg",sep = "")))
 }

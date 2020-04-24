@@ -16,9 +16,9 @@
 #' package = "parcutils")
 #' oo <- parcutils::get_intergenic_singals(bw_file = bw_file,gff_file  = gff_file)
 #' oo %>%
-#'     rtracklayer::export.bed(con = file(paste(bw_file_name,"_intergenic", ".bed",sep = "")))
+#'     rtracklayer::export.bed(con = file(paste("intergenic", ".bed",sep = "")))
 #' oo %>%
-#'    rtracklayer::export.bedGraph(con = file(paste(bw_file_name,"_intergenic", ".bdg",sep = "")))
+#'    rtracklayer::export.bedGraph(con = file(paste("intergenic", ".bdg",sep = "")))
 #' @importFrom rtracklayer import
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr filter mutate
