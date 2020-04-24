@@ -17,3 +17,6 @@ Imports:
     rtracklayer (>= 1.46.0),
     tibble (>= 3.0.1),
     tools (>= 3.6.2)
+
+BugReports: https://github.com/cparsania/parcutils/issues
+URL: https://github.com/cparsania/parcutils
