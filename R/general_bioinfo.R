@@ -82,7 +82,6 @@ get_intergenic_signals <- function(bw_file , gff_file){
 #' normalise_counts(x = tt, .vars = c("sample_1","sample_2") ,method = "TPM")
 #' normalise_counts(x = tt, .vars = c("sample_1","sample_2") ,method = "RPKM")
 #' }
-
 normalise_counts <- function(x, .vars ,method = "TPM"){
 
   x_colnames <- colnames(x)
