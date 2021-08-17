@@ -115,9 +115,9 @@ normalise_counts <- function(x, .vars ,method = "TPM"){
 
   # do normalization
   if(method == "TPM"){
-    x %<>% dplyr::mutate_at(.vars = dplyr::vars(!!.vars_quot) ,.funs = tpm ,length = .$Length)
+    x %<>% dplyr::mutate_at(.vars = dplyr::vars(!!.vars_quot) ,.funs = get_tpm ,length = .$Length)
   } else if(method == "RPKM") {
-    x %<>% dplyr::mutate_at(.vars = dplyr::vars(!!.vars_quot) ,.funs = rpkm ,length = .$Length)
+    x %<>% dplyr::mutate_at(.vars = dplyr::vars(!!.vars_quot) ,.funs = get_rpkm ,length = .$Length)
   } else{
     stop("arg should be one  either TPM or RPKM.")
   }
