@@ -69,6 +69,43 @@
 #' @import TidyWrappers
 #' @examples
 #' \dontrun{
+#'
+#' set.seed(123)
+#' # create dummy RNAseq (dummy) count matrix
+#' counts <- matrix(rnbinom(n=1000, mu=100, size=1/0.5), ncol=10) %>%
+#'   as.data.frame() %>% tibble::as_tibble()
+#'
+#' colnames(counts) <- c(paste("c" , c(1:5), sep = ""),c(paste ("d" , 1:5, sep = "")))
+#'
+#' counts %<>%  dplyr::mutate("Geneid" = stringi::stri_rand_strings(n = 100, length = 5))  %>%
+#'   dplyr::relocate("Geneid")
+#' # create sample info
+#' si <- tibble::tibble(samples = colnames(counts)[-1] , sample_groups = factor(rep(c("c","d"), each=5)))
+#'
+#' res <- get_deg(counts = counts ,
+#'                sample_info = si,
+#'                column_geneid = "Geneid" , group_numerator = "d" , group_denominator = "c",
+#'                column_samples = c("c1","c2","c3","c4" ,"c5" ,"d1" ,"d2","d3" ,"d4" ,"d5"))
+#'
+#' names <- paste(res$)
+#'
+#' ## DESEq result object(s)
+#' res$dsr
+#'
+#' ## DESEq result data frame
+#' res$dsr_tibble
+#'
+#' ## DESEq result data frame  DEG assigned, look at the columns 'signif' and 'regul'
+#'
+#' res$dsr_tibble_deg
+#'
+#' res$dsr_tibble_deg[[1]] %>% dplyr::filter(regul != "other")
+#'
+#' ## DEG summary
+#'
+#' res$deg_summmary
+#'
+#'
 #' }
 get_deg <- function(counts,
                     column_geneid,
