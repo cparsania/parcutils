@@ -117,13 +117,12 @@ get_deg <- function(counts,
                     delim = "\t", # delim for count file. valid only if count file provided. default "\t".
                     comment_char = "#", # comment char for count file. valid only if count file provided. default "#",
                     min_counts = 10, # minimum counts in anyone sample
-                    min_replicates = 2,
+                    min_replicates = 1,
                     cutoff_lfc = 1,
                     cutoff_pval = 0.05,
                     cutoff_padj = 0.01,
                     ...
                     ){
-
 
   # defaults
   # counts = "data/featureCount_output"
@@ -178,6 +177,7 @@ get_deg <- function(counts,
   } else {
     count_data <- counts
   }
+
   # remove duplicate rows if any
   count_data %<>% unique()
 
