@@ -25,10 +25,10 @@
 #' @param comment_char a character denoting comments line in count file. Only valid if \code{count} is a file path.
 #' @param min_counts a numeric value, default 10,  denoting minimum counts for a gene to be used for differential expression analysis.
 #' @param min_replicates a numeric value, default 2, denoting minimum samples within a group have \code{minimum_counts}.
-#' @param cutoff_lfc a numeric value which is internally passed to \link{catagorize_diff_genes}
-#' @param cutoff_padj a numeric value which is internally passed to \link{catagorize_diff_genes}
+#' @param cutoff_lfc a numeric value which is internally passed to \link{categorize_diff_genes}
+#' @param cutoff_padj a numeric value which is internally passed to \link{categorize_diff_genes}
 #' @param ... for future use
-#' @param cutoff_pval a numeric value which is internally passed to \link{catagorize_diff_genes}
+#' @param cutoff_pval a numeric value which is internally passed to \link{categorize_diff_genes}
 #'
 #' @return a data frame of DESeq results, DEG, and DEG summary.
 #' @export
@@ -360,7 +360,7 @@ get_deg <- function(counts,
     # categorize DEG based on log2FC and pvalue
 
     dplyr::mutate(dsr_tibble_deg = purrr::map(dsr_tibble , ~ ..1 %>%
-                                                catagorize_diff_genes(log2fc_cutoff = cutoff_lfc ,
+                                                categorize_diff_genes(log2fc_cutoff = cutoff_lfc ,
                                                                       pval_cutoff = cutoff_pval,
                                                                       padj_cutoff = cutoff_padj ,
                                                                       regul = T) )) %>%

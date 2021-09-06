@@ -51,11 +51,11 @@ and second column denotes group name for each sample in first column. For e.g.\t
 
 \item{min_replicates}{a numeric value, default 2, denoting minimum samples within a group have \code{minimum_counts}.}
 
-\item{cutoff_lfc}{a numeric value which is internally passed to \link{catagorize_diff_genes}}
+\item{cutoff_lfc}{a numeric value which is internally passed to \link{categorize_diff_genes}}
 
-\item{cutoff_pval}{a numeric value which is internally passed to \link{catagorize_diff_genes}}
+\item{cutoff_pval}{a numeric value which is internally passed to \link{categorize_diff_genes}}
 
-\item{cutoff_padj}{a numeric value which is internally passed to \link{catagorize_diff_genes}}
+\item{cutoff_padj}{a numeric value which is internally passed to \link{categorize_diff_genes}}
 
 \item{...}{for future use}
 }
