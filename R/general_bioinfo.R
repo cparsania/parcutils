@@ -8,7 +8,8 @@
 #' @export
 #'
 #' @examples
-#' library("magrittr")
+#' \dontrun{
+#' #' library("magrittr")
 #' bw_file <- system.file("extdata" ,
 #' "example.bw" ,
 #' package = "parcutils")
@@ -20,6 +21,7 @@
 #'     rtracklayer::export.bed(con = file(paste("intergenic", ".bed",sep = "")))
 #' oo %>%
 #'    rtracklayer::export.bedGraph(con = file(paste("intergenic", ".bdg",sep = "")))
+#' }
 #' @importFrom rtracklayer import
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr filter mutate

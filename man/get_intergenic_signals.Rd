@@ -18,7 +18,8 @@ an object of class \link{GenomicRanges} which can be exported to various file fo
 given the .gff file and .bw file function finds the intergenic regions and associate signal inensity of each region
 }
 \examples{
-library("magrittr")
+\dontrun{
+#' library("magrittr")
 bw_file <- system.file("extdata" ,
 "example.bw" ,
 package = "parcutils")
@@ -30,4 +31,5 @@ oo \%>\%
     rtracklayer::export.bed(con = file(paste("intergenic", ".bed",sep = "")))
 oo \%>\%
    rtracklayer::export.bedGraph(con = file(paste("intergenic", ".bdg",sep = "")))
+}
 }
