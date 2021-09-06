@@ -388,7 +388,7 @@ get_deg <- function(counts,
 
     dplyr::mutate(dsr =  purrr::map2( .x = !!column_numerator,
                                       .y = !!column_denominator ,
-                                      ~ DESeq2::results(dds, contrast = c("sample_groups" , ..2,..1)))) %>%
+                                      ~ DESeq2::results(dds, contrast = c("sample_groups" , ..1,..2)))) %>%
 
     # convert deseq result object into a tibble.
 
