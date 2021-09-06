@@ -284,7 +284,9 @@ get_deg <- function(counts,
   }
 
 
-  # subset necessary columns from count. The samples which are present in sample_information will only be processed further.
+  # subset necessary columns from count.
+  #The samples which are present in sample_information will only be processed further.
+
   count_data_select <- count_data %>%
     dplyr::select(!!column_geneid_quo, !!!sample_info_samples_quo)
 
