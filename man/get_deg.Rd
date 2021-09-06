@@ -14,7 +14,7 @@ get_deg(
   delim = "\\t",
   comment_char = "#",
   min_counts = 10,
-  min_replicates = 2,
+  min_replicates = 1,
   cutoff_lfc = 1,
   cutoff_pval = 0.05,
   cutoff_padj = 0.01,
@@ -49,7 +49,8 @@ and second column denotes group name for each sample in first column. For e.g.\t
 
 \item{min_counts}{a numeric value, default 10,  denoting minimum counts for a gene to be used for differential expression analysis.}
 
-\item{min_replicates}{a numeric value, default 2, denoting minimum samples within a group have \code{minimum_counts}.}
+\item{min_replicates}{a numeric value, default 1, denoting minimum samples within a group have \code{minimum_counts}.
+Value must not be higher than number of replicates in each group.}
 
 \item{cutoff_lfc}{a numeric value which is internally passed to \link{categorize_diff_genes}}
 
@@ -70,5 +71,42 @@ samples within a group (e.g. minimum counts across replicate samples).
 }
 \examples{
 \dontrun{
+
+set.seed(123)
+# create dummy RNAseq (dummy) count matrix
+counts <- matrix(rnbinom(n=1000, mu=100, size=1/0.5), ncol=10) \%>\%
+  as.data.frame() \%>\% tibble::as_tibble()
+
+colnames(counts) <- c(paste("c" , c(1:5), sep = ""),c(paste ("d" , 1:5, sep = "")))
+
+counts \%<>\%  dplyr::mutate("Geneid" = stringi::stri_rand_strings(n = 100, length = 5))  \%>\%
+  dplyr::relocate("Geneid")
+# create sample info
+si <- tibble::tibble(samples = colnames(counts)[-1] , sample_groups = factor(rep(c("c","d"), each=5)))
+
+res <- get_deg(counts = counts ,
+               sample_info = si,
+               column_geneid = "Geneid" , group_numerator = "d" , group_denominator = "c",
+               column_samples = c("c1","c2","c3","c4" ,"c5" ,"d1" ,"d2","d3" ,"d4" ,"d5"))
+
+names <- paste(res$)
+
+## DESEq result object(s)
+res$dsr
+
+## DESEq result data frame
+res$dsr_tibble
+
+## DESEq result data frame  DEG assigned, look at the columns 'signif' and 'regul'
+
+res$dsr_tibble_deg
+
+res$dsr_tibble_deg[[1]] \%>\% dplyr::filter(regul != "other")
+
+## DEG summary
+
+res$deg_summmary
+
+
 }
 }
