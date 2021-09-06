@@ -1,12 +1,14 @@
 #' @title Perform differential expression analysis using `DESeq2`
-#' @description This is wrapper function build upon `DESeq2::DESeq()` and `DESeq2::DESeqResults()`
-#' to find diff genes and categories them based on various cutoffs such as p-value, padj-value, log2fc etc.
+#' @description This is a wrapper function build upon `DESeq2::DESeq()` and `DESeq2::DESeqResults()`
+#' to find diff genes and categories them based on various cutoffs such p-value, padj-value, log2fc etc.
+#' It also allows selecting genes for diff analysis based upon minimum counts to each gene and number of
+#' samples within a group (e.g. replicate samples) have minimum counts.
 #'
 #' @param counts a character string providing a name of count file or a data frame of counts for each gene.
 #' See details below to know more about format of file and count data frame.
-#' @param column_geneid a character string denoting a column of geneid in \code{count}
-#' @param column_samples a character vector denoting names of sample columns from \code{count}
-#' @param sample_info a character string denoting a name of sample information file or data frame.
+#' @param column_geneid a character string denoting a column of geneid in \code{counts}
+#' @param column_samples a character vector denoting names of sample columns from \code{counts}
+#' @param sample_info a character string denoting a name of sample information file or a data frame.
 #' A file or a data frame both must have at least two columns without column names. First column denotes to samples names
 #' and second column denotes group name for each sample in first column. For e.g.
 #'
@@ -28,7 +30,7 @@
 #' @param ... for future use
 #' @param cutoff_pval a numeric value which is internally passed to \link{catagorize_diff_genes}
 #'
-#' @return a data frame of DEG
+#' @return a data frame of DESeq results, DEG, and DEG summary.
 #' @export
 #' @importFrom cli cli_alert
 #' @importFrom cli cli_alert_info

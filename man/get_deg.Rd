@@ -25,11 +25,11 @@ get_deg(
 \item{counts}{a character string providing a name of count file or a data frame of counts for each gene.
 See details below to know more about format of file and count data frame.}
 
-\item{column_geneid}{a character string denoting a column of geneid in \code{count}}
+\item{column_geneid}{a character string denoting a column of geneid in \code{counts}}
 
-\item{column_samples}{a character vector denoting names of sample columns from \code{count}}
+\item{column_samples}{a character vector denoting names of sample columns from \code{counts}}
 
-\item{sample_info}{a character string denoting a name of sample information file or data frame.
+\item{sample_info}{a character string denoting a name of sample information file or a data frame.
 A file or a data frame both must have at least two columns without column names. First column denotes to samples names
 and second column denotes group name for each sample in first column. For e.g.\tabular{ll}{
     \tab  \cr
@@ -60,11 +60,13 @@ and second column denotes group name for each sample in first column. For e.g.\t
 \item{...}{for future use}
 }
 \value{
-a data frame of DEG
+a data frame of DESeq results, DEG, and DEG summary.
 }
 \description{
-This is wrapper function build upon \code{DESeq2::DESeq()} and \code{DESeq2::DESeqResults()}
-to find diff genes and categories them based on various cutoffs such as p-value, padj-value, log2fc etc.
+This is a wrapper function build upon \code{DESeq2::DESeq()} and \code{DESeq2::DESeqResults()}
+to find diff genes and categories them based on various cutoffs such p-value, padj-value, log2fc etc.
+It also allows selecting genes for diff analysis based upon minimum counts to each gene and number of
+samples within a group (e.g. replicate samples) have minimum counts.
 }
 \examples{
 \dontrun{
