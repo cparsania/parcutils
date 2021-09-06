@@ -24,7 +24,8 @@
 #' @param delim a character denoting deliminator for \code{count} file. Only valid if \code{count} is a file path.
 #' @param comment_char a character denoting comments line in count file. Only valid if \code{count} is a file path.
 #' @param min_counts a numeric value, default 10,  denoting minimum counts for a gene to be used for differential expression analysis.
-#' @param min_replicates a numeric value, default 2, denoting minimum samples within a group have \code{minimum_counts}.
+#' @param min_replicates a numeric value, default 1, denoting minimum samples within a group have \code{minimum_counts}.
+#' Value must not be higher than number of replicates in each group.
 #' @param cutoff_lfc a numeric value which is internally passed to \link{categorize_diff_genes}
 #' @param cutoff_padj a numeric value which is internally passed to \link{categorize_diff_genes}
 #' @param ... for future use
