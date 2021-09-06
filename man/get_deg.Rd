@@ -65,8 +65,8 @@ a data frame of DESeq results, DEG, and DEG summary.
 \description{
 This is a wrapper function build upon \code{DESeq2::DESeq()} and \code{DESeq2::DESeqResults()}
 to find diff genes and categories them based on various cutoffs such p-value, padj-value, log2fc etc.
-It also allows selecting genes for diff analysis based upon minimum counts to each gene and number of
-samples within a group (e.g. replicate samples) have minimum counts.
+It also allows selecting genes for diff analysis based upon minimum counts across
+samples within a group (e.g. minimum counts across replicate samples).
 }
 \examples{
 \dontrun{

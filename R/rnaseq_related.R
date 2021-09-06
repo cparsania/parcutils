@@ -1,8 +1,8 @@
 #' @title Perform differential expression analysis using `DESeq2`
 #' @description This is a wrapper function build upon `DESeq2::DESeq()` and `DESeq2::DESeqResults()`
 #' to find diff genes and categories them based on various cutoffs such p-value, padj-value, log2fc etc.
-#' It also allows selecting genes for diff analysis based upon minimum counts to each gene and number of
-#' samples within a group (e.g. replicate samples) have minimum counts.
+#' It also allows selecting genes for diff analysis based upon minimum counts across
+#' samples within a group (e.g. minimum counts across replicate samples).
 #'
 #' @param counts a character string providing a name of count file or a data frame of counts for each gene.
 #' See details below to know more about format of file and count data frame.
