@@ -256,8 +256,8 @@ get_deg <- function(counts,
   sample_info_samples <- sample_info_data %>% dplyr::pull(sample_info_colnames[1])
   sample_info_samples_quo <- rlang::enquos(sample_info_samples)
 
-  if(!all(sample_info_samples %in% column_samples)){
-    index_not_present <- which(!(sample_info_samples %in% column_samples))
+  if(!all(sample_info_samples %in% count_data_col_names)){
+    index_not_present <- which(!(sample_info_samples %in% count_data_col_names))
     value_not_present <- sample_info_samples[index_not_present] %>% paste0(collapse = "','")
     stop(glue::glue("Values '{value_not_present}' given in first column of 'sample_info' must present as column(s) in 'counts'."))
   }
