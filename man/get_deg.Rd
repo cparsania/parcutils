@@ -47,10 +47,13 @@ and second column denotes group name for each sample in first column. For e.g.\t
 
 \item{comment_char}{a character denoting comments line in count file. Only valid if \code{count} is a file path.}
 
-\item{min_counts}{a numeric value, default 10,  denoting minimum counts for a gene to be used for differential expression analysis.}
+\item{min_counts}{a numeric value, default 10,  denoting minimum counts for a gene to be used o consider a
+gene for differential expression analysis.}
 
-\item{min_replicates}{a numeric value, default 1, denoting minimum samples within a group have \code{minimum_counts}.
-Value must not be higher than number of replicates in each group.}
+\item{min_replicates}{a numeric value, default 1, denoting minimum samples within a group must have \code{minimum_counts}.
+Value provided must not be higher than number of replicates in each group.
+For example for given values \code{min_replicates = 2} and  \code{minimum_counts = 10}
+the genes which have minimum counts 10 in atleast 2 replicates will be used for DEG.}
 
 \item{cutoff_lfc}{a numeric value which is internally passed to \link{categorize_diff_genes}}
 

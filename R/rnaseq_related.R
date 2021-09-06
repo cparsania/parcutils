@@ -21,11 +21,14 @@
 #'
 #' @param group_numerator a character vector denoting sample groups to use in numerator to calculate fold change.
 #' @param group_denominator a character vector denoting sample groups to use in denominator to calculate fold change.
-#' @param delim a character denoting deliminator for \code{count} file. Only valid if \code{count} is a file path.
-#' @param comment_char a character denoting comments line in count file. Only valid if \code{count} is a file path.
-#' @param min_counts a numeric value, default 10,  denoting minimum counts for a gene to be used for differential expression analysis.
-#' @param min_replicates a numeric value, default 1, denoting minimum samples within a group have \code{minimum_counts}.
-#' Value must not be higher than number of replicates in each group.
+#' @param delim a character denoting deliminator for `count` file. Only valid if `count` is a file path.
+#' @param comment_char a character denoting comments line in count file. Only valid if `count` is a file path.
+#' @param min_counts a numeric value, default 10,  denoting minimum counts for a gene to be used o consider a
+#' gene for differential expression analysis.
+#' @param min_replicates a numeric value, default 1, denoting minimum samples within a group must have `minimum_counts`.
+#' Value provided must not be higher than number of replicates in each group.
+#' For example for given values `min_replicates = 2` and  `minimum_counts = 10`
+#' the genes which have minimum counts 10 in atleast 2 replicates will be used for DEG.
 #' @param cutoff_lfc a numeric value which is internally passed to \link{categorize_diff_genes}
 #' @param cutoff_padj a numeric value which is internally passed to \link{categorize_diff_genes}
 #' @param ... for future use
