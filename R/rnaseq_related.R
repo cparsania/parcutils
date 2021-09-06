@@ -479,13 +479,12 @@ filter_gff <- function(gtf_file ,
 #'  - Down : log2fc  <= (-1) * log2fc_cutoff pvalue <= pvalue_cutoff & padj <= padj_cutoff
 #'  - Other : remaining genes
 #' @return a data frame
-#' @keywords internal
 #' @details // TO DO. --> explain columns 'signif' and 'type' in the returned data frame.
 #' @examples
 #' \dontrun{
 #'
 #' }
-catagorize_diff_genes <-  function(dsr_tibble,
+categorize_diff_genes <-  function(dsr_tibble,
                                    log2fc_cutoff =  1,
                                    pval_cutoff = 0.05,
                                    padj_cutoff = 0.01,
