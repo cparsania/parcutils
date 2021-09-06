@@ -143,12 +143,12 @@ get_deg <- function(counts,
   ## define statics/global
   sample_info_colnames = c("sample_names", "sample_groups")
 
-  # validate numeric and scalper value
+  # validate numeric and scaler value
   num_args = list(min_counts, min_replicates, cutoff_lfc , cutoff_padj)
   num_args_quo <- rlang::quos(min_counts, min_replicates, cutoff_lfc , cutoff_padj)
   names(num_args)  <- purrr::map_chr(num_args_quo , ~ rlang::quo_name(..1))
 
-  is_numeric_and_scaler <- purrr::imap_lgl(num_args ,~if_else(rlang::is_scalar_double(..1), TRUE, FALSE))
+  is_numeric_and_scaler <- purrr::imap_lgl(num_args ,~dplyr::if_else(rlang::is_scalar_double(..1), TRUE, FALSE))
 
   for(i in seq_along(is_numeric_and_scaler)){
     if(!is_numeric_and_scaler[i])
