@@ -1,21 +1,25 @@
 validate count matrix
 
--> count matrix must be a tibble, data frame or a character string denting a count file
+-> count matrix must be a tibble, data frame or a character string denoting a count file
 -> count matrix must contain a column containing unique identifier for each row. Usually this is Geneid
 -> if a file provided, column names are mendatory
 
+// Ideally there should be a function to validate count matrix and sample information.
 
 why do an argument column_samples required ?
 
 Count output from a featureCount contains columns such as chr, start, end, strand etc.
-To use this file directly as an input, it is mendatory to ask user to provide count columns.
-
+To use this file directly as an input, it is mendatory to ask user to provide which are count columns.
 
 Decide on which samples to use for DESeq analysis ?
 
 -> all samples given under 'column_samples' must present in 'count'
 -> all samples given in first column of 'sample_info' must present in 'count'
 -> for DESeq analysis the samples which are present in 'sample_info' will only be used.
+-> What if samples given on 'column_samples' not present in first column of 'sample_info' ? Have you checked this ?
 
 
+// TO DO
+ Think of genrating automated R markdown reports for whole RNAseq data analysis.
 
+ -> fix the function to generate run commnands to add import lines in description file.
