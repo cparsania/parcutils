@@ -72,7 +72,8 @@ sort_geom_box <- function(x, decreasing = T){
     dplyr::group_by(!!x) %>%
     dplyr::summarise(median =median(!!y)) %>%
     dplyr::arrange(!!dec) %>%
-    dplyr::pull(!!x)
+    dplyr::pull(!!x) %>%
+    as.character()
 
   # set new levels in the data
   dat <- dat %>%
