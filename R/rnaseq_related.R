@@ -70,6 +70,7 @@
 #' @importFrom tibble column_to_rownames
 #' @importFrom tidyr expand_grid
 #' @importFrom tidyr gather
+#' @import DESeq2
 #' @import TidyWrappers
 #' @examples
 #' \dontrun{
