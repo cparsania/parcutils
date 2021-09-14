@@ -7,7 +7,7 @@
 normalise_counts(x, .vars, method = "TPM")
 }
 \arguments{
-\item{x}{A dataframe of raw counts along with mandatory columns which are \code{Geneid, Chr, Start, End, Strand, Length}.}
+\item{x}{A dataframe of raw counts along with mandatory columns which are \code{GeneID, Chr, Start, End, Strand, Length}.}
 
 \item{.vars}{A character vector containing columns from \code{x}. Normalization will be performed on these columns.}
 
@@ -25,7 +25,7 @@ implemntaion of RPKM and TPM can be seen in functions \link[parcutils]{get_tpm} 
 \examples{
 \dontrun{
 set.seed(123)
-tt <- tibble::tibble(Geneid = c(paste("Gene_",1:5,sep = "")),
+tt <- tibble::tibble(GeneID = c(paste("Gene_",1:5,sep = "")),
                      Chr = "Chr1",
                      Start = sample(1:100, 5),
                      End = sample(100:200,5),

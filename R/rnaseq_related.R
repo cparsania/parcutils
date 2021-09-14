@@ -130,7 +130,7 @@ get_deg <- function(counts,
 
   # defaults
   # counts = "data/featureCount_output"
-  # column_geneid = "Geneid"
+  # column_geneid = "GeneID"
   # column_samples = c("SRR8986352", "SRR8986375", "SRR8986374", "SRR8986377", "SRR8986376", "SRR8986379", "SRR8986378", "SRR8986381")
   # sample_info =  "data/sample_information" # without column names
   # group_numerator = c("KO1","KO2")
@@ -437,7 +437,7 @@ get_deg <- function(counts,
 dsr_to_tibble <- function(x){
 
   x %>% as.data.frame() %>%
-    tibble::rownames_to_column("Geneid") %>%
+    tibble::rownames_to_column("GeneID") %>%
     tibble::as_tibble() %>%
     dplyr::mutate_if(is.numeric, ~ round(..1, 3)) ## round by 3 digits
 }

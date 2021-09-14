@@ -57,7 +57,7 @@ get_intergenic_signals <- function(bw_file , gff_file){
 #' @description This function allows converting raw read counts into normalized counts either by method Tags Per Million (TPM) or Reads Per Kilo-base Per Million (RPKM)
 #' @details implemntaion of RPKM and TPM can be seen in functions \link[parcutils]{get_tpm} and \link[parcutils]{get_rpkm} respectively.
 #'
-#' @param x A dataframe of raw counts along with mandatory columns which are \code{Geneid, Chr, Start, End, Strand, Length}.
+#' @param x A dataframe of raw counts along with mandatory columns which are \code{GeneID, Chr, Start, End, Strand, Length}.
 #' @param .vars A character vector containing columns from \code{x}. Normalization will be performed on these columns.
 #' @param method A character string, default TPM. Choices are one of TPM, RPKM.
 #'
@@ -68,7 +68,7 @@ get_intergenic_signals <- function(bw_file , gff_file){
 #' @examples
 #' \dontrun{
 #' set.seed(123)
-#' tt <- tibble::tibble(Geneid = c(paste("Gene_",1:5,sep = "")),
+#' tt <- tibble::tibble(GeneID = c(paste("Gene_",1:5,sep = "")),
 #'                      Chr = "Chr1",
 #'                      Start = sample(1:100, 5),
 #'                      End = sample(100:200,5),
@@ -100,7 +100,7 @@ normalise_counts <- function(x, .vars ,method = "TPM"){
   base::stopifnot(is.character(.vars))
 
   # check presence of mandatory columns in x
-  mandatory_cols <- c("Geneid", "Chr", "Start", "End", "Strand", "Length")
+  mandatory_cols <- c("GeneID", "Chr", "Start", "End", "Strand", "Length")
 
   if(!all(mandatory_cols %in% x_colnames)){
     i <- which(mandatory_cols %in% x_colnames == F)
