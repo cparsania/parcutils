@@ -375,6 +375,10 @@ get_deg <- function(counts,
 
   cli::cli_alert_success("Done.")
 
+  # generate normalize count matrix
+
+  norm_counts <- DESeq2::counts(dds, normalized  = T)
+
   # create combinations of all comparisons from  group_numerator and group_denominator.
 
   comb <- tidyr::expand_grid(x = group_numerator, y = group_denominator)
@@ -408,11 +412,17 @@ get_deg <- function(counts,
                                                                       pval_cutoff = cutoff_pval,
                                                                       padj_cutoff = cutoff_padj ,
                                                                       regul = T) )) %>%
+    # add count matrix
+
+    dplyr::mutate(norm_counts = list(norm_counts)) %>%
+
     # summarize DEG
 
     dplyr::mutate(deg_summmary = purrr::map(dsr_tibble_deg , ~ ..1 %>%
                                               dplyr::group_by(regul) %>%
-                                              dplyr::tally() ,.id = "cond"))
+                                              dplyr::tally() ,.id = "cond")) %>%
+
+
 
   cli::cli_alert_info("Done.")
     return(xx)
