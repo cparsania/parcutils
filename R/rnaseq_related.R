@@ -129,12 +129,14 @@ get_deg <- function(counts,
                     ){
 
   # defaults
-  # counts = "data/featureCount_output"
-  # column_geneid = "GeneID"
-  # column_samples = c("SRR8986352", "SRR8986375", "SRR8986374", "SRR8986377", "SRR8986376", "SRR8986379", "SRR8986378", "SRR8986381")
-  # sample_info =  "data/sample_information" # without column names
-  # group_numerator = c("KO1","KO2")
-  # group_denominator = "WT"
+  # counts <- matrix(rnbinom(n=1000, mu=100, size=1/0.5), ncol=10) %>% as.data.frame() %>% tibble::as_tibble()
+
+  # colnames(counts) <- c(paste("c" , c(1:5), sep = ""),c(paste ("d" , 1:5, sep = "")))
+
+  # counts %<>%  dplyr::mutate("Geneid" = stringi::stri_rand_strings(n = 100, length = 5))  %>% dplyr::relocate("Geneid")
+  # sample_info <- tibble::tibble(samples = colnames(counts)[-1] , sample_groups = factor(rep(c("c","d"), each=5)))
+  # column_geneid = "Geneid"
+  # column_samples = c("c1","c2","c3","c4" ,"c5" ,"d1" ,"d2","d3" ,"d4" ,"d5")
   # cutoff_pval = 0.05
   # cutoff_padj = 0.01
   # cutoff_lfc = 1.5
@@ -142,6 +144,8 @@ get_deg <- function(counts,
   # comment_char = "#"
   # min_counts <- 10 # minimum counts in anyone sample
   # min_replicates <- 2 # number of replicates fulfilling criteria of minimum counts in anyone sample (min_counts)
+  # group_numerator = "d"
+  # group_denominator = "c"
 
   ## define statics/global
   sample_info_colnames = c("sample_names", "sample_groups")
@@ -377,7 +381,8 @@ get_deg <- function(counts,
 
   # generate normalize count matrix
 
-  norm_counts <- DESeq2::counts(dds, normalized  = T)
+  norm_counts <- DESeq2::counts(dds, normalized  = T) %>%  as.data.frame() %>%
+    tibble::rownames_to_column(var = column_geneid) %>% tibble::as_tibble()
 
   # create combinations of all comparisons from  group_numerator and group_denominator.
 
@@ -414,13 +419,13 @@ get_deg <- function(counts,
                                                                       regul = T) )) %>%
     # add count matrix
 
-    dplyr::mutate(norm_counts = list(norm_counts)) %>%
+    dplyr::mutate(norm_counts = list(norm_counts = norm_counts)) %>%
 
     # summarize DEG
 
     dplyr::mutate(deg_summmary = purrr::map(dsr_tibble_deg , ~ ..1 %>%
                                               dplyr::group_by(regul) %>%
-                                              dplyr::tally() ,.id = "cond")) %>%
+                                              dplyr::tally() ,.id = "cond"))
 
 
 
