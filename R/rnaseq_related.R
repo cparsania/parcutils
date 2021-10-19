@@ -453,8 +453,8 @@ dsr_to_tibble <- function(x){
 
   x %>% as.data.frame() %>%
     tibble::rownames_to_column("GeneID") %>%
-    tibble::as_tibble() %>%
-    dplyr::mutate_if(is.numeric, ~ round(..1, 3)) ## round by 3 digits
+    tibble::as_tibble() #%>%
+    #dplyr::mutate_if(is.numeric, ~ round(..1, 3)) ## round by 3 digits
 }
 
 
