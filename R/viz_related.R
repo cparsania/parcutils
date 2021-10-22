@@ -84,3 +84,39 @@ sort_geom_box <- function(x, decreasing = T){
 
   return(plt)
 }
+
+
+# vocano plot
+
+#' Wrapper around EnhancedVolcano::EnhancedVolcano
+#'
+#' @param toptable \code{toptable} \link{EnhancedVolcano::EnhancedVolcano}
+#' @param lab \code{lab} \link{EnhancedVolcano::EnhancedVolcano}
+#' @param x \code{x} \link{EnhancedVolcano::EnhancedVolcano}
+#' @param y \code{y} \link{EnhancedVolcano::EnhancedVolcano}
+#' @param pCutoff \code{pCutoff} \link{EnhancedVolcano::EnhancedVolcano}
+#' @param FCcutoff \code{FCcutoff} \link{EnhancedVolcano::EnhancedVolcano}
+#' @param col_by_regul lgl, default T, whether to color variable by gene regulation - Up, Down, Other
+#' @param ... Other parameters pass to \link{EnhancedVolcano::EnhancedVolcano}
+#'
+#' @return a volcano plot
+#' @export
+EnhancedVolcano2 <- function(toptable, lab, x, y, pCutoff = 10e-4,FCcutoff = 1.5,col_by_regul = T,...){
+
+  if(col_by_regul) {
+
+    keyvals <- ifelse(
+      toptable[[x]] <= -FCcutoff  & toptable[[y]] <= pCutoff , '#2166ac',
+      ifelse(toptable[[x]] >= FCcutoff &  toptable[[y]] <= pCutoff, "#b2182b",
+             '#e0e0e0'))
+    keyvals[is.na(keyvals)] <- '#e0e0e0'
+    names(keyvals)[keyvals == '#2166ac'] <- 'Down'
+    names(keyvals)[keyvals == '#e0e0e0'] <- 'Other'
+    names(keyvals)[keyvals == '#b2182b'] <- 'Up'
+  }
+
+  plot  <- EnhancedVolcano::EnhancedVolcano(toptable = toptable, lab = lab,x = x,y = y,
+                                            pCutoff = pCutoff, FCcutoff = FCcutoff, colCustom  = keyvals, ...)
+
+  plot
+}
