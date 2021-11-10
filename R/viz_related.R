@@ -86,7 +86,7 @@ sort_geom_box <- function(x, decreasing = T){
 }
 
 
-# vocano plot
+# volcano plot
 
 #' Wrapper around EnhancedVolcano::EnhancedVolcano
 #'
@@ -120,3 +120,166 @@ EnhancedVolcano2 <- function(toptable, lab, x, y, pCutoff = 10e-4,FCcutoff = 1.5
 
   plot
 }
+
+
+
+
+
+
+
+# visualize relative position of regions related to reference region
+
+
+
+#' Generate segment plot to visualize genomic regions related to reference regions.
+#'
+#' @param query an object of \link{GenomicRanges} to be visualized relative to reference
+#' @param reference an object of \link{GenomicRanges} against which \code{query} regions should be mapped.
+#'
+#' @return a list containing segment plot and plot data
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' ref_file <- system.file("extdata", "Homo_sapiens.GRCh38.101.gtf.gz" ,package = "parcutils")
+#' ref_data <- rtracklayer::import(ref_file)  %>%
+#'  tibble::as_tibble() %>%
+#'  dplyr::mutate(seqnames = stringr::str_c("chr",seqnames ,sep = "")) %>% plyranges::as_granges()
+#'  ref_data_gr <-  ref_data %>%
+#' dplyr::filter(type == "gene" & gene_biotype == "protein_coding")
+#' query_regions_gr <- ref_data %>% dplyr::filter(type == "Selenocysteine")  %>% sample(5000)
+#'
+#' oo <- plot_regions_relative_to_reference(query = query_regions_gr, reference  =  ref_data_gr)
+#'  oo$plot
+#' oo$data %>% ggplot2::ggplot(aes(x = q_relt_start)) + geom_density()
+#'}
+plot_regions_relative_to_reference <- function(query , reference){
+
+  # query <- query_regions_gr
+  # reference  <-  ref_data_gr
+
+
+  # check object type. Both query and reference must be of the class gr
+
+  if(!any("GRanges" %in% attr(query, "class") )){
+    stop("'query' must be of an object of class 'GRanges'")
+  }
+
+  if(!any("GRanges" %in% attr(reference, "class") )){
+    stop("'reference' must be of an object of class 'GRanges'")
+  }
+
+  ##
+  # remove duplicates
+  ##
+
+  query <- query %>% unique()
+  reference <- reference %>% unique()
+
+  ##
+  # add unique identifier
+  ##
+
+  # id for query
+  query_id_col_name <- "query_id"
+  query <- query %>%
+    tibble::as_tibble() %>%
+    dplyr::mutate(!!query_id_col_name := stringr::str_c(seqnames , start, end , strand , sep = "|")) %>%
+    plyranges::as_granges()
+
+  # id for reference
+
+  ref_id_col_name <- "reference_id"
+  reference <- reference %>%
+    tibble::as_tibble() %>%
+    dplyr::mutate(!!ref_id_col_name := stringr::str_c(seqnames , start, end , strand , sep = "|")) %>%
+    plyranges::as_granges()
+
+  ##
+  # find reference for each query region.
+  ##
+
+  # query is within reference
+
+  if(TRUE){
+    q_r_combined <- query %>%
+      plyranges::join_overlap_left_within_directed(reference)
+  }
+
+  # mapping statistics
+
+  all_queries <- query$query_id
+  all_reference <- reference$reference_id
+
+  mapped_id_table <- q_r_combined %>%
+    tibble::as_tibble() %>%
+    dplyr::select(!!query_id_col_name , !!ref_id_col_name) %>%
+    # if no reference mapped to query then it will be NA.
+    tidyr::drop_na() %>%
+    unique()
+
+  mapping_stats <-  tibble::tibble(all_queries = all_queries) %>%
+    dplyr::mutate(times_mapped = purrr::map_dbl(all_queries , ~ which(..1 ==  mapped_id_table$query_id) %>% length()))
+
+  # prepare final table for plot
+
+  for_plot <- mapped_id_table %>%
+    tidyr::separate(col = query_id , into = c("qseqname","qstart", "qend", "qstrand"), sep = "\\|", convert = T ,remove = F) %>%
+    tidyr::separate(col = reference_id , into = c("rseqname","rstart", "rend", "rstrand") , sep = "\\|", convert = T, remove = F) %>%
+
+    # add width
+    dplyr::mutate(qwidth = qend - qstart + 1 , rwidth = rend - rstart + 1) %>%
+
+    # add absolute start and end
+    dplyr::mutate(q_abs_start = 1 + abs(qstart - rstart), q_abs_end = q_abs_start + (qend - qstart)) %>%
+
+    # add relative start and end. Strand must be considered
+    dplyr::mutate(q_relt_start = dplyr::if_else(qstrand == "-", 1- (q_abs_start/rwidth)  , q_abs_start/rwidth) ,
+                  q_relt_end =  dplyr::if_else(qstrand == "-" , 1 - (q_abs_end/rwidth) ,  q_abs_end/rwidth )) %>%
+
+    # flip start and end after strand considerd. This will make sure that start <  end
+    dplyr::mutate(q_relt_start_temp = dplyr::if_else(qstrand == "-",  q_relt_end , q_relt_start) ,
+                  q_relt_end_temp = dplyr::if_else(qstrand == "-",  q_relt_start , q_relt_end)) %>%
+
+    # remove temp cols
+    dplyr::mutate(q_relt_start = q_relt_start_temp , q_relt_end = q_relt_end_temp) %>%
+    dplyr::select(-q_relt_start_temp,-q_relt_end_temp)
+
+
+  # add density
+  if(TRUE) {
+    dens <- density(for_plot$q_relt_start)
+
+    #approx density (y) for given (x)
+    af  <-  approxfun(dens$x , dens$y)
+
+    density_col_name <- "dens"
+    for_plot %<>% dplyr::mutate(!!density_col_name := af(q_relt_start))
+
+  }
+
+  # sort by start postion of query region
+  if(TRUE){
+    for_plot %<>%
+      dplyr::mutate(id = paste0(dplyr::row_number())) %>%
+      dplyr::mutate(id = forcats::fct_reorder(id, q_relt_start))
+  }
+
+  # plot
+  gp <-  for_plot %>%
+    ggplot2::ggplot(ggplot2::aes(x = q_relt_start ,y = id)) +
+    geom_segment(ggplot2::aes(xend = q_relt_end, yend = id , col = dens)) +
+    ggplot2::scale_color_viridis_c() + xlim(0,1) +
+    theme_bw() +
+    labs(color = "Density") +
+    theme(text = element_text(size = 15),
+          axis.text = element_text(size = 15),
+          axis.text.y = element_blank(),
+          axis.ticks.y  = element_blank() ,
+          legend.text = element_text(size = 12)) + xlab("Relative query start") + ylab("Query regions")
+
+  rtrn <- list(plot= gp, data = for_plot)
+
+}
+
+
