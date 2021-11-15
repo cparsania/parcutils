@@ -266,17 +266,19 @@ plot_regions_relative_to_reference <- function(query , reference){
   }
 
   # plot
-  gp <-  for_plot %>%
-    ggplot2::ggplot(ggplot2::aes(x = q_relt_start ,y = id)) +
-    geom_segment(ggplot2::aes(xend = q_relt_end, yend = id , col = dens)) +
-    ggplot2::scale_color_viridis_c() + xlim(0,1) +
+  gp <- for_plot %>%
+    ggplot2::ggplot(ggplot2::aes(x = q_relt_start, y = id)) +
+    ggplot2::geom_segment(ggplot2::aes(xend = q_relt_end, yend = id, col = dens)) +
+    ggplot2::scale_color_viridis_c() +
+    xlim(0, 1) +
     theme_bw() +
     labs(color = "Density") +
     theme(text = element_text(size = 15),
-          axis.text = element_text(size = 15),
-          axis.text.y = element_blank(),
-          axis.ticks.y  = element_blank() ,
-          legend.text = element_text(size = 12)) + xlab("Relative query start") + ylab("Query regions")
+          axis.text = element_text(size = 15), axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(), legend.text = element_text(size = 12)) +
+    xlab("Relative query start") +
+    ylab("Query regions")
+
 
   rtrn <- list(plot= gp, data = for_plot)
 
