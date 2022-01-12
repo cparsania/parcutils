@@ -188,6 +188,46 @@ get_star_aling_log_summary <- function(log_file){
 
   ## Each element of the vector is a line from *Log.final.out file. get required data from each element of the vector
 
+  #1                                  Started job on |	Jan 11 10:06:42
+  #2                             Started mapping on |	Jan 11 10:13:03
+  #3                                     Finished on |	Jan 11 10:32:12
+  #4        Mapping speed, Million of reads per hour |	197.65
+  #5
+  #6                           Number of input reads |	63084121
+  #7                       Average input read length |	300
+  #8                                     UNIQUE READS:
+  #9                    Uniquely mapped reads number |	60272060
+  #10                         Uniquely mapped reads % |	95.54%
+  #11                           Average mapped length |	298.09
+  #12                        Number of splices: Total |	61018038
+  #13             Number of splices: Annotated (sjdb) |	60401463
+  #14                        Number of splices: GT/AG |	60461428
+  #15                        Number of splices: GC/AG |	421402
+  #16                        Number of splices: AT/AC |	62147
+  #17                Number of splices: Non-canonical |	73061
+  #18                       Mismatch rate per base, % |	0.23%
+  #19                          Deletion rate per base |	0.01%
+  #20                         Deletion average length |	1.88
+  #21                         Insertion rate per base |	0.01%
+  #22                        Insertion average length |	1.64
+  #23                              MULTI-MAPPING READS:
+  #24         Number of reads mapped to multiple loci |	1309690
+  #25              % of reads mapped to multiple loci |	2.08%
+  #26         Number of reads mapped to too many loci |	13337
+  #27              % of reads mapped to too many loci |	0.02%
+  #28                                   UNMAPPED READS:
+  #29   Number of reads unmapped: too many mismatches |	0
+  #30        % of reads unmapped: too many mismatches |	0.00%
+  #31             Number of reads unmapped: too short |	1468446
+  #32                  % of reads unmapped: too short |	2.33%
+  #33                 Number of reads unmapped: other |	20588
+  #34                      % of reads unmapped: other |	0.03%
+  #35                                   CHIMERIC READS:
+  #36                        Number of chimeric reads |	0
+  #37                             % of chimeric reads |	0.00%
+
+
+
   elems_to_keep <- c(total_input_reads = 6,
                      reads_mapped_uniquely = 9 ,
                      prcnt_mapped_uniquely = 10,
