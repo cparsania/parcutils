@@ -33,6 +33,7 @@
 #' @param cutoff_padj a numeric value which is internally passed to \link{categorize_diff_genes}
 #' @param ... for future use
 #' @param cutoff_pval a numeric value which is internally passed to \link{categorize_diff_genes}
+#' @param regul_based_upon either of 1, 2 or 3 which is internally passed to \link{categorize_diff_genes}
 #'
 #' @return a data frame of DESeq results, DEG, and DEG summary.
 #' @export
@@ -125,6 +126,7 @@ get_deg <- function(counts,
                     cutoff_lfc = 1,
                     cutoff_pval = 0.05,
                     cutoff_padj = 0.01,
+                    regul_based_upon = 1,
                     ...
                     ){
 
@@ -329,6 +331,7 @@ get_deg <- function(counts,
     TidyWrappers::tbl_remove_rows_zero_all()
 
   # to perform DESeq analysis genes having non zero count in at least one sample will be used.
+
   genes_to_keep <- count_data_non_zero_in_one %>%
 
     # convert data wide to long format.
@@ -416,7 +419,7 @@ get_deg <- function(counts,
                                                 categorize_diff_genes(log2fc_cutoff = cutoff_lfc ,
                                                                       pval_cutoff = cutoff_pval,
                                                                       padj_cutoff = cutoff_padj ,
-                                                                      regul = T) )) %>%
+                                                                      regul = T, regul_based_upon = regul_based_upon) )) %>%
     # add count matrix
 
     dplyr::mutate(norm_counts = list(norm_counts = norm_counts)) %>%
