@@ -419,7 +419,7 @@ get_deg <- function(counts,
                                                 categorize_diff_genes(log2fc_cutoff = cutoff_lfc ,
                                                                       pval_cutoff = cutoff_pval,
                                                                       padj_cutoff = cutoff_padj ,
-                                                                      regul = T, regul_based_upon = regul_based_upon) )) %>%
+                                                                      regul_based_upon = regul_based_upon) )) %>%
     # add count matrix
 
     dplyr::mutate(norm_counts = list(norm_counts = norm_counts)) %>%
