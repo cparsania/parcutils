@@ -18,6 +18,7 @@ get_deg(
   cutoff_lfc = 1,
   cutoff_pval = 0.05,
   cutoff_padj = 0.01,
+  regul_based_upon = 1,
   ...
 )
 }
@@ -60,6 +61,8 @@ the genes which have minimum counts 10 in atleast 2 sample groups will be used f
 \item{cutoff_pval}{a numeric value which is internally passed to \link{categorize_diff_genes}}
 
 \item{cutoff_padj}{a numeric value which is internally passed to \link{categorize_diff_genes}}
+
+\item{regul_based_upon}{either of 1, 2 or 3 which is internally passed to \link{categorize_diff_genes}}
 
 \item{...}{for future use}
 }
