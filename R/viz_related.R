@@ -110,10 +110,10 @@ EnhancedVolcano2 <- function(toptable, lab, x, y, pCutoff = 10e-4,FCcutoff = 1.5
   if(col_by_regul) {
 
     keyvals <- ifelse(
-      toptable[[x]] <= -FCcutoff  & toptable[[y]] <= pCutoff , '#2166ac',
-      ifelse(toptable[[x]] >= FCcutoff &  toptable[[y]] <= pCutoff, "#b2182b",
-             '#e0e0e0'))
-    keyvals[is.na(keyvals)] <- '#e0e0e0'
+      toptable[[x]] <= -FCcutoff  & toptable[[y]] <= pCutoff , col_down,
+      ifelse(toptable[[x]] >= FCcutoff &  toptable[[y]] <= pCutoff, col_up,
+             col_others))
+    keyvals[is.na(keyvals)] <- col_others
     names(keyvals)[keyvals == col_down ] <- 'Down'
     names(keyvals)[keyvals == col_others] <- 'Other'
     names(keyvals)[keyvals == col_up] <- 'Up'
