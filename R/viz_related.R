@@ -113,11 +113,13 @@ EnhancedVolcano2 <- function(toptable, lab, x, y, pCutoff = 10e-4,FCcutoff = 1.5
     names(keyvals)[keyvals == '#2166ac'] <- 'Down'
     names(keyvals)[keyvals == '#e0e0e0'] <- 'Other'
     names(keyvals)[keyvals == '#b2182b'] <- 'Up'
+
+    plot  <- EnhancedVolcano::EnhancedVolcano(toptable = toptable, lab = lab,x = x,y = y,
+                                              pCutoff = pCutoff, FCcutoff = FCcutoff, colCustom  = keyvals, ...)
+  } else {
+    plot  <- EnhancedVolcano::EnhancedVolcano(toptable = toptable, lab = lab,x = x,y = y,
+                                              pCutoff = pCutoff, FCcutoff = FCcutoff, ...)
   }
-
-  plot  <- EnhancedVolcano::EnhancedVolcano(toptable = toptable, lab = lab,x = x,y = y,
-                                            pCutoff = pCutoff, FCcutoff = FCcutoff, colCustom  = keyvals, ...)
-
   plot
 }
 
