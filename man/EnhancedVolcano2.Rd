@@ -12,6 +12,9 @@ EnhancedVolcano2(
   pCutoff = 0.001,
   FCcutoff = 1.5,
   col_by_regul = T,
+  col_up = "#b2182b",
+  col_down = "#2166ac",
+  col_others = "#e0e0e0",
   ...
 )
 }
@@ -29,6 +32,12 @@ EnhancedVolcano2(
 \item{FCcutoff}{\code{FCcutoff} \link{EnhancedVolcano::EnhancedVolcano}}
 
 \item{col_by_regul}{lgl, default T, whether to color variable by gene regulation - Up, Down, Other}
+
+\item{col_up}{a character string denoting color for up genes, works only when col_by_regul = T}
+
+\item{col_down}{a character string denoting color for down genes, works only when col_by_regul = T.}
+
+\item{col_others}{a character string denoting color for other genes, works only when col_by_regul = T.}
 
 \item{...}{Other parameters pass to \link{EnhancedVolcano::EnhancedVolcano}}
 }
