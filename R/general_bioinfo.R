@@ -253,4 +253,61 @@ get_star_aling_log_summary <- function(log_file){
 
 
 
+#' Get intersects of upset plot.
+#'
+#' @param upset_data a list
+#' @param upset_plot an output of \link{UpSetR::upset}
+#'
+#' @return a tbl
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' set.seed(123)
+#' x <- list(A = sample(1:5, 10, replace = T ) , B = sample(1:5, 10, replace = T ) , c = sample(1:10, 10, replace = T))
+#' us <- UpSetR::upset(UpSetR::fromList(x))
+#' get_upset_intersects(x , us )
+#'
+#' }
+#'
+get_upset_intersects <- function(upset_data, upset_plot){
+
+
+
+  if(!inherits(x = upset_plot, "upset")){
+    stop("Argument 'upset_plot' must be an object of class upset.")
+  }
+
+  if(! is(upset_data ,"list")){
+    stop("Argument upset_data must be a list.")
+  }
+
+
+  upset_data <- unlist(upset_data, use.names = FALSE)
+  upset_data <- upset_data[ !duplicated(upset_data) ]
+
+
+  out <- upset_plot$New_data %>%
+    tibble::as_tibble() %>%
+    dplyr::mutate(us_elem = upset_data) %>%
+    tidyr::gather(samples, is_element_present, -us_elem) %>%
+    dplyr::filter(is_element_present == 1) %>%
+    dplyr::group_by(us_elem) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(set = purrr::map_chr(data, ~ ..1 %>% dplyr::pull(1) %>%
+                                         stringr::str_c(collapse = ","))) %>%
+    dplyr::select(-data) %>%
+    dplyr::ungroup() %>%
+    dplyr::group_by(set) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(elements = purrr::map(data , ~..1 %>% dplyr::pull(1))) %>%
+    dplyr::select(-data) %>%
+    dplyr::ungroup()
+
+  return(out)
+
+}
+
+
+
 
