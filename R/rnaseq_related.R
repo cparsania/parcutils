@@ -389,11 +389,19 @@ get_deg <- function(counts,
 
   # create combinations of all comparisons from  group_numerator and group_denominator.
 
+
   comb <- tidyr::expand_grid(x = group_numerator, y = group_denominator)
 
   column_numerator = rlang::quo(numerator)
   column_denominator = rlang::quo(denominator)
   comb %<>% dplyr::rename(!!column_numerator := x , !!column_denominator := y )
+
+  # remove all combinations where numerator and denominator
+  comb <- comb %>% dplyr::filter(numerator != denominator)
+
+  if(nrow(comb) == 0){
+    stop("Numerator and Denominator have at least a pair of different value.")
+  }
 
   # summarize results
 
