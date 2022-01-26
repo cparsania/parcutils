@@ -310,4 +310,42 @@ get_upset_intersects <- function(upset_data, upset_plot){
 
 
 
+#' split grouped data with names. A wrapper around dplyr::group_by()
+#' ref: https://github.com/tidyverse/dplyr/issues/4223
+#'
+#' @param .tbl a data frame
+#' @param ... arguments pass to dplyr::group_by()
+#' @param keep_order logical, default TRUE, whether to maintain original order of the groups.
+#'
+#' @return a named list
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' a <- tibble::tibble(x = 1:5, y = sample(letters[1:5]))
+#' a  %>% named_group_split(y)
+#' a  %>% named_group_split(y , keep_order = F)
+#' }
+#'
+#'
+named_group_split <- function(.tbl, ..., keep_order = T) {
+
+  grouped <- dplyr::group_by(.tbl, ...)
+  names <- rlang::inject(paste(!!!dplyr::group_keys(grouped), sep = " / "))
+
+  gr_splt <- grouped %>%
+    dplyr::group_split() %>%
+    rlang::set_names(names)
+
+  ## maintain original order of groups
+  if(keep_order){
+    grp_index <-  grouped %>% dplyr::group_indices() %>% unique()
+    gr_splt <- gr_splt[grp_index]
+  }
+
+  return(gr_splt)
+}
+
+
+
 
