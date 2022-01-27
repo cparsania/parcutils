@@ -898,6 +898,11 @@ run_deseq_analysis <- function(
                                               dplyr::tally() ,.id = "cond"))
 
 
+  # add column of comparison
+
+  xx <- xx %>%
+    dplyr::mutate(comp = stringr::str_c(numerator , denominator ,sep = "_VS_"))
+
 
   cli::cli_alert_info("Done.")
   return(xx)
@@ -931,8 +936,7 @@ dsr_to_tibble <- function(x){
 
 
 ##@@@@@@@@
-## filter gff ----
-## filter gff
+## filter gff file
 ##@@@@@@@@
 
 #' Filter rows from GFF file.
@@ -1096,6 +1100,11 @@ categorize_diff_genes <-  function(dsr_tibble,
   }
 
 }
+
+
+
+
+
 
 
 
