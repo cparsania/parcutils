@@ -1,5 +1,7 @@
 #' @title Perform differential expression analysis using `DESeq2`
-#' @description  `r lifecycle::badge(stage = "deprecated")`
+#' @description
+#'
+#' `r lifecycle::badge("deprecated")`
 #'
 #' This is a wrapper function build upon `DESeq2::DESeq()` and `DESeq2::DESeqResults()`
 #' to find diff genes and categories them based on various cutoffs such p-value, padj-value, log2fc etc.
