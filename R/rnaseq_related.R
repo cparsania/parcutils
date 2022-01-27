@@ -590,23 +590,23 @@ run_deseq_analysis <- function(
 ){
 
   # defaults
-  # counts <- matrix(rnbinom(n=1000, mu=100, size=1/0.5), ncol=10) %>% as.data.frame() %>% tibble::as_tibble()
-
-  # colnames(counts) <- c(paste("c" , c(1:5), sep = ""),c(paste ("d" , 1:5, sep = "")))
-
-  # counts %<>%  dplyr::mutate("Geneid" = stringi::stri_rand_strings(n = 100, length = 5))  %>% dplyr::relocate("Geneid")
-  # sample_info <- tibble::tibble(samples = colnames(counts)[-1] , sample_groups = factor(rep(c("c","d"), each=5)))
-  # column_geneid = "Geneid"
-  # column_samples = c("c1","c2","c3","c4" ,"c5" ,"d1" ,"d2","d3" ,"d4" ,"d5")
-  # cutoff_pval = 0.05
-  # cutoff_padj = 0.01
-  # cutoff_lfc = 1.5
-  # delim = "\t"
-  # comment_char = "#"
-  # min_counts <- 10 # minimum counts in anyone sample
-  # min_replicates <- 2 # number of replicates fulfilling criteria of minimum counts in anyone sample (min_counts)
-  # group_numerator = "d"
-  # group_denominator = "c"
+   # counts <- matrix(rnbinom(n=1000, mu=100, size=1/0.5), ncol=10) %>% as.data.frame() %>% tibble::as_tibble()
+   #
+   # colnames(counts) <- c(paste("c" , c(1:5), sep = ""),c(paste ("d" , 1:5, sep = "")))
+   #
+   # counts %<>%  dplyr::mutate("Geneid" = stringi::stri_rand_strings(n = 100, length = 5))  %>% dplyr::relocate("Geneid")
+   # sample_info <- tibble::tibble(samples = colnames(counts)[-1] , sample_groups = factor(rep(c("c","d"), each=5)))
+   # column_geneid = "Geneid"
+   # column_samples = c("c1","c2","c3","c4" ,"c5" ,"d1" ,"d2","d3" ,"d4" ,"d5")
+   # cutoff_pval = 0.05
+   # cutoff_padj = 0.01
+   # cutoff_lfc = 1.5
+   # delim = "\t"
+   # comment_char = "#"
+   # min_counts <- 10 # minimum counts in anyone sample
+   # min_replicates <- 2 # number of replicates fulfilling criteria of minimum counts in anyone sample (min_counts)
+   # group_numerator = "d"
+   # group_denominator = "c"
 
   ## define statics/global
   sample_info_colnames = c("sample_names", "sample_groups")
@@ -843,8 +843,20 @@ run_deseq_analysis <- function(
 
   # generate normalize count matrix
 
-  norm_counts <- DESeq2::counts(dds, normalized  = T) %>%  as.data.frame() %>%
-    tibble::rownames_to_column(var = column_geneid) %>% tibble::as_tibble()
+  norm_counts <- DESeq2::counts(dds, normalized  = T) %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column(var = column_geneid) %>%
+    tibble::as_tibble()
+
+  # group normalized counts for each sample
+
+  norm_counts <- norm_counts %>%
+    tidyr::pivot_longer(cols = -!!column_geneid , names_to = "samples", values_to = "norm_counts") %>%
+    dplyr::left_join(sample_info , by = c("samples"))  %>%
+    parcutils::named_group_split(sample_groups) %>%
+    purrr::map(~ ..1 %>% tidyr::pivot_wider(id_cols = !!column_geneid,
+                                            names_from = samples ,
+                                            values_from = norm_counts))
 
   # create combinations of all comparisons from  group_numerator and group_denominator.
 
@@ -869,6 +881,13 @@ run_deseq_analysis <- function(
   # prepare a tibble where each row denotes to a combination of numerator and denominator.
 
   xx <- comb %>%
+
+    ## add column comparisons
+    dplyr::mutate(comp = stringr::str_c(.$numerator , .$denominator ,sep = "_VS_")) %>%
+
+    ## add column norm counts
+    dplyr::mutate(norm_counts = list(norm_counts[c(.$numerator , .$denominator)]) ) %>%
+
 
     # for each combination of numerator and denominator get deseq result. Results will be stored in a list column of tibble
 
@@ -898,11 +917,10 @@ run_deseq_analysis <- function(
                                               dplyr::tally() ,.id = "cond"))
 
 
-  # add column of comparison
+  ## use comparisons as names for list elements
+  xx  %<>%  dplyr::mutate_if(is.list, ~rlang::set_names(. , xx$comp))
 
-  xx <- xx %>%
-    dplyr::mutate(comp = stringr::str_c(numerator , denominator ,sep = "_VS_"))
-
+  # assign names to each list in the tibble
 
   cli::cli_alert_info("Done.")
   return(xx)
