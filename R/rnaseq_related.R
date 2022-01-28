@@ -886,7 +886,7 @@ run_deseq_analysis <- function(
     dplyr::mutate(comp = stringr::str_c(.$numerator , .$denominator ,sep = "_VS_")) %>%
 
     ## add column norm counts
-    dplyr::mutate(norm_counts = list(norm_counts[c(.$numerator , .$denominator)]) ) %>%
+    dplyr::mutate(norm_counts = purrr::map2(numerator, denominator, ~ norm_counts[c(..1,..2)])) %>%
 
 
     # for each combination of numerator and denominator get deseq result. Results will be stored in a list column of tibble
