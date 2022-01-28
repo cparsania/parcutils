@@ -843,14 +843,14 @@ run_deseq_analysis <- function(
 
   # generate normalize count matrix
 
-  norm_counts <- DESeq2::counts(dds, normalized  = T) %>%
+  norm_count <- DESeq2::counts(dds, normalized  = T) %>%
     as.data.frame() %>%
     tibble::rownames_to_column(var = column_geneid) %>%
     tibble::as_tibble()
 
   # group normalized counts for each sample
 
-  norm_counts <- norm_counts %>%
+  norm_count <- norm_count %>%
     tidyr::pivot_longer(cols = -!!column_geneid , names_to = "samples", values_to = "norm_counts") %>%
     dplyr::left_join(sample_info_data , by = c("samples" = "sample_names"))  %>%
     parcutils::named_group_split(sample_groups) %>%
@@ -886,7 +886,7 @@ run_deseq_analysis <- function(
     dplyr::mutate(comp = stringr::str_c(.$numerator , .$denominator ,sep = "_VS_")) %>%
 
     ## add column norm counts
-    dplyr::mutate(norm_counts = purrr::map2(numerator, denominator, ~ norm_counts[c(..1,..2)])) %>%
+    dplyr::mutate(norm_counts = purrr::map2(numerator, denominator, ~ norm_count[c(..1,..2)])) %>%
 
 
     # for each combination of numerator and denominator get deseq result. Results will be stored in a list column of tibble
