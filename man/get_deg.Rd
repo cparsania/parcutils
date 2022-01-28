@@ -2,7 +2,7 @@
 % Please edit documentation in R/rnaseq_related.R
 \name{get_deg}
 \alias{get_deg}
-\title{Perform differential expression analysis using \link\link{DESeq2}}
+\title{Perform differential expression analysis using \code{\link[DESeq2:DESeq]{DESeq2::DESeq()}}}
 \usage{
 get_deg(
   counts,
@@ -72,7 +72,7 @@ a data frame of DESeq results, DEG, and DEG summary.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-This is a wrapper function build upon \link[DESeq2]{DESeq} and \link[DESeq2]{DESeqResults}.
+This is a wrapper function build upon \code{\link[DESeq2:DESeq]{DESeq2::DESeq()}}  and  \code{\link[DESeq2:DESeqResults]{DESeq2::DESeqResults()}}.
 to find diff genes and categories them based on various cutoffs such p-value, padj-value, log2fc etc.
 It also allows selecting genes for diff analysis based upon minimum counts across
 samples within a group (e.g. minimum counts across replicate samples).

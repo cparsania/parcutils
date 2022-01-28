@@ -1,9 +1,9 @@
-#' @title Perform differential expression analysis using \link[DESeq2]
+#' @title Perform differential expression analysis using [DESeq2::DESeq()]
 #' @description
 #'
 #' `r lifecycle::badge("deprecated")`
 #'
-#' This is a wrapper function build upon \link[DESeq2]{DESeq} and \link[DESeq2]{DESeqResults}.
+#' This is a wrapper function build upon [DESeq2::DESeq()]  and  [DESeq2::DESeqResults()].
 #' to find diff genes and categories them based on various cutoffs such p-value, padj-value, log2fc etc.
 #' It also allows selecting genes for diff analysis based upon minimum counts across
 #' samples within a group (e.g. minimum counts across replicate samples).
@@ -455,8 +455,8 @@ get_deg <- function(counts,
 
 
 
-#' @title Perform differential expression analysis using \link[DESeq2]
-#' @description This is a wrapper function build upon \link[DESeq2]{DESeq} and \link[DESeq2]{DESeqResults}`
+#' @title Perform differential expression analysis using [DESeq2::DESeq()]
+#' @description This is a wrapper function build upon [DESeq2::DESeq()]  and  [DESeq2::DESeqResults()]
 #' to find diff genes and categories them based on various cutoffs such p-value, padj-value, log2fc etc.
 #' It also allows selecting genes for diff analysis based upon minimum counts across
 #' samples within a group (e.g. minimum counts across replicate samples).
@@ -1125,7 +1125,7 @@ categorize_diff_genes <-  function(dsr_tibble,
 #' Prepare a fold change matrix
 #' @description This function returns a dataframe having first column gene names and subsequent columns are
 #' fold change values for the comparisons passed through `sample_comparisons`.
-#' @param x an abject of class "parcutils". This is an output of the function \link[parcutils]{run_deseq_analysis}.
+#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param sample_comparisons a character vector denoting sample comparisons for which fold change values to be derived.
 #' @param genes a character vector denoting gene names for which fold change values to be derived.
 #'
@@ -1134,9 +1134,9 @@ categorize_diff_genes <-  function(dsr_tibble,
 #'
 #' @examples
 #' \dontrun{
-#'
-#' // TO Do
+#' // TO DO
 #' }
+#'
 get_fold_change_matrix <- function(x , sample_comparisons , genes){
 
   # validate x
@@ -1184,7 +1184,7 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #' Prepare a matrix of normalised gene expression values
 #' @description This function returns a dataframe having first column gene names and subsequent columns are
 #' normalised gene expression values for the comparisons passed through sample_comparisons.
-#' @param x an abject of class "parcutils". This is an output of the function \link[parcutils]{run_deseq_analysis}.
+#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param sample_comparisons a character vector denoting sample comparisons for which fold change values to be derived.
 #' @param genes a character vector denoting gene names for which fold change values to be derived.
 #' @param summarise_replicates logical, default FALSE, indicating whether gene expression values summarised by mean or median between replicates.
@@ -1194,9 +1194,9 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #' @export
 #'
 #' @examples
-#' \dontrun
-#' {
-#' // TO DO.
+#' \dontrun{
+#'
+#' // TO DO
 #' }
 get_normalised_expression_matrix <- function(x , sample_comparisons, genes, summarise_replicates = FALSE, summarise_method = "median" ){
 

@@ -13,7 +13,7 @@ get_normalised_expression_matrix(
 )
 }
 \arguments{
-\item{x}{an abject of class "parcutils". This is an output of the function \link[parcutils]{run_deseq_analysis}.}
+\item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
 
 \item{sample_comparisons}{a character vector denoting sample comparisons for which fold change values to be derived.}
 
@@ -31,8 +31,8 @@ This function returns a dataframe having first column gene names and subsequent 
 normalised gene expression values for the comparisons passed through sample_comparisons.
 }
 \examples{
-\dontrun
-{
-// TO DO.
+\dontrun{
+
+// TO DO
 }
 }

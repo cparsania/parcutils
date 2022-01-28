@@ -7,7 +7,7 @@
 get_fold_change_matrix(x, sample_comparisons, genes)
 }
 \arguments{
-\item{x}{an abject of class "parcutils". This is an output of the function \link[parcutils]{run_deseq_analysis}.}
+\item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
 
 \item{sample_comparisons}{a character vector denoting sample comparisons for which fold change values to be derived.}
 
@@ -22,7 +22,7 @@ fold change values for the comparisons passed through \code{sample_comparisons}.
 }
 \examples{
 \dontrun{
-
-// TO Do
+// TO DO
 }
+
 }
