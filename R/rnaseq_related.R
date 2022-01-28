@@ -852,7 +852,7 @@ run_deseq_analysis <- function(
 
   norm_counts <- norm_counts %>%
     tidyr::pivot_longer(cols = -!!column_geneid , names_to = "samples", values_to = "norm_counts") %>%
-    dplyr::left_join(sample_info , by = c("samples"))  %>%
+    dplyr::left_join(sample_info_data , by = c("samples" = "sample_names"))  %>%
     parcutils::named_group_split(sample_groups) %>%
     purrr::map(~ ..1 %>% tidyr::pivot_wider(id_cols = !!column_geneid,
                                             names_from = samples ,
