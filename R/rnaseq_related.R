@@ -1,9 +1,9 @@
-#' @title Perform differential expression analysis using `DESeq2`
+#' @title Perform differential expression analysis using \link[DESeq2]
 #' @description
 #'
 #' `r lifecycle::badge("deprecated")`
 #'
-#' This is a wrapper function build upon `DESeq2::DESeq()` and `DESeq2::DESeqResults()`
+#' This is a wrapper function build upon \link[DESeq2]{DESeq} and \link[DESeq2]{DESeqResults}.
 #' to find diff genes and categories them based on various cutoffs such p-value, padj-value, log2fc etc.
 #' It also allows selecting genes for diff analysis based upon minimum counts across
 #' samples within a group (e.g. minimum counts across replicate samples).
@@ -134,7 +134,7 @@ get_deg <- function(counts,
                     ...
                     ){
 
-  warning("`get_deg` is deprecated.
+  stop("`get_deg` is deprecated.
              Please use `run_deseq_analysis` instead.")
 
 
@@ -455,8 +455,8 @@ get_deg <- function(counts,
 
 
 
-#' @title Perform differential expression analysis using `DESeq2`
-#' @description This is a wrapper function build upon `DESeq2::DESeq()` and `DESeq2::DESeqResults()`
+#' @title Perform differential expression analysis using \link[DESeq2]
+#' @description This is a wrapper function build upon \link[DESeq2]{DESeq} and \link[DESeq2]{DESeqResults}`
 #' to find diff genes and categories them based on various cutoffs such p-value, padj-value, log2fc etc.
 #' It also allows selecting genes for diff analysis based upon minimum counts across
 #' samples within a group (e.g. minimum counts across replicate samples).
@@ -919,6 +919,10 @@ run_deseq_analysis <- function(
   # assign names to each list in the tibble
 
   cli::cli_alert_info("Done.")
+
+  ## set class
+
+  class(xx) <- c("parcutils" , class(xx))
   return(xx)
 
 }
@@ -931,18 +935,19 @@ run_deseq_analysis <- function(
 #'
 #' @return a data frame
 #' @export
+#' @keywords internal
 #' @importFrom tibble rownames_to_column
 #' @importFrom dplyr mutate_if
 #' @importFrom tibble as_tibble
 #' @examples
 #' \dontrun{
-#'
+#'  // TO DO
 #' }
 #'
-dsr_to_tibble <- function(x){
+dsr_to_tibble <- function(x, .col_gene_id = "gene_id"){
 
   x %>% as.data.frame() %>%
-    tibble::rownames_to_column("GeneID") %>%
+    tibble::rownames_to_column(.col_gene_id) %>%
     tibble::as_tibble() #%>%
     #dplyr::mutate_if(is.numeric, ~ round(..1, 3)) ## round by 3 digits
 }
@@ -967,7 +972,7 @@ dsr_to_tibble <- function(x){
 #'
 #' @examples
 #' \dontrun{
-#'
+#' // TO DO
 #' }
 #'
 filter_gff <- function(gtf_file ,
@@ -1028,7 +1033,7 @@ filter_gff <- function(gtf_file ,
 #' @details // TO DO. --> explain columns 'signif' and 'type' in the returned data frame.
 #' @examples
 #' \dontrun{
-#'
+#' // TO DO
 #' }
 categorize_diff_genes <-  function(dsr_tibble,
                                    log2fc_cutoff =  1,
@@ -1116,6 +1121,147 @@ categorize_diff_genes <-  function(dsr_tibble,
 }
 
 
+
+#' Prepare a fold change matrix
+#' @description This function returns a dataframe having first column gene names and subsequent columns are
+#' fold change values for the comparisons passed through `sample_comparisons`.
+#' @param x an abject of class "parcutils". This is an output of the function \link[parcutils]{run_deseq_analysis}.
+#' @param sample_comparisons a character vector denoting sample comparisons for which fold change values to be derived.
+#' @param genes a character vector denoting gene names for which fold change values to be derived.
+#'
+#' @return a tbl.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'
+#' // TO Do
+#' }
+get_fold_change_matrix <- function(x , sample_comparisons , genes){
+
+  # validate x
+
+  stopifnot("x must be an object of class 'parcutils'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils"))
+
+  # validate sample_comparisons
+
+  stopifnot("sample_comparisons must be a character vector." = is.character(sample_comparisons))
+
+  # validate genes
+
+  stopifnot("genes must be a character vector." = is.character(genes))
+
+  # check if sample_comparisons present in x
+
+  if(!any (x$comp %in% sample_comparisons)) {
+    stop("None of values from 'sample_comparisons' present in the x.")
+  }
+
+  # get gene_id column name
+
+  ## NOTE: There should be a way to get all user input parameters from the 'parcutils' object.
+
+  gene_id_column <- x$dsr_tibble_deg[[1]] %>% colnames() %>% .[1]
+
+  # subset data
+  res <- x %>%
+    dplyr::filter(comp %in% sample_comparisons ) %>%
+    dplyr::pull(dsr_tibble_deg) %>%
+    purrr::map(~ ..1 %>% dplyr::filter(!!rlang::sym(gene_id_column) %in% genes) %>% dplyr::select(1,3)) %>%
+    dplyr::bind_rows(.id  = "comparisons") %>%
+    tidyr::pivot_wider(id_cols = !!rlang::sym(gene_id_column) , names_from = comparisons, values_from = log2FoldChange)
+
+
+  if(nrow(res) == 0){
+    warning("None of the queried 'genes' are found in the 'x'.")
+  }
+
+  return(res)
+}
+
+
+
+#' Prepare a matrix of normalised gene expression values
+#' @description This function returns a dataframe having first column gene names and subsequent columns are
+#' normalised gene expression values for the comparisons passed through sample_comparisons.
+#' @param x an abject of class "parcutils". This is an output of the function \link[parcutils]{run_deseq_analysis}.
+#' @param sample_comparisons a character vector denoting sample comparisons for which fold change values to be derived.
+#' @param genes a character vector denoting gene names for which fold change values to be derived.
+#' @param summarise_replicates logical, default FALSE, indicating whether gene expression values summarised by mean or median between replicates.
+#' @param summarise_method a character string either "mean" or "median" by which normalised gene expression values will be summarised between replicates.
+#'
+#' @return a tbl.
+#' @export
+#'
+#' @examples
+#' \dontrun
+#' {
+#' // TO DO.
+#' }
+get_normalised_expression_matrix <- function(x , sample_comparisons, genes, summarise_replicates = FALSE, summarise_method = "median" ){
+
+  # validate x
+
+  stopifnot("x must be an object of class 'parcutils'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils"))
+
+  # validate genes
+
+  stopifnot("genes must be a character vector." = is.character(genes))
+
+  # validate summarise_replicates
+
+  stopifnot("summarise_replicates must be a logical." = is.logical(summarise_replicates))
+
+
+  # validate sample_comparisons
+
+  stopifnot("sample_comparisons must be a character vector." = is.character(sample_comparisons))
+
+
+  # validate summarise_method
+
+  match.arg(summarise_method , choices = c("mean" ,"median"))
+
+  gene_id_column <- x$norm_counts[[1]][[1]] %>% colnames() %>% .[1]
+
+
+  # subset data
+
+  queried_samples <- x$norm_counts[sample_comparisons]
+
+  # check of queried_samples is empty
+  if(queried_samples %>% purrr::map_lgl(is.null) %>% all()) {
+
+    stop("None of the values from 'sample_comparisons' found in 'x'. Validate values in 'sample_comparisons' by names(x$norm_counts)")
+  }
+
+  # flatten and make all in a tibble
+  queried_samples_long <- queried_samples %>% purrr::flatten() %>%
+    dplyr::bind_rows(.id = "samples")  %>%
+    tidyr::pivot_longer(cols = c(-'samples' , -!!gene_id_column) ,names_to = "reps", values_to = "values") %>%
+    TidyWrappers::tbl_remove_rows_NA_any() %>%
+    dplyr::distinct()
+
+
+  if(summarise_replicates) {
+
+    out <- queried_samples_long %>%
+      dplyr::group_by(samples,!!rlang::sym(gene_id_column)) %>%
+      dplyr::summarise_at("values",summarise_method) %>%
+      dplyr::ungroup() %>%
+      tidyr::pivot_wider(id_cols = !!gene_id_column, names_from = "samples", values_from = "values")
+
+  } else {
+    out <-  queried_samples_long %>%
+      tidyr::pivot_wider(id_cols = !!gene_id_column, names_from = "reps", values_from = "values")
+  }
+
+
+  return(out)
+
+
+
+}
 
 
 

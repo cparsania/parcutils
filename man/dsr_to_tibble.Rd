@@ -4,7 +4,7 @@
 \alias{dsr_to_tibble}
 \title{Convert DESeq result object in to a tibble.}
 \usage{
-dsr_to_tibble(x)
+dsr_to_tibble(x, .col_gene_id = "gene_id")
 }
 \arguments{
 \item{x}{\link{DESeqResults} object}
@@ -17,7 +17,8 @@ Convert DESeq result object in to a tibble.
 }
 \examples{
 \dontrun{
-
+ // TO DO
 }
 
 }
+\keyword{internal}
