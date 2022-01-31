@@ -1256,14 +1256,77 @@ get_normalised_expression_matrix <- function(x , sample_comparisons, genes, summ
       tidyr::pivot_wider(id_cols = !!gene_id_column, names_from = "reps", values_from = "values")
   }
 
-
   return(out)
-
 
 
 }
 
 
+
+#' Get genes from based on their differential regulation (up, down, both, other and all)
+#'
+#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
+#' @param sample_comparison a character string denoting a sample comparison for which genes to be obtained.
+#' @param regulation a character string, default \code{both}. Values can be one of the \code{up}, \code{down}, \code{both}, \code{other}, \code{all}.
+#'  + up : returns all up regulated genes.
+#'  + down : returns all down regulated genes.
+#'  + both : returns all up and down regulated genes.
+#'  + other : returns genes other than up and down regulated genes.
+#'  + all : returns all genes.
+#' @return a named vector.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' // TO DO
+#' }
+#'
+get_genes_by_regulation <-  function(x, sample_comparison , regulation = "both"  ) {
+
+  # validate x.
+  stopifnot("x must be an object of class 'parcutils'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils"))
+
+  # validate sample comparison.
+  stopifnot("sample_comparison must be a character string" = is.character(sample_comparison) & length(sample_comparison) ==1)
+
+  # validate regulation.
+  match.arg(regulation , choices = c("up","down" , "both", "other" ,"all"), several.ok = F)
+
+  # split by column regul.
+  # NOTE: do not group by column name instead use index. The reason is because if the column name of column 'regul' change in future it will break this code.
+
+  genes_by_comp <- x$dsr_tibble_deg[[sample_comparison]] %>%
+    dplyr::select(1, dplyr::last_col())
+
+  genes_by_comp <- genes_by_comp %>%
+    dplyr::group_by_at(2)
+
+  grp_keys <- genes_by_comp %>%
+    dplyr::group_keys() %>%
+    pull(1)
+
+  genes_by_comp <- genes_by_comp %>%
+    dplyr::group_split()
+  names(genes_by_comp) <- grp_keys
+
+  # Convert names and regulation to lower case before comparison
+  names(genes_by_comp)  <- tolower(names(genes_by_comp))
+  regulation = tolower(regulation)
+
+  if(regulation == "both"){
+    rslt <- genes_by_comp[c("up","down")]  %>% as.list() %>% dplyr::bind_rows()
+  } else if(regulation == "all"){
+    rslt <- genes_by_comp  %>% as.list() %>% dplyr::bind_rows()
+  } else{
+    rslt <- genes_by_comp[[regulation]]
+  }
+
+  rslt <- rslt[[1]] %>%
+    purrr::set_names(rslt[[2]] %>% tolower())
+
+  return(rslt)
+
+}
 
 
 
