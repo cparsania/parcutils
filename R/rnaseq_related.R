@@ -1185,8 +1185,8 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #' @description This function returns a dataframe having first column gene names and subsequent columns are
 #' normalised gene expression values for the comparisons passed through sample_comparisons.
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
-#' @param sample_comparisons a character vector denoting sample comparisons for which fold change values to be derived.
-#' @param genes a character vector denoting gene names for which fold change values to be derived.
+#' @param sample_comparisons a character vector denoting sample comparisons for which normalised gene expression values to be derived.
+#' @param genes a character vector denoting gene names for which normalised gene expression values to be derived.
 #' @param summarise_replicates logical, default FALSE, indicating whether gene expression values summarised by mean or median between replicates.
 #' @param summarise_method a character string either "mean" or "median" by which normalised gene expression values will be summarised between replicates.
 #'
@@ -1255,6 +1255,9 @@ get_normalised_expression_matrix <- function(x , sample_comparisons, genes, summ
     out <-  queried_samples_long %>%
       tidyr::pivot_wider(id_cols = !!gene_id_column, names_from = "reps", values_from = "values")
   }
+
+  ## filter by required genes
+  out %<>% dplyr::filter(!!rlang::sym(gene_id_column) %in% genes)
 
   return(out)
 

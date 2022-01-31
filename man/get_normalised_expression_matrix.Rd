@@ -15,9 +15,9 @@ get_normalised_expression_matrix(
 \arguments{
 \item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
 
-\item{sample_comparisons}{a character vector denoting sample comparisons for which fold change values to be derived.}
+\item{sample_comparisons}{a character vector denoting sample comparisons for which normalised gene expression values to be derived.}
 
-\item{genes}{a character vector denoting gene names for which fold change values to be derived.}
+\item{genes}{a character vector denoting gene names for which normalised gene expression values to be derived.}
 
 \item{summarise_replicates}{logical, default FALSE, indicating whether gene expression values summarised by mean or median between replicates.}
 
