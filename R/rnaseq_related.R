@@ -1338,13 +1338,14 @@ get_genes_by_regulation <-  function(x, sample_comparison , regulation = "both" 
 
 
 #' Generate upset plots for DEG between comparisons.
-#'
+#' @description  Given a set of DEG comparisons, the functions returns [UpSetR::upset()] plots for up and down genes for any 2 comparisons.
+#' For each upset plot generated function also returns interaction in form of tibble.
 #' @param x x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param sample_comparisons a character vector denoting  sample comparisons between upset plot to be generated.
 #' @param color_up a character string denoting a valid color code for bars in upset plot for up regulated genes.
 #' @param color_down a character string denoting a valid color code for bars in upset plot for down regulated genes.
 #'
-#' @return an output of [UpSetR::upset()].
+#' @return an object of named list where each element is a list of two - 1)  an upset plots  [UpSetR::upset()] and their intersections in form of tibble.
 #' @export
 #' @importFrom  UpSetR upset fromList
 #' @importFrom  purrr map set_names cross map_chr
@@ -1356,7 +1357,6 @@ get_genes_by_regulation <-  function(x, sample_comparison , regulation = "both" 
 #' // TO DO.
 #' }
 #'
-
 plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_down = "#006d2c"){
 
   # x <- dd
@@ -1388,6 +1388,10 @@ plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_d
     purrr::map( ~..1)
 
 
+  ## set names
+  sample_comparisons_all_comb <- purrr::set_names(sample_comparisons_all_comb , ~purrr::map_chr(sample_comparisons_all_comb , ~paste0(..1, collapse = "_AND_")))
+
+
   all_upsets <- purrr::map(sample_comparisons_all_comb, ~ piarwise_upset(x = x,
                                                                          sample_comparison = ..1,
                                                                          color_up = color_up ,
@@ -1401,14 +1405,14 @@ plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_d
 
 ##
 #' Generate upset plots for DEG between a comparison.
-#'
-#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].x
+#' @description This function called from [parcutils::plot_deg_upsets()].
+#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param sample_comparison a character vector of length 2 denoting  sample comparisons between upset plot to be generated.
 #' @param color_up a character string denoting a valid color code for bars in upset plot for up regulated genes.
 #' @param color_down a character string denoting a valid color code for bars in upset plot for down regulated genes.
 #' @param ... other arguments to be passed to [UpSetR::upset()].
 #'
-#' @return an object of [UpSetR::upset()]
+#' @return an object of named list where each element is a list of two - 1)  an upset plots  [UpSetR::upset()] and their intersections in form of tibble.
 #' @export
 #' @keywords internal
 #' @examples
@@ -1443,6 +1447,7 @@ piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_do
                     "down" = color_down) #MetBrewer::met.brewer(name = "Austria")[3])
 
 
+
   # plot upset
   us_plot <- UpSetR::upset(UpSetR::fromList(input_list_for_upset) ,
                            order.by =  c("degree"),
@@ -1456,7 +1461,13 @@ piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_do
                            sets.x.label = "No. of genes",
                            sets.bar.color = rep(upset_colors %>% rev(),each = 2),...)
 
-  return(us_plot)
+  # get upset data.
+  upset_intersects  <- parcutils::get_upset_intersects(input_list_for_upset, upset_plot = us_plot)
+
+  ret <- list(upset_plot = us_plot,upset_intersects = upset_intersects)
+
+
+  return(ret)
 
 
 }

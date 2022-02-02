@@ -13,7 +13,7 @@ piarwise_upset(
 )
 }
 \arguments{
-\item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.x}
+\item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
 
 \item{sample_comparison}{a character vector of length 2 denoting  sample comparisons between upset plot to be generated.}
 
@@ -24,10 +24,10 @@ piarwise_upset(
 \item{...}{other arguments to be passed to \code{\link[UpSetR:upset]{UpSetR::upset()}}.}
 }
 \value{
-an object of \code{\link[UpSetR:upset]{UpSetR::upset()}}
+an object of named list where each element is a list of two - 1)  an upset plots  \code{\link[UpSetR:upset]{UpSetR::upset()}} and their intersections in form of tibble.
 }
 \description{
-Generate upset plots for DEG between a comparison.
+This function called from \code{\link[=plot_deg_upsets]{plot_deg_upsets()}}.
 }
 \examples{
 \dontrun{

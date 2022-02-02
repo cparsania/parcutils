@@ -21,10 +21,11 @@ plot_deg_upsets(
 \item{color_down}{a character string denoting a valid color code for bars in upset plot for down regulated genes.}
 }
 \value{
-an output of \code{\link[UpSetR:upset]{UpSetR::upset()}}.
+an object of named list where each element is a list of two - 1)  an upset plots  \code{\link[UpSetR:upset]{UpSetR::upset()}} and their intersections in form of tibble.
 }
 \description{
-Generate upset plots for DEG between comparisons.
+Given a set of DEG comparisons, the functions returns \code{\link[UpSetR:upset]{UpSetR::upset()}} plots for up and down genes for any 2 comparisons.
+For each upset plot generated function also returns interaction in form of tibble.
 }
 \examples{
 \dontrun{
