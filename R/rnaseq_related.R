@@ -1334,3 +1334,135 @@ get_genes_by_regulation <-  function(x, sample_comparison , regulation = "both" 
 
 
 
+
+
+
+#' Generate upset plots for DEG between comparisons.
+#'
+#' @param x x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
+#' @param sample_comparisons a character vector denoting  sample comparisons between upset plot to be generated.
+#' @param color_up a character string denoting a valid color code for bars in upset plot for up regulated genes.
+#' @param color_down a character string denoting a valid color code for bars in upset plot for down regulated genes.
+#'
+#' @return an output of [UpSetR::upset()].
+#' @export
+#' @importFrom  UpSetR upset fromList
+#' @importFrom  purrr map set_names cross map_chr
+#' @importFrom  glue glue
+#' @importFrom  magrittr %>% %<>%
+#' @examples
+#' \dontrun{
+#'
+#' // TO DO.
+#' }
+#'
+
+plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_down = "#006d2c"){
+
+  # x <- dd
+  # sample_comparisons = c("shRNA1_VS_shCTRL", "INFy_shRNA1_VS_INFy_shCTRL" , "INFy_shCTRL_VS_shCTRL")
+
+  # validate x
+
+  stopifnot("x must be an object of class 'parcutils'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils"))
+
+
+  # validate sample_comparisons
+
+  stopifnot("sample_comparisons must be a character vector of length 2." = is.character(sample_comparisons) & length(sample_comparisons) > 1)
+
+  # all sample comparisons must present in x
+
+  if(!all(sample_comparisons %in% x$comp) ){
+    not_present <- sample_comparisons[!(sample_comparisons %in% x$comp)]
+    stop(glue::glue("Value {not_present} is not present in the x. Check x$comp to access all choices."))
+  }
+
+  # validate colors
+
+  stopifnot("color_up and color_down must be a character string denoting a valid color code." = is.character(color_up) & is.character(color_up) & length(color_up)==1, length(color_down)==1)
+
+  # generate all combinations of 2 from sample_comparisons.
+  sample_comparisons_all_comb <- combn(sample_comparisons, 2)  %>%
+    as.data.frame() %>%
+    purrr::map( ~..1)
+
+
+  all_upsets <- purrr::map(sample_comparisons_all_comb, ~ piarwise_upset(x = x,
+                                                                         sample_comparison = ..1,
+                                                                         color_up = color_up ,
+                                                                         color_down = color_down) )
+
+  return(all_upsets)
+}
+
+
+
+
+##
+#' Generate upset plots for DEG between a comparison.
+#'
+#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].x
+#' @param sample_comparison a character vector of length 2 denoting  sample comparisons between upset plot to be generated.
+#' @param color_up a character string denoting a valid color code for bars in upset plot for up regulated genes.
+#' @param color_down a character string denoting a valid color code for bars in upset plot for down regulated genes.
+#' @param ... other arguments to be passed to [UpSetR::upset()].
+#'
+#' @return an object of [UpSetR::upset()]
+#' @export
+#' @keywords internal
+#' @examples
+#' \dontrun{
+#'
+#' // TO DO.
+#' }
+#'
+piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_down = "#006d2c",... ){
+
+  # validate sample_comparison
+
+  stopifnot("sample_comparison must be a character vector of length 2." = is.character(sample_comparison) & length(sample_comparison) == 2)
+
+  yy <- purrr::map(sample_comparison %>%
+                     purrr::set_names(sample_comparison), ~parcutils::get_genes_by_regulation(x = x, sample_comparison = ..1,regulation = "both") ) %>%
+    purrr::map(~split(..1, names(..1)))
+
+  input_list_for_upset <- purrr::map(names(yy), ~ purrr::set_names(yy[[..1]], glue::glue("{..1}_{yy[[..1]] %>% names %>% tolower}"))) %>% purrr::flatten()
+
+
+  # order list by up and down genes
+
+  lst_order <- list(sample_comparison , c("up" ,"down")) %>%
+    purrr::cross() %>%
+    purrr::map_chr( paste0 , collapse ="_")
+
+  input_list_for_upset <- input_list_for_upset[lst_order]
+
+  # up set colors
+  upset_colors <- c("up" = color_up, #MetBrewer::met.brewer(name = "Austria")[1],
+                    "down" = color_down) #MetBrewer::met.brewer(name = "Austria")[3])
+
+
+  # plot upset
+  us_plot <- UpSetR::upset(UpSetR::fromList(input_list_for_upset) ,
+                           order.by =  c("degree"),
+                           #group.by = "sets",
+                           nsets = length(input_list_for_upset),
+                           nintersects = NA,
+                           sets = names(input_list_for_upset) %>% rev(),
+                           keep.order=T,
+                           text.scale=1.5,
+                           mb.ratio = c(0.6, 0.4),
+                           sets.x.label = "No. of genes",
+                           sets.bar.color = rep(upset_colors %>% rev(),each = 2),...)
+
+  return(us_plot)
+
+
+}
+
+
+
+
+
+
