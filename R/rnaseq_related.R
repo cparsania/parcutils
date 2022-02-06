@@ -545,7 +545,7 @@ get_deg <- function(counts,
 #' # create sample info
 #' si <- tibble::tibble(samples = colnames(counts)[-1] , sample_groups = factor(rep(c("c","d"), each=5)))
 #'
-#' res <- get_deg(counts = counts ,
+#' res <- run_deseq_analysis(counts = counts ,
 #'                sample_info = si,
 #'                column_geneid = "Geneid" , group_numerator = "d" , group_denominator = "c",
 #'                column_samples = c("c1","c2","c3","c4" ,"c5" ,"d1" ,"d2","d3" ,"d4" ,"d5"))
