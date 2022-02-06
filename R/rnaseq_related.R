@@ -1475,5 +1475,281 @@ piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_do
 
 
 
+#' Given a set of genes and sample names create a heatmap of gene expression value or z-score.
+#' @description Heatmap is a common tool to show gene expression pattern across samples in RNAseq experiment.
+#' While doing data exploration, it is a common practice to generate several heatmaps to identify interesting
+#' patterns of gene expression across sample. Most heatmap generating tools require data in a tabular form.
+#' However, to prepare such a tabular form requires significant data wrangling such as subsetting
+#' genes (rows) and samples (columns) specifically when RNASeq studies studies consisting of several samples and
+#' replicates.
+#'
+#' This function cut downs several steps of data wrangling to create a heatmap of gene expression. Given an object of
+#' 'parcutils', names of samples, genes to show in heatmap and several other arguments it creates a heatmap.
+#' The output of the function is an output of the function [ComplexHeatmap::Heatmap()] which then can be used for
+#' the other functions of the \link{ComplexHeatmap} pacakge.
+#'
+#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
+#' @param samples a character vector denoting sample names to show in the heatmap.
+#' @param genesa character vector denoting genes to show in the heatmap.
+#' @param repair_genes  logical, default FALSE, indicating whether to repair gene names or not. See details.
+#' @param convert_log2 logical, default FALSE, indicating whether to convert gene expression values in log2 or not.
+#' @param color_default logical, default TRUE, indicating whether to use default heatmap colors.
+#' @param col an output of [circlize::colorRamp2()], default NULL.
+#' @param convert_zscore logical, default TRUE, indicating whether to convert gene expression values in to the z-score or not. see details.
+#' @param summarise_replicates logical, default TRUE, indicating whether to summarise values for each gene across replicates.
+#' @param summarise_method a character string, either mean or median.
+#' @param show_row_names logical, default FALSE, indicating whether to show row names in the heatmap or not.
+#' Internally this argument is passed to the function [ComplexHeatmap::Heatmap()].
+#' @param cluster_rows logical, default TRUE, indicating whether to cluster rows in the heatmap or not.
+#' Internally this argument is passed to the function [ComplexHeatmap::Heatmap()].
+#' @param show_row_dend logical, default TRUE, indicating whether to show dendrogram in the heatmap or not.
+#' Internally this argument is passed to the function [ComplexHeatmap::Heatmap()].
+#' @param row_names_font_size a numeric value, default 10, indicating size of row names in the heatmap.
+#' @param show_column_names logical, default TRUE, indicating whether to show column names in the heatmap or not.
+#' Internally this argument is passed to the function [ComplexHeatmap::Heatmap()].
+#' @param cluster_columns logical, default TRUE, indicating whether to cluster columns in the heatmap or not.
+#' Internally this argument is passed to the function [ComplexHeatmap::Heatmap()].
+#' @param show_heatmap_legend logical, default TRUE, indicating whether to show heatmap legend or not.
+#' @param ... Other parameters to be passes to [ComplexHeatmap::Heatmap()].
+#'
+#' @return an output of the function [ComplexHeatmap::Heatmap()].
+#' @export
+#' @details \code{repair_genes} Internally gene names are stored as a "gene_id:gene_symbol" format. For example, "ENSG00000187634:SAMD11".
+#' When \code{repair_genes} is set to \code{TRUE} the string corresponding to gene_id followed by ":" will be removed. This is useful when gene names
+#' are revealed in the heatmap.
+#' \code{convert_zscore}. When set to \code{TRUE} values for each gene is converted into z-score. z-score is calculated by baser r function [base::scale()]
+#' with all default parameters.
+#'
+#' @examples
+#' \dontrun{
+#' // TO DO.
+#' }
+#'
+get_gene_expression_heatmap <- function(x,
+                                        samples,
+                                        genes,
+                                        repair_genes = FALSE,
+                                        convert_log2 = FALSE,
+                                        color_default = TRUE,
+                                        col = NULL,
+                                        convert_zscore = TRUE,
+                                        summarise_replicates = TRUE,
+                                        summarise_method = "median",
+
+                                        show_row_names = FALSE,
+                                        cluster_rows = TRUE,
+                                        show_row_dend = TRUE,
+                                        row_names_font_size = 10,
+
+                                        show_column_names = TRUE,
+                                        cluster_columns = TRUE,
+
+                                        show_heatmap_legend = TRUE,
+
+                                        ...){
+
+
+  ## validate x
+
+  stopifnot("x must be an object of class 'parcutils'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils"))
+
+  # validate samples
+
+  stopifnot("samples must be a character vector." = is.character(samples))
+
+  # validate genes
+
+  stopifnot("genes must be a character vector." = is.character(genes))
+
+  # validate repair_genes
+
+  stopifnot("repair_genes must be a logical." = is.logical(repair_genes))
+
+
+  # validate color default
+
+  stopifnot("color_default must be a logical." = is.logical(color_default))
+
+  if(!color_default){
+    if(is.null(col)){
+      stop("col must be the output of circlize::colorRamp2() when  color_default is FALSE.")
+    }
+  }
+
+  # validate summarise_replicates
+
+  stopifnot("summarise_replicates must be a logical." = is.logical(summarise_replicates))
+
+  # validate summarise_method
+
+  match.arg(summarise_method , choices = c("mean" ,"median"))
+
+  # validate convert_zscore
+
+  stopifnot("convert_zscore must be a logical." = is.logical(convert_zscore))
+
+  ## prepare matrix for heatmap
+  all_expr_mat <-  get_all_named_expression_matrix(x)
+
+  # merge df and make them long format
+  expr_mat_long <- all_expr_mat[samples] %>%
+    purrr::map_df(~ ..1 %>% tidyr::pivot_longer(cols = -1 , values_to = "vals" , names_to = "replicate") , .id = "sample") %>%
+    dplyr::select(-1,dplyr::everything(),1) %>%
+    dplyr::distinct()
+
+  column_gene_id <- expr_mat_long %>% colnames()%>%.[1]
+
+  # summarise replicates
+
+  if(summarise_replicates){
+    expr_mat_long <- expr_mat_long %>%
+      dplyr::group_by(sample , !!rlang::sym(column_gene_id))  %>%
+      dplyr::summarise_at("vals", summarise_method) %>%
+      dplyr::ungroup()
+
+    #  make it wide
+    expr_mat_wide <- expr_mat_long %>%
+      tidyr::pivot_wider(id_cols = !!rlang::sym(column_gene_id), values_from = "vals", names_from = "sample")
+
+    # keep original order of columns
+    expr_mat_wide <- expr_mat_wide %>%
+      dplyr::select(!!rlang::sym(column_gene_id),dplyr::all_of(samples))
+
+  } else{
+    #  make it wide
+    expr_mat_wide <- expr_mat_long %>%
+      tidyr::pivot_wider(id_cols = !!rlang::sym(column_gene_id), values_from = "vals", names_from = "replicate" )
+
+  }
+
+
+  # convert log
+  if(convert_log2){
+    expr_mat_wide <- expr_mat_wide %>% TidyWrappers::tbl_convert_log2(frac = 0.1)
+  }
+
+  # convert z score
+
+  if(convert_zscore){
+    expr_mat_wide <- expr_mat_wide %>% TidyWrappers::tbl_convert_row_zscore()
+  }
+
+  # remove row if all are NA.
+  value_na <- expr_mat_wide  %>%  TidyWrappers::tbl_keep_rows_NA_any() %>% dplyr::pull(!!rlang::sym(column_gene_id))
+  if(length(value_na) > 0){
+    value_na <- paste0(value_na, collapse = ",")
+    warning(glue::glue("Genes having value NA - {value_na} are removed from heatmap.",))
+    expr_mat_wide <- expr_mat_wide %>% TidyWrappers::tbl_remove_rows_NA_any()
+  }
+
+
+  # filter by genes
+  expr_mat_wide <- expr_mat_wide %>% dplyr::filter(!!rlang::sym(column_gene_id) %in% genes)
+
+  #fix colors
+  if(color_default){
+    col = fix_hm_colors(expr_mat_wide)
+  } else {
+    col = col
+  }
+
+  # replair genes
+
+  if(repair_genes){
+    expr_mat_wide <- expr_mat_wide %>% dplyr::mutate(!!column_gene_id := !!rlang::sym(column_gene_id) %>% stringr::str_replace(".*:" , ""))
+  }
+
+  #  convert into matrix
+  expr_mat_wide  %<>%
+    as.data.frame() %>% tibble::column_to_rownames(column_gene_id)
+
+  # generate heatmap
+
+  hm <- ComplexHeatmap::Heatmap(expr_mat_wide,col = col,
+                                show_row_names = show_row_names,
+                                cluster_rows = cluster_rows,
+                                show_row_dend = show_row_dend,
+                                row_names_gp = grid::gpar(fontsize = row_names_font_size),
+                                show_column_names = show_column_names,
+                                cluster_columns = cluster_columns,
+                                show_heatmap_legend = show_heatmap_legend, ...)
+
+  return(hm)
+
+}
+
+
+
+
+#' Get named list of gene expression matrix for all samples in x.
+#'
+#' @param x
+#'
+#' @return named list of gene expression matrix.
+#' @export
+#' @keywords internal
+get_all_named_expression_matrix <- function(x){
+
+  validata_parcutils_obj(x)
+
+  all_sample_names <- x$norm_counts %>%
+    purrr::flatten() %>% names()
+
+  unique_index <- purrr::map_dbl(all_sample_names %>% unique() , ~ which(..1 == all_sample_names)[1])
+
+  ret <- x$norm_counts %>% purrr::flatten() %>% magrittr::extract(unique_index)
+  return(ret)
+
+}
+
+
+#' Validate if an object is of class 'parcutils'.
+#'
+#' @param x
+#'
+#' @return
+#' @export
+#' @keywords internal
+validata_parcutils_obj <- function(x){
+
+  stopifnot("x must be an object of class 'parcutils'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils"))
+}
+
+
+
+#' Given a matrix generate color scale for heatmap.
+#'
+#' @param hm_matrix
+#'
+#' @return color for [ComplexHeatmap::Heatmap()].
+#' @export
+#' @keywords internal
+fix_hm_colors <- function(hm_matrix){
+
+  stopifnot(is.data.frame(hm_matrix))
+
+  col_choices <- c("min" = MetBrewer::met.brewer(name = "Austria")[2],
+                   "max" = MetBrewer::met.brewer(name = "Austria")[1])
+
+  max_val <- hm_matrix %>% dplyr::select_if(is.numeric) %>% max() %>% ceiling()
+  min_val <- hm_matrix %>% dplyr::select_if(is.numeric) %>% min() %>% floor()
+  mid_val <- (max_val + min_val) / 2
+
+  col = circlize::colorRamp2(c(min_val , mid_val, max_val), c(col_choices["min"], "white", col_choices["max"]))
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
