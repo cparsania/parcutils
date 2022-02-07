@@ -1705,7 +1705,10 @@ filter_df_by_genes <- function(df, genes){
     stop("No genes found.")
 
   } else if(length(genes_not_present) < length(genes)){
-    warning(glue::glue("Genes below are not present into x\n{genes_not_present}",.sep = ,))
+
+    cli::cli_alert_warning(text = paste0("Genes below are not present into x\n" ,
+                                         paste0(genes_not_present , collapse = ",")))
+
   }
 
   # filter available genes
