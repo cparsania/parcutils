@@ -1710,9 +1710,10 @@ filter_df_by_genes <- function(df, genes){
 
   # filter available genes
   df <- df %>%
-    dplyr::slice(order(!!rlang::sym(column_gene_id) , genes_present ))
+    dplyr::slice(match(genes_present, !!rlang::sym(column_gene_id)))
 
 }
+
 
 #' Get named list of gene expression matrix for all samples in x.
 #'
