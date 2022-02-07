@@ -1634,6 +1634,9 @@ get_gene_expression_heatmap <- function(x,
     expr_mat_wide <- expr_mat_wide %>% TidyWrappers::tbl_convert_row_zscore()
   }
 
+  # filter by user supplied genes
+  expr_mat_wide <- expr_mat_wide %>% dplyr::filter(!!rlang::sym(column_gene_id) %in% genes)
+
   # remove row if all are NA.
   value_na <- expr_mat_wide  %>%  TidyWrappers::tbl_keep_rows_NA_any() %>% dplyr::pull(!!rlang::sym(column_gene_id))
   if(length(value_na) > 0){
@@ -1642,9 +1645,6 @@ get_gene_expression_heatmap <- function(x,
     expr_mat_wide <- expr_mat_wide %>% TidyWrappers::tbl_remove_rows_NA_any()
   }
 
-
-  # filter by genes
-  expr_mat_wide <- expr_mat_wide %>% dplyr::filter(!!rlang::sym(column_gene_id) %in% genes)
 
   #fix colors
   if(color_default){
