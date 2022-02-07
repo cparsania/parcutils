@@ -1622,7 +1622,6 @@ get_gene_expression_heatmap <- function(x,
 
   }
 
-
   # convert log
   if(convert_log2){
     expr_mat_wide <- expr_mat_wide %>% TidyWrappers::tbl_convert_log2(frac = 0.1)
@@ -1635,7 +1634,8 @@ get_gene_expression_heatmap <- function(x,
   }
 
   # filter by user supplied genes
-  expr_mat_wide <- expr_mat_wide %>% dplyr::filter(!!rlang::sym(column_gene_id) %in% genes)
+
+  expr_mat_wide <- filter_df_by_genes(df = expr_mat_wide, genes = genes)
 
   # remove row if all are NA.
   value_na <- expr_mat_wide  %>%  TidyWrappers::tbl_keep_rows_NA_any() %>% dplyr::pull(!!rlang::sym(column_gene_id))
@@ -1644,7 +1644,6 @@ get_gene_expression_heatmap <- function(x,
     warning(glue::glue("Genes having value NA - {value_na} are removed from heatmap.",))
     expr_mat_wide <- expr_mat_wide %>% TidyWrappers::tbl_remove_rows_NA_any()
   }
-
 
   #fix colors
   if(color_default){
@@ -1680,6 +1679,40 @@ get_gene_expression_heatmap <- function(x,
 
 
 
+
+#' Filter expression matrix (dataframe) by genes(first column).
+#'
+#' @param df a gene expression data frame
+#' @param genes acharacter vector of genes to be filtred from df.
+#'
+#' @return a filtered dataframe.
+#' @export
+#' @keywords internal
+#' @examples
+filter_df_by_genes <- function(df, genes){
+
+  column_gene_id <- df %>% colnames() %>%.[1]
+
+  ## check which genes are not present in the df
+  df_genes <- df %>%
+    dplyr::pull(!!rlang::sym(column_gene_id))
+
+  genes_not_present <- dplyr::setdiff(genes, df_genes)
+  genes_present <- genes[genes %in% df_genes]
+
+  if(length(genes_not_present) == length(genes) ){
+
+    stop("No genes found.")
+
+  } else if(length(genes_not_present) < length(genes)){
+    warning(glue::glue("Genes below are not present into x\n{genes_not_present}",.sep = ,))
+  }
+
+  # filter available genes
+  df <- df %>%
+    dplyr::slice(order(!!rlang::sym(column_gene_id) , genes_present ))
+
+}
 
 #' Get named list of gene expression matrix for all samples in x.
 #'
