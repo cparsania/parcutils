@@ -7,7 +7,7 @@
 get_all_named_expression_matrix(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{an object of class parcutils.}
 }
 \value{
 named list of gene expression matrix.

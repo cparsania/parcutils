@@ -6,7 +6,7 @@
 \usage{
 get_normalised_expression_matrix(
   x,
-  sample_comparisons,
+  samples,
   genes,
   summarise_replicates = FALSE,
   summarise_method = "median"
@@ -15,7 +15,7 @@ get_normalised_expression_matrix(
 \arguments{
 \item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
 
-\item{sample_comparisons}{a character vector denoting sample comparisons for which normalised gene expression values to be derived.}
+\item{samples}{a character vector denoting samples for which normalised gene expression values to be derived.}
 
 \item{genes}{a character vector denoting gene names for which normalised gene expression values to be derived.}
 

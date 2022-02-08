@@ -30,6 +30,8 @@ get_gene_expression_heatmap(
 
 \item{samples}{a character vector denoting sample names to show in the heatmap.}
 
+\item{genes}{a character vector denoting genes to show in the heatmap.}
+
 \item{repair_genes}{logical, default FALSE, indicating whether to repair gene names or not. See details.}
 
 \item{convert_log2}{logical, default FALSE, indicating whether to convert gene expression values in log2 or not.}
@@ -64,8 +66,6 @@ Internally this argument is passed to the function \code{\link[ComplexHeatmap:He
 \item{show_heatmap_legend}{logical, default TRUE, indicating whether to show heatmap legend or not.}
 
 \item{...}{Other parameters to be passes to \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}.}
-
-\item{genesa}{character vector denoting genes to show in the heatmap.}
 }
 \value{
 an output of the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}.
@@ -84,11 +84,13 @@ The output of the function is an output of the function \code{\link[ComplexHeatm
 the other functions of the \link{ComplexHeatmap} pacakge.
 }
 \details{
-\code{repair_genes} Internally gene names are stored as a "gene_id:gene_symbol" format. For example, "ENSG00000187634:SAMD11".
+\itemize{
+\item \code{repair_genes} :  Internally gene names are stored as a "gene_id:gene_symbol" format. For example, "ENSG00000187634:SAMD11".
 When \code{repair_genes} is set to \code{TRUE} the string corresponding to gene_id followed by ":" will be removed. This is useful when gene names
-are revealed in the heatmap.
-\code{convert_zscore}. When set to \code{TRUE} values for each gene is converted into z-score. z-score is calculated by baser r function \code{\link[base:scale]{base::scale()}}
+to be revealed in the heatmap.
+\item \code{convert_zscore} :  When set to \code{TRUE} values for each gene is converted into z-score. z-score is calculated by baser r function \code{\link[base:scale]{base::scale()}}
 with all default parameters.
+}
 }
 \examples{
 \dontrun{

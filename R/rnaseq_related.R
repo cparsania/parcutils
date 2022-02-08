@@ -1184,8 +1184,9 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #' Prepare a matrix of normalised gene expression values
 #' @description This function returns a dataframe having first column gene names and subsequent columns are
 #' normalised gene expression values for the comparisons passed through sample_comparisons.
+#'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
-#' @param sample_comparisons a character vector denoting sample comparisons for which normalised gene expression values to be derived.
+#' @param samples a character vector denoting samples for which normalised gene expression values to be derived.
 #' @param genes a character vector denoting gene names for which normalised gene expression values to be derived.
 #' @param summarise_replicates logical, default FALSE, indicating whether gene expression values summarised by mean or median between replicates.
 #' @param summarise_method a character string either "mean" or "median" by which normalised gene expression values will be summarised between replicates.
@@ -1198,11 +1199,11 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #'
 #' // TO DO
 #' }
-get_normalised_expression_matrix <- function(x , sample_comparisons, genes, summarise_replicates = FALSE, summarise_method = "median" ){
+get_normalised_expression_matrix <- function(x , samples, genes, summarise_replicates = FALSE, summarise_method = "median" ){
 
   # validate x
 
-  stopifnot("x must be an object of class 'parcutils'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils"))
+  validata_parcutils_obj(x)
 
   # validate genes
 
@@ -1212,11 +1213,9 @@ get_normalised_expression_matrix <- function(x , sample_comparisons, genes, summ
 
   stopifnot("summarise_replicates must be a logical." = is.logical(summarise_replicates))
 
+  # validate samples
 
-  # validate sample_comparisons
-
-  stopifnot("sample_comparisons must be a character vector." = is.character(sample_comparisons))
-
+  stopifnot("samples must be a character vector." = is.character(samples))
 
   # validate summarise_method
 
@@ -1225,41 +1224,45 @@ get_normalised_expression_matrix <- function(x , sample_comparisons, genes, summ
   gene_id_column <- x$norm_counts[[1]][[1]] %>% colnames() %>% .[1]
 
 
-  # subset data
+  ## get all samples gene expression matrix.
+  all_expr_mats <-  get_all_named_expression_matrix(x)
 
-  queried_samples <- x$norm_counts[sample_comparisons]
-
-  # check of queried_samples is empty
-  if(queried_samples %>% purrr::map_lgl(is.null) %>% all()) {
-
-    stop("None of the values from 'sample_comparisons' found in 'x'. Validate values in 'sample_comparisons' by names(x$norm_counts)")
-  }
-
-  # flatten and make all in a tibble
-  queried_samples_long <- queried_samples %>% purrr::flatten() %>%
-    dplyr::bind_rows(.id = "samples")  %>%
-    tidyr::pivot_longer(cols = c(-'samples' , -!!gene_id_column) ,names_to = "reps", values_to = "values") %>%
-    TidyWrappers::tbl_remove_rows_NA_any() %>%
+  # merge df and make them long format
+  expr_mat_long <- all_expr_mats[samples] %>%
+    purrr::map_df(~ ..1 %>% tidyr::pivot_longer(cols = -1 , values_to = "vals" , names_to = "replicate") , .id = "sample") %>%
+    dplyr::select(-1,dplyr::everything(),1) %>%
     dplyr::distinct()
 
+  column_gene_id <- expr_mat_long %>% colnames()%>%.[1]
 
-  if(summarise_replicates) {
+  # summarise replicates
 
-    out <- queried_samples_long %>%
-      dplyr::group_by(samples,!!rlang::sym(gene_id_column)) %>%
-      dplyr::summarise_at("values",summarise_method) %>%
-      dplyr::ungroup() %>%
-      tidyr::pivot_wider(id_cols = !!gene_id_column, names_from = "samples", values_from = "values")
+  if(summarise_replicates){
+    expr_mat_long <- expr_mat_long %>%
+      dplyr::group_by(sample , !!rlang::sym(column_gene_id))  %>%
+      dplyr::summarise_at("vals", summarise_method) %>%
+      dplyr::ungroup()
 
-  } else {
-    out <-  queried_samples_long %>%
-      tidyr::pivot_wider(id_cols = !!gene_id_column, names_from = "reps", values_from = "values")
+    #  make it wide
+    expr_mat_wide <- expr_mat_long %>%
+      tidyr::pivot_wider(id_cols = !!rlang::sym(column_gene_id), values_from = "vals", names_from = "sample")
+
+    # keep original order of columns
+    expr_mat_wide <- expr_mat_wide %>%
+      dplyr::select(!!rlang::sym(column_gene_id),dplyr::all_of(samples))
+
+  } else{
+    #  make it wide
+    expr_mat_wide <- expr_mat_long %>%
+      tidyr::pivot_wider(id_cols = !!rlang::sym(column_gene_id), values_from = "vals", names_from = "replicate" )
+
   }
 
-  ## filter by required genes
-  out %<>% dplyr::filter(!!rlang::sym(gene_id_column) %in% genes)
+  # filter by user supplied genes
 
-  return(out)
+  expr_mat_wide <- filter_df_by_genes(df = expr_mat_wide, genes = genes)
+
+  return(expr_mat_wide)
 
 
 }
@@ -1490,7 +1493,7 @@ piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_do
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param samples a character vector denoting sample names to show in the heatmap.
-#' @param genesa character vector denoting genes to show in the heatmap.
+#' @param genes a character vector denoting genes to show in the heatmap.
 #' @param repair_genes  logical, default FALSE, indicating whether to repair gene names or not. See details.
 #' @param convert_log2 logical, default FALSE, indicating whether to convert gene expression values in log2 or not.
 #' @param color_default logical, default TRUE, indicating whether to use default heatmap colors.
@@ -1514,10 +1517,11 @@ piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_do
 #'
 #' @return an output of the function [ComplexHeatmap::Heatmap()].
 #' @export
-#' @details \code{repair_genes} Internally gene names are stored as a "gene_id:gene_symbol" format. For example, "ENSG00000187634:SAMD11".
+#' @details
+#' + \code{repair_genes} :  Internally gene names are stored as a "gene_id:gene_symbol" format. For example, "ENSG00000187634:SAMD11".
 #' When \code{repair_genes} is set to \code{TRUE} the string corresponding to gene_id followed by ":" will be removed. This is useful when gene names
-#' are revealed in the heatmap.
-#' \code{convert_zscore}. When set to \code{TRUE} values for each gene is converted into z-score. z-score is calculated by baser r function [base::scale()]
+#' to be revealed in the heatmap.
+#' + \code{convert_zscore} :  When set to \code{TRUE} values for each gene is converted into z-score. z-score is calculated by baser r function [base::scale()]
 #' with all default parameters.
 #'
 #' @examples
@@ -1669,7 +1673,7 @@ get_gene_expression_heatmap <- function(x,
 
   #  convert into matrix
   expr_mat_wide  %<>%
-    as.data.frame() %>% tibble::column_to_rownames(column_gene_id)
+    as.data.frame() %>% tibble::column_to_rownames(column_gene_id) %>% as.matrix()
 
   # generate heatmap
 
@@ -1734,7 +1738,7 @@ filter_df_by_genes <- function(df, genes){
 
 #' Get named list of gene expression matrix for all samples in x.
 #'
-#' @param x
+#' @param x an object of class parcutils.
 #'
 #' @return named list of gene expression matrix.
 #' @export
