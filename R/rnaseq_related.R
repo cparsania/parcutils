@@ -1832,7 +1832,7 @@ get_heatmap_data <- function(h){
   ## make tibble
   row_ord <- tibble::tibble(clust = names(row_ord) , ord = row_ord) %>% tidyr::unnest(cols = (ord))
 
-  mat <- h@matrix %>% as.data.frame() %>% tibble::rownames_to_column()  %>%
+  mat <- h@ht_list[[1]]@matrix %>% as.data.frame() %>% tibble::rownames_to_column()  %>%
     tibble::as_tibble()
 
   ## order matrix by hm
