@@ -1698,6 +1698,11 @@ get_gene_expression_heatmap <- function(x,
 #' @export
 #' @keywords internal
 #' @examples
+#' \dontrun{
+#'
+#' # TO DO
+#' }
+#'
 filter_df_by_genes <- function(df, genes){
 
   column_gene_id <- df %>% colnames() %>%.[1]
@@ -1787,6 +1792,56 @@ fix_hm_colors <- function(hm_matrix){
 }
 
 
+
+## given a heatmap,  x and destination file  save expression values and / or zscore values.
+
+#' Get data from a heatmap in the same order.
+#'
+#' @param h an object of class [ComplexHeatmap::Heatmap()]
+#'
+#' @return a tbl.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # // TO DO
+#' }
+#'
+get_heatmap_data <- function(h){
+
+  # validate h
+  if(!is(h , "HeatmapList")){
+    stop("h must be the output of ComplexHeatmap::Heatmap().")
+  }
+
+  # get row order.
+  row_ord <- ComplexHeatmap::row_order(h)
+
+  # if not list, make it.
+
+  if(!is(row_ord, "list")){
+    row_ord <- list(row_ord)
+  }
+
+  # set names
+  row_ord <- row_ord %>% purrr::set_names(nm = glue::glue("cluster_{1:length(row_ord)}"))
+
+  ## make tibble
+  row_ord <- tibble::tibble(clust = names(row_ord) , ord = row_ord) %>% tidyr::unnest(cols = (ord))
+
+  mat <- h@ht_list[[1]]@matrix %>% as.data.frame() %>% tibble::rownames_to_column()  %>%
+    tibble::as_tibble()
+
+  ## order matrix by hm
+  mat_ordered <- mat %>%
+    dplyr::slice(row_ord$ord)
+
+  ## add clusters
+  mat_ordered <- mat_ordered %>%
+    dplyr::mutate(clusters = row_ord$clust)
+
+  return(mat_ordered)
+}
 
 
 

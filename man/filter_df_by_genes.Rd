@@ -17,4 +17,11 @@ a filtered dataframe.
 \description{
 Filter expression matrix (dataframe) by genes(first column).
 }
+\examples{
+\dontrun{
+
+# TO DO
+}
+
+}
 \keyword{internal}
