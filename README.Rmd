@@ -30,7 +30,7 @@ badger::badge_lifecycle()
 
 <!-- badges: end -->
 
-The goal of parcutils is to provide day to day bioinformatics utility functions. Those functions are mostly wrapper functions written on top of core bioconductior fucntions. 
+The goal of `parcutils` is to provide day to day bioinformatics utility functions. Those functions are mostly wrapper functions written on top of core bioconductor functions. 
 
 ## Installation
 
@@ -41,7 +41,7 @@ if(require("devtools")){
         devtools::install_github("cparsania/parcutils")
 } else{
         install.packages("devtools")
-        devtools::install_github("cparsania/pparcutils")
+        devtools::install_github("cparsania/parcutils")
 }
 ```
 
@@ -60,7 +60,7 @@ library(parcutils)
 bw_file <- system.file("extdata" , "example.bw" , package = "parcutils")
 gff_file <- system.file("extdata" , "C_glabrata_CBS138_version_s02-m07-r06_features.gff" ,package = "parcutils")
 
-oo <- parcutils::get_intergenic_singals(bw_file = bw_file,gff_file  = gff_file)
+oo <- parcutils::get_intergenic_signals(bw_file = bw_file,gff_file  = gff_file)
 
 oo 
 ```

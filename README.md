@@ -6,23 +6,22 @@
 <!-- badges: start -->
 
 [![](https://img.shields.io/badge/devel%20version-0.1.0-blue.svg)](https://github.com/cparsania/parcutils)
-[![](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 <!-- badges: end -->
 
-The goal of parcutils is to provide day to day bioinformatics utility
+The goal of `parcutils` is to provide day to day bioinformatics utility
 functions. Those functions are mostly wrapper functions written on top
-of core bioconductior fucntions.
+of core bioconductor functions.
 
 ## Installation
 
 ``` r
-
 if(require("devtools")){
         devtools::install_github("cparsania/parcutils")
 } else{
         install.packages("devtools")
-        devtools::install_github("cparsania/pparcutils")
+        devtools::install_github("cparsania/parcutils")
 }
 ```
 
@@ -42,23 +41,23 @@ library(parcutils)
 bw_file <- system.file("extdata" , "example.bw" , package = "parcutils")
 gff_file <- system.file("extdata" , "C_glabrata_CBS138_version_s02-m07-r06_features.gff" ,package = "parcutils")
 
-oo <- parcutils::get_intergenic_singals(bw_file = bw_file,gff_file  = gff_file)
+oo <- parcutils::get_intergenic_signals(bw_file = bw_file,gff_file  = gff_file)
 
 oo 
 #> GRanges object with 3715 ranges and 1 metadata column:
-#>                        seqnames      ranges strand |            score
-#>                           <Rle>   <IRanges>  <Rle> |        <numeric>
-#>      [1] ChrA_C_glabrata_CBS138      1-1607      + | 1.08452520981737
-#>      [2] ChrA_C_glabrata_CBS138   2637-2670      + | 14.5011175941018
-#>      [3] ChrA_C_glabrata_CBS138  4810-11696      + | 1.98691039911389
-#>      [4] ChrA_C_glabrata_CBS138 13043-14976      + | 7.80336749689286
-#>      [5] ChrA_C_glabrata_CBS138 15887-17912      + | 4.28256952397797
-#>      ...                    ...         ...    ... .              ...
-#>   [3711] mito_C_glabrata_CBS138 17988-18003      + | 6.55200004577637
-#>   [3712] mito_C_glabrata_CBS138 18076-18084      + | 6.55200004577637
-#>   [3713] mito_C_glabrata_CBS138 18157-18179      + | 5.59056505949601
-#>   [3714] mito_C_glabrata_CBS138 18263-18280      + | 4.09499979019165
-#>   [3715] mito_C_glabrata_CBS138 18368-18403      + | 2.84375001986822
+#>                        seqnames      ranges strand |     score
+#>                           <Rle>   <IRanges>  <Rle> | <numeric>
+#>      [1] ChrA_C_glabrata_CBS138      1-1607      + |   1.08453
+#>      [2] ChrA_C_glabrata_CBS138   2637-2670      + |  14.50112
+#>      [3] ChrA_C_glabrata_CBS138  4810-11696      + |   1.98691
+#>      [4] ChrA_C_glabrata_CBS138 13043-14976      + |   7.80337
+#>      [5] ChrA_C_glabrata_CBS138 15887-17912      + |   4.28257
+#>      ...                    ...         ...    ... .       ...
+#>   [3711] mito_C_glabrata_CBS138 17988-18003      + |   6.55200
+#>   [3712] mito_C_glabrata_CBS138 18076-18084      + |   6.55200
+#>   [3713] mito_C_glabrata_CBS138 18157-18179      + |   5.59057
+#>   [3714] mito_C_glabrata_CBS138 18263-18280      + |   4.09500
+#>   [3715] mito_C_glabrata_CBS138 18368-18403      + |   2.84375
 #>   -------
 #>   seqinfo: 14 sequences from an unspecified genome; no seqlengths
 ```
