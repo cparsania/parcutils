@@ -1549,6 +1549,14 @@ get_gene_expression_heatmap <- function(x,
                                         ...){
 
 
+  ## argument row_km from ComplexHeatmap::Heatmap is not supported.
+  arg_dots <- list(...)
+  if("row_km" %in% arg_dots){
+    stop("Due to inconsistant output of ComplexHeatmap::row_order()
+            between arguments `row_split` and `row_km`, row_km is currently not supported. Use row_split instead.")
+  }
+
+
   ## validate x
 
   stopifnot("x must be an object of class 'parcutils'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils"))
@@ -1638,7 +1646,8 @@ get_gene_expression_heatmap <- function(x,
   expr_mat_wide <- filter_df_by_genes(df = expr_mat_wide, genes = genes)
 
   # remove row if all are NA.
-  value_na <- expr_mat_wide  %>%  TidyWrappers::tbl_keep_rows_NA_any() %>% dplyr::pull(!!rlang::sym(column_gene_id))
+  value_na <- expr_mat_wide  %>%  TidyWrappers::tbl_keep_rows_NA_any() %>%
+    dplyr::pull(!!rlang::sym(column_gene_id))
   if(length(value_na) > 0){
     value_na <- paste0(value_na, collapse = ",")
     warning(glue::glue("Genes having value NA - {value_na} are removed from heatmap.",))
@@ -1652,7 +1661,7 @@ get_gene_expression_heatmap <- function(x,
     col = col
   }
 
-  # replair genes
+  # repair genes
 
   if(repair_genes){
     expr_mat_wide <- expr_mat_wide %>% dplyr::mutate(!!column_gene_id := !!rlang::sym(column_gene_id) %>% stringr::str_replace(".*:" , ""))
@@ -1776,7 +1785,6 @@ fix_hm_colors <- function(hm_matrix){
 
 
 }
-
 
 
 
