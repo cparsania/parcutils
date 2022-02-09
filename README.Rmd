@@ -37,10 +37,11 @@ The goal of `parcutils` is to provide day to day bioinformatics utility function
 
 ```{r, eval=FALSE}
 
-if(require("devtools")){
+if(require("devtools") && require("BiocManager")){
         devtools::install_github("cparsania/parcutils")
 } else{
         install.packages("devtools")
+        install.packages("BiocManager")
         devtools::install_github("cparsania/parcutils")
 }
 ```

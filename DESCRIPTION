@@ -29,6 +29,8 @@ Imports:
     fs (>= 1.5.0),
     UpSetR (>= 1.4.0),
     ComplexHeatmap,
+Remotes:
+    cparsania/TidyWrappers
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
