@@ -12,7 +12,7 @@ get_intergenic_signals(bw_file, gff_file)
 \item{gff_file}{a string denoting path of gff file.}
 }
 \value{
-an object of class \link{GenomicRanges} which can be exported to various file formats such as bw, bed, begraph etc.
+an object of class \code{\link[GenomicRanges:genomic-range-squeezers]{GenomicRanges::granges()}} which can be exported to various file formats such as bw, bed, begraph etc.
 }
 \description{
 given the .gff file and .bw file function finds the intergenic regions and associate signal inensity of each region

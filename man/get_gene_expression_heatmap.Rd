@@ -101,7 +101,7 @@ replicates.
 This function cut downs several steps of data wrangling to create a heatmap of gene expression, z-score or
 log2 fold-change . Given an object of 'parcutils', names of samples or sample comprisons, genes to show in heatmap
 and several other arguments it creates a heatmap.The output of the function is an output of the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}
-which then can be used for the other functions of the \link{ComplexHeatmap} package.
+which then can be used for the other functions of the \href{https://jokergoo.github.io/ComplexHeatmap-reference/book/}{ComplexHeatmap} package.
 }
 \details{
 The function \code{get_gene_expression_heatmap} is to create a heatmap either for normalised gene expression or z-score values

@@ -931,7 +931,7 @@ run_deseq_analysis <- function(
 
 #' Convert DESeq result object in to a tibble.
 #'
-#' @param x \link{DESeqResults} object
+#' @param x [DESeq2::DESeqResults()] object
 #'
 #' @return a data frame
 #' @export
@@ -1489,7 +1489,7 @@ piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_do
 #' This function cut downs several steps of data wrangling to create a heatmap of gene expression, z-score or
 #' log2 fold-change . Given an object of 'parcutils', names of samples or sample comprisons, genes to show in heatmap
 #' and several other arguments it creates a heatmap.The output of the function is an output of the function [ComplexHeatmap::Heatmap()]
-#' which then can be used for the other functions of the \link{ComplexHeatmap} package.
+#' which then can be used for the other functions of the [ComplexHeatmap](https://jokergoo.github.io/ComplexHeatmap-reference/book/) package.
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param samples a character vector denoting sample names to show in the heatmap.

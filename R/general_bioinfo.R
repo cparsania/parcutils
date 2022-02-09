@@ -4,7 +4,7 @@
 #' @param bw_file a string denoting path of .bw file
 #' @param gff_file a string denoting path of gff file.
 #'
-#' @return an object of class \link{GenomicRanges} which can be exported to various file formats such as bw, bed, begraph etc.
+#' @return an object of class [GenomicRanges::granges()] which can be exported to various file formats such as bw, bed, begraph etc.
 #' @export
 #'
 #' @examples
@@ -55,7 +55,7 @@ get_intergenic_signals <- function(bw_file , gff_file){
 
 #' @title Derive normalized counts from raw read numbers
 #' @description This function allows converting raw read counts into normalized counts either by method Tags Per Million (TPM) or Reads Per Kilo-base Per Million (RPKM)
-#' @details implemntaion of RPKM and TPM can be seen in functions \link[parcutils]{get_tpm} and \link[parcutils]{get_rpkm} respectively.
+#' @details implemntaion of RPKM and TPM can be seen in functions [parcutils::get_tpm()] and [parcutils::get_rpkm()] respectively.
 #'
 #' @param x A dataframe of raw counts along with mandatory columns which are \code{GeneID, Chr, Start, End, Strand, Length}.
 #' @param .vars A character vector containing columns from \code{x}. Normalization will be performed on these columns.
@@ -256,7 +256,7 @@ get_star_aling_log_summary <- function(log_file){
 #' Get intersects of upset plot.
 #'
 #' @param upset_data a list
-#' @param upset_plot an output of \link{UpSetR::upset}
+#' @param upset_plot an output of [UpSetR::upset()]
 #'
 #' @return a tbl
 #' @export

@@ -90,14 +90,14 @@ sort_geom_box <- function(x, decreasing = T){
 
 #' Wrapper around EnhancedVolcano::EnhancedVolcano
 #'
-#' @param toptable \code{toptable} \link{EnhancedVolcano::EnhancedVolcano}
-#' @param lab \code{lab} \link{EnhancedVolcano::EnhancedVolcano}
-#' @param x \code{x} \link{EnhancedVolcano::EnhancedVolcano}
-#' @param y \code{y} \link{EnhancedVolcano::EnhancedVolcano}
-#' @param pCutoff \code{pCutoff} \link{EnhancedVolcano::EnhancedVolcano}
-#' @param FCcutoff \code{FCcutoff} \link{EnhancedVolcano::EnhancedVolcano}
+#' @param toptable \code{toptable} [EnhancedVolcano::EnhancedVolcano()]
+#' @param lab \code{lab} [EnhancedVolcano::EnhancedVolcano()]
+#' @param x \code{x} [EnhancedVolcano::EnhancedVolcano()]
+#' @param y \code{y} [EnhancedVolcano::EnhancedVolcano()]
+#' @param pCutoff \code{pCutoff} [EnhancedVolcano::EnhancedVolcano()]
+#' @param FCcutoff \code{FCcutoff} [EnhancedVolcano::EnhancedVolcano()]
 #' @param col_by_regul lgl, default T, whether to color variable by gene regulation - Up, Down, Other
-#' @param ... Other parameters pass to \link{EnhancedVolcano::EnhancedVolcano}
+#' @param ... Other parameters pass to [EnhancedVolcano::EnhancedVolcano()]
 #' @param col_up a character string denoting color for up genes, works only when col_by_regul = T
 #' @param col_down  a character string denoting color for down genes, works only when col_by_regul = T.
 #' @param col_others a character string denoting color for other genes, works only when col_by_regul = T.
@@ -139,8 +139,8 @@ EnhancedVolcano2 <- function(toptable, lab, x, y, pCutoff = 10e-4,FCcutoff = 1.5
 
 #' Generate segment plot to visualize genomic regions related to reference regions.
 #'
-#' @param query an object of \link{GenomicRanges} to be visualized relative to reference
-#' @param reference an object of \link{GenomicRanges} against which \code{query} regions should be mapped.
+#' @param query an object of [GenomicRanges::granges()] to be visualized relative to reference
+#' @param reference an object of [GenomicRanges::granges()] against which \code{query} regions should be mapped.
 #'
 #' @return a list containing segment plot and plot data
 #' @export

@@ -9,7 +9,7 @@ get_upset_intersects(upset_data, upset_plot)
 \arguments{
 \item{upset_data}{a list}
 
-\item{upset_plot}{an output of \link{UpSetR::upset}}
+\item{upset_plot}{an output of \code{\link[UpSetR:upset]{UpSetR::upset()}}}
 }
 \value{
 a tbl

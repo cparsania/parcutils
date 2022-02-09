@@ -7,9 +7,9 @@
 plot_regions_relative_to_reference(query, reference)
 }
 \arguments{
-\item{query}{an object of \link{GenomicRanges} to be visualized relative to reference}
+\item{query}{an object of \code{\link[GenomicRanges:genomic-range-squeezers]{GenomicRanges::granges()}} to be visualized relative to reference}
 
-\item{reference}{an object of \link{GenomicRanges} against which \code{query} regions should be mapped.}
+\item{reference}{an object of \code{\link[GenomicRanges:genomic-range-squeezers]{GenomicRanges::granges()}} against which \code{query} regions should be mapped.}
 }
 \value{
 a list containing segment plot and plot data

@@ -19,17 +19,17 @@ EnhancedVolcano2(
 )
 }
 \arguments{
-\item{toptable}{\code{toptable} \link{EnhancedVolcano::EnhancedVolcano}}
+\item{toptable}{\code{toptable} \code{\link[EnhancedVolcano:EnhancedVolcano]{EnhancedVolcano::EnhancedVolcano()}}}
 
-\item{lab}{\code{lab} \link{EnhancedVolcano::EnhancedVolcano}}
+\item{lab}{\code{lab} \code{\link[EnhancedVolcano:EnhancedVolcano]{EnhancedVolcano::EnhancedVolcano()}}}
 
-\item{x}{\code{x} \link{EnhancedVolcano::EnhancedVolcano}}
+\item{x}{\code{x} \code{\link[EnhancedVolcano:EnhancedVolcano]{EnhancedVolcano::EnhancedVolcano()}}}
 
-\item{y}{\code{y} \link{EnhancedVolcano::EnhancedVolcano}}
+\item{y}{\code{y} \code{\link[EnhancedVolcano:EnhancedVolcano]{EnhancedVolcano::EnhancedVolcano()}}}
 
-\item{pCutoff}{\code{pCutoff} \link{EnhancedVolcano::EnhancedVolcano}}
+\item{pCutoff}{\code{pCutoff} \code{\link[EnhancedVolcano:EnhancedVolcano]{EnhancedVolcano::EnhancedVolcano()}}}
 
-\item{FCcutoff}{\code{FCcutoff} \link{EnhancedVolcano::EnhancedVolcano}}
+\item{FCcutoff}{\code{FCcutoff} \code{\link[EnhancedVolcano:EnhancedVolcano]{EnhancedVolcano::EnhancedVolcano()}}}
 
 \item{col_by_regul}{lgl, default T, whether to color variable by gene regulation - Up, Down, Other}
 
@@ -39,7 +39,7 @@ EnhancedVolcano2(
 
 \item{col_others}{a character string denoting color for other genes, works only when col_by_regul = T.}
 
-\item{...}{Other parameters pass to \link{EnhancedVolcano::EnhancedVolcano}}
+\item{...}{Other parameters pass to \code{\link[EnhancedVolcano:EnhancedVolcano]{EnhancedVolcano::EnhancedVolcano()}}}
 }
 \value{
 a volcano plot

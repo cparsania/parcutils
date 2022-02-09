@@ -17,12 +17,14 @@ of core bioconductor functions.
 ## Installation
 
 ``` r
+
 if(require("devtools") && require("BiocManager")){
-        devtools::install_github("cparsania/parcutils")
+  options(repos = BiocManager::repositories() )
+  devtools::install_github("cparsania/parcutils")
 } else{
-        install.packages("devtools")
-        install.packages("BiocManager")
-        devtools::install_github("cparsania/parcutils")
+  install.packages(c("devtools","BiocManager"))
+  options(repos = BiocManager::repositories() )
+  devtools::install_github("cparsania/parcutils")
 }
 ```
 

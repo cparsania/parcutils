@@ -7,7 +7,7 @@
 dsr_to_tibble(x, .col_gene_id = "gene_id")
 }
 \arguments{
-\item{x}{\link{DESeqResults} object}
+\item{x}{\code{\link[DESeq2:DESeqResults]{DESeq2::DESeqResults()}} object}
 }
 \value{
 a data frame

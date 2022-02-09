@@ -20,7 +20,7 @@ A dataframe with all mandatory columns along with columns mentioned in \code{.va
 This function allows converting raw read counts into normalized counts either by method Tags Per Million (TPM) or Reads Per Kilo-base Per Million (RPKM)
 }
 \details{
-implemntaion of RPKM and TPM can be seen in functions \link[parcutils]{get_tpm} and \link[parcutils]{get_rpkm} respectively.
+implemntaion of RPKM and TPM can be seen in functions \code{\link[=get_tpm]{get_tpm()}} and \code{\link[=get_rpkm]{get_rpkm()}} respectively.
 }
 \examples{
 \dontrun{
