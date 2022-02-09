@@ -1478,18 +1478,18 @@ piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_do
 
 
 
-#' Given a set of genes and sample names create a heatmap of gene expression value or z-score.
-#' @description Heatmap is a common tool to show gene expression pattern across samples in RNAseq experiment.
+#' Generate a heatmap of normalised gene expression values, z-score or log2 fold-change values.
+#' @description Heatmap is a common tool to show gene expression pattern across samples in RNA-seq experiment.
 #' While doing data exploration, it is a common practice to generate several heatmaps to identify interesting
 #' patterns of gene expression across sample. Most heatmap generating tools require data in a tabular form.
-#' However, to prepare such a tabular form requires significant data wrangling such as subsetting
-#' genes (rows) and samples (columns) specifically when RNASeq studies studies consisting of several samples and
+#' However, to prepare such a tabular form requires significant data wrangling such as sub-setting
+#' genes (rows) and samples (columns) specifically when RNA-seq studies studies consisting of several samples and
 #' replicates.
 #'
-#' This function cut downs several steps of data wrangling to create a heatmap of gene expression. Given an object of
-#' 'parcutils', names of samples, genes to show in heatmap and several other arguments it creates a heatmap.
-#' The output of the function is an output of the function [ComplexHeatmap::Heatmap()] which then can be used for
-#' the other functions of the \link{ComplexHeatmap} pacakge.
+#' This function cut downs several steps of data wrangling to create a heatmap of gene expression, z-score or
+#' log2 fold-change . Given an object of 'parcutils', names of samples or sample comprisons, genes to show in heatmap
+#' and several other arguments it creates a heatmap.The output of the function is an output of the function [ComplexHeatmap::Heatmap()]
+#' which then can be used for the other functions of the \link{ComplexHeatmap} package.
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param samples a character vector denoting sample names to show in the heatmap.
@@ -1518,9 +1518,13 @@ piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_do
 #' @return an output of the function [ComplexHeatmap::Heatmap()].
 #' @export
 #' @details
+#' The function `get_gene_expression_heatmap` is to create a heatmap either for normalised gene expression or z-score values
+#' while the function `get_fold_change_heatmap` is to create a heatmap for log2 fold-changes values.
+#'
 #' + \code{repair_genes} :  Internally gene names are stored as a "gene_id:gene_symbol" format. For example, "ENSG00000187634:SAMD11".
 #' When \code{repair_genes} is set to \code{TRUE} the string corresponding to gene_id followed by ":" will be removed. This is useful when gene names
 #' to be revealed in the heatmap.
+#'
 #' + \code{convert_zscore} :  When set to \code{TRUE} values for each gene is converted into z-score. z-score is calculated by baser r function [base::scale()]
 #' with all default parameters.
 #'
@@ -1555,9 +1559,8 @@ get_gene_expression_heatmap <- function(x,
 
   ## argument row_km from ComplexHeatmap::Heatmap is not supported.
   arg_dots <- list(...)
-  if("row_km" %in% arg_dots){
-    stop("Due to inconsistant output of ComplexHeatmap::row_order()
-            between arguments `row_split` and `row_km`, row_km is currently not supported. Use row_split instead.")
+  if("row_km" %in% names(arg_dots)){
+    stop("Due to inconsistant output of ComplexHeatmap::row_order() between arguments `row_split` and `row_km`, `row_km` is currently not supported. Use `row_split` instead.")
   }
 
 
@@ -1690,6 +1693,115 @@ get_gene_expression_heatmap <- function(x,
 
 }
 
+
+#' @rdname get_gene_expression_heatmap
+#'
+#' @param sample_comparisons a character vector denoting sample comparisons for which heatmap of log2 fold-change to be plotted.
+#' @export
+get_fold_change_heatmap <-  function(x,
+                                     sample_comparisons,
+                                     genes,
+                                     repair_genes = FALSE,
+                                     color_default = TRUE,
+                                     col = NULL,
+
+                                     show_row_names = FALSE,
+                                     cluster_rows = TRUE,
+                                     show_row_dend = TRUE,
+                                     row_names_font_size = 10,
+
+                                     show_column_names = TRUE,
+                                     cluster_columns = TRUE,
+
+                                     show_heatmap_legend = TRUE, ...){
+
+  arg_dots <- list(...)
+  if("row_km" %in% names(arg_dots)){
+    stop("Due to inconsistant output of ComplexHeatmap::row_order() between arguments `row_split` and `row_km`, `row_km` is currently not supported. Use `row_split` instead.")
+  }
+
+
+  ## validate x
+
+  stopifnot("x must be an object of class 'parcutils'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils"))
+
+  # validate samples
+
+  stopifnot("sample_comparisons must be a character vector." = is.character(sample_comparisons))
+
+  # validate genes
+
+  stopifnot("genes must be a character vector." = is.character(genes))
+
+  # validate repair_genes
+
+  stopifnot("repair_genes must be a logical." = is.logical(repair_genes))
+
+
+  # validate color default
+
+  stopifnot("color_default must be a logical." = is.logical(color_default))
+
+  if(!color_default){
+    if(is.null(col)){
+      stop("col must be the output of circlize::colorRamp2() when  color_default is FALSE.")
+    }
+  }
+
+
+  fc_df <-  parcutils::get_fold_change_matrix(x = x,
+                                              sample_comparisons = sample_comparisons,
+                                              genes = genes)
+
+  gene_id_column <- fc_df %>% colnames() %>% .[1]
+
+  # check if any of the given gene not found
+
+  genes_not_found <- genes[! genes %in% fc_df[[1]] ]
+
+  if(length(genes_not_found) > 0 ){
+    cli::cli_alert_warning(paste0("Below genes are not found in x.",  paste0(genes_not_found , collapse = ",")))
+  }
+
+  # keep genes and samples in the same order
+
+  fc_df <- fc_df %>%
+    dplyr::select(!!rlang::sym(gene_id_column),dplyr::all_of(sample_comparisons)) %>%
+    dplyr::slice(match(genes, fc_df[[1]]))
+
+
+  # fix colors
+  if(color_default){
+    col = fix_hm_colors(fc_df)
+  } else {
+    col = col
+  }
+
+  # repair genes
+
+  if(repair_genes){
+    fc_df <- fc_df %>%
+      dplyr::mutate(!!gene_id_column := !!rlang::sym(gene_id_column) %>%
+                      stringr::str_replace(".*:" , ""))
+  }
+
+  # convert df to matrix
+  fc_mat <- fc_df %>% as.data.frame() %>% tibble::column_to_rownames(gene_id_column) %>% as.matrix()
+
+  # generate heatmap
+
+  hm <- ComplexHeatmap::Heatmap(fc_mat,
+                                col = col,
+                                show_row_names = show_row_names,
+                                cluster_rows = cluster_rows,
+                                show_row_dend = show_row_dend,
+                                row_names_gp = grid::gpar(fontsize = row_names_font_size),
+                                show_column_names = show_column_names,
+                                cluster_columns = cluster_columns,
+                                show_heatmap_legend = show_heatmap_legend, ...)
+
+  return(hm)
+}
 
 
 

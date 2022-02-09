@@ -1,12 +1,11 @@
 Type: Package
 Package: parcutils
-Title: Utility Functions To Deal Day To Day Bioinformatics Tasks
+Title: Utility Functions To Deal Day To Day Bioinformatics Tasks.
 Version: 0.1.0
 Author: Chirag Parsania
 Maintainer: The package maintainer <chirag.parsania@gmail.com>
 Description: The package contains utility functions to deal with day to
-    day bioinformatics tasks.  It conatains mostly wrapper functions on
-    top of core bioconductor functions.
+    day bioinformatics tasks. Most of the functions are related to RNA-seq data analysis. 
 License: MIT + file LICENSE
 URL: https://github.com/cparsania/parcutils
 BugReports: https://github.com/cparsania/parcutils/issues
@@ -28,7 +27,8 @@ Imports:
     TidyWrappers (>= 0.0.1.9000),
     tools (>= 3.6.2),
     fs (>= 1.5.0),
-    UpSetR (>= 1.4.0)
+    UpSetR (>= 1.4.0),
+    ComplexHeatmap,
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

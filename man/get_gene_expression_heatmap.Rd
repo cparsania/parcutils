@@ -2,7 +2,8 @@
 % Please edit documentation in R/rnaseq_related.R
 \name{get_gene_expression_heatmap}
 \alias{get_gene_expression_heatmap}
-\title{Given a set of genes and sample names create a heatmap of gene expression value or z-score.}
+\alias{get_fold_change_heatmap}
+\title{Generate a heatmap of normalised gene expression values, z-score or log2 fold-change values.}
 \usage{
 get_gene_expression_heatmap(
   x,
@@ -15,6 +16,23 @@ get_gene_expression_heatmap(
   convert_zscore = TRUE,
   summarise_replicates = TRUE,
   summarise_method = "median",
+  show_row_names = FALSE,
+  cluster_rows = TRUE,
+  show_row_dend = TRUE,
+  row_names_font_size = 10,
+  show_column_names = TRUE,
+  cluster_columns = TRUE,
+  show_heatmap_legend = TRUE,
+  ...
+)
+
+get_fold_change_heatmap(
+  x,
+  sample_comparisons,
+  genes,
+  repair_genes = FALSE,
+  color_default = TRUE,
+  col = NULL,
   show_row_names = FALSE,
   cluster_rows = TRUE,
   show_row_dend = TRUE,
@@ -66,24 +84,28 @@ Internally this argument is passed to the function \code{\link[ComplexHeatmap:He
 \item{show_heatmap_legend}{logical, default TRUE, indicating whether to show heatmap legend or not.}
 
 \item{...}{Other parameters to be passes to \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}.}
+
+\item{sample_comparisons}{a character vector denoting sample comparisons for which heatmap of log2 fold-change to be plotted.}
 }
 \value{
 an output of the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}.
 }
 \description{
-Heatmap is a common tool to show gene expression pattern across samples in RNAseq experiment.
+Heatmap is a common tool to show gene expression pattern across samples in RNA-seq experiment.
 While doing data exploration, it is a common practice to generate several heatmaps to identify interesting
 patterns of gene expression across sample. Most heatmap generating tools require data in a tabular form.
-However, to prepare such a tabular form requires significant data wrangling such as subsetting
-genes (rows) and samples (columns) specifically when RNASeq studies studies consisting of several samples and
+However, to prepare such a tabular form requires significant data wrangling such as sub-setting
+genes (rows) and samples (columns) specifically when RNA-seq studies studies consisting of several samples and
 replicates.
 
-This function cut downs several steps of data wrangling to create a heatmap of gene expression. Given an object of
-'parcutils', names of samples, genes to show in heatmap and several other arguments it creates a heatmap.
-The output of the function is an output of the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}} which then can be used for
-the other functions of the \link{ComplexHeatmap} pacakge.
+This function cut downs several steps of data wrangling to create a heatmap of gene expression, z-score or
+log2 fold-change . Given an object of 'parcutils', names of samples or sample comprisons, genes to show in heatmap
+and several other arguments it creates a heatmap.The output of the function is an output of the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}
+which then can be used for the other functions of the \link{ComplexHeatmap} package.
 }
 \details{
+The function \code{get_gene_expression_heatmap} is to create a heatmap either for normalised gene expression or z-score values
+while the function \code{get_fold_change_heatmap} is to create a heatmap for log2 fold-changes values.
 \itemize{
 \item \code{repair_genes} :  Internally gene names are stored as a "gene_id:gene_symbol" format. For example, "ENSG00000187634:SAMD11".
 When \code{repair_genes} is set to \code{TRUE} the string corresponding to gene_id followed by ":" will be removed. This is useful when gene names
