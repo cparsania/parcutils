@@ -6,10 +6,8 @@
 \usage{
 get_normalised_expression_matrix(
   x,
-  samples,
-  all_samples = FALSE,
-  genes,
-  all_genes = T,
+  samples = NULL,
+  genes = NULL,
   summarise_replicates = FALSE,
   summarise_method = "median"
 )
@@ -17,13 +15,9 @@ get_normalised_expression_matrix(
 \arguments{
 \item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
 
-\item{samples}{a character vector denoting samples for which normalised gene expression values to be derived.}
+\item{samples}{a character vector denoting samples for which normalised gene expression values to be derived, Default NULL. If NULL it returns all samples in x}
 
-\item{all_samples}{logical, default FALSE. If TRUE, all samples from x will be returned.}
-
-\item{genes}{a character vector denoting gene names for which normalised gene expression values to be derived.}
-
-\item{all_genes}{logical, default FALSE. If TRUE, all genes from x will be returned.}
+\item{genes}{a character vector denoting gene names for which normalised gene expression values to be derived, Default NULL. If NULL it returns all samples in x.}
 
 \item{summarise_replicates}{logical, default FALSE, indicating whether gene expression values summarised by mean or median between replicates.}
 
