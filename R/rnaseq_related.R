@@ -1209,7 +1209,7 @@ get_normalised_expression_matrix <- function(x , samples, all_samples = FALSE,ge
 
   # validate genes
 
-  stopifnot("genes must be a character vector." = is.character(genes))
+  stopifnot("genes must be a character vector when all_genes is FALSE." = is.character(genes) & all_genes == FALSE)
 
   # validate summarise_replicates
 
@@ -1217,7 +1217,7 @@ get_normalised_expression_matrix <- function(x , samples, all_samples = FALSE,ge
 
   # validate samples
 
-  stopifnot("samples must be a character vector." = is.character(samples))
+  stopifnot("samples must be a character vector when all_samples is FALSE." = is.character(samples) & all_samples == FALSE)
 
   # validate summarise_method
 
