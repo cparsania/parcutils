@@ -1201,7 +1201,7 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #'
 #' // TO DO
 #' }
-get_normalised_expression_matrix <- function(x , samples, all_samples = FALSE,genes, all_genes = T, summarise_replicates = FALSE, summarise_method = "median" ){
+get_normalised_expression_matrix <- function(x , samples, all_samples = FALSE, genes, all_genes = T, summarise_replicates = FALSE, summarise_method = "median" ){
 
   # validate x
 
@@ -1209,7 +1209,7 @@ get_normalised_expression_matrix <- function(x , samples, all_samples = FALSE,ge
 
   # validate genes
 
-  stopifnot("genes must be a character vector when all_genes is FALSE." = is.character(genes) & all_genes == FALSE)
+  stopifnot("genes must be a character vector when all_genes is FALSE." = is.character(genes) | all_genes)
 
   # validate summarise_replicates
 
@@ -1217,7 +1217,7 @@ get_normalised_expression_matrix <- function(x , samples, all_samples = FALSE,ge
 
   # validate samples
 
-  stopifnot("samples must be a character vector when all_samples is FALSE." = is.character(samples) & all_samples == FALSE)
+  stopifnot("samples must be a character vector when all_samples is FALSE." = is.character(samples) | all_samples )
 
   # validate summarise_method
 
