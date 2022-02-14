@@ -1186,10 +1186,8 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #' normalised gene expression values for the comparisons passed through sample_comparisons.
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
-#' @param samples a character vector denoting samples for which normalised gene expression values to be derived.
-#' @param all_samples logical, default FALSE. If TRUE, all samples from x will be returned.
-#' @param genes a character vector denoting gene names for which normalised gene expression values to be derived.
-#' @param all_genes logical, default FALSE. If TRUE, all genes from x will be returned.
+#' @param samples a character vector denoting samples for which normalised gene expression values to be derived, Default NULL. If NULL it returns all samples in x
+#' @param genes a character vector denoting gene names for which normalised gene expression values to be derived, Default NULL. If NULL it returns all samples in x.
 #' @param summarise_replicates logical, default FALSE, indicating whether gene expression values summarised by mean or median between replicates.
 #' @param summarise_method a character string either "mean" or "median" by which normalised gene expression values will be summarised between replicates.
 #'
@@ -1201,7 +1199,7 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #'
 #' // TO DO
 #' }
-get_normalised_expression_matrix <- function(x , samples, all_samples = FALSE, genes, all_genes = T, summarise_replicates = FALSE, summarise_method = "median" ){
+get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, summarise_replicates = FALSE, summarise_method = "median" ){
 
   # validate x
 
@@ -1209,7 +1207,7 @@ get_normalised_expression_matrix <- function(x , samples, all_samples = FALSE, g
 
   # validate genes
 
-  stopifnot("genes must be a character vector when all_genes is FALSE." = is.character(genes) | all_genes)
+  stopifnot("genes must be a NULL or character vector." = is.character(genes) | is.null(genes))
 
   # validate summarise_replicates
 
@@ -1217,7 +1215,7 @@ get_normalised_expression_matrix <- function(x , samples, all_samples = FALSE, g
 
   # validate samples
 
-  stopifnot("samples must be a character vector when all_samples is FALSE." = is.character(samples) | all_samples )
+  stopifnot("samples must be a NULL or character vector." = is.character(samples) | is.null(samples))
 
   # validate summarise_method
 
@@ -1230,10 +1228,10 @@ get_normalised_expression_matrix <- function(x , samples, all_samples = FALSE, g
   all_expr_mats <-  get_all_named_expression_matrix(x)
 
   # Keep only user supplied samples
-  if(!all_samples) {
-    cols_selected_expr_mats <- all_expr_mats[samples]
-  } else{
+  if(is.null(samples)) {
     cols_selected_expr_mats <- all_expr_mats
+  } else{
+    cols_selected_expr_mats <- all_expr_mats[samples]
   }
 
   # make data long format.
@@ -1269,12 +1267,13 @@ get_normalised_expression_matrix <- function(x , samples, all_samples = FALSE, g
 
   # filter by user supplied genes
 
-  if(!all_genes) {
-    expr_mat_wide <- filter_df_by_genes(df = expr_mat_wide, genes = genes)
+  if(is.null(genes)) {
+    ret <- expr_mat_wide
+  }else{
+    ret <- filter_df_by_genes(df = expr_mat_wide, genes = genes)
   }
 
-
-  return(expr_mat_wide)
+  return(ret)
 
 
 }
