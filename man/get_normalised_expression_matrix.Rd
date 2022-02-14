@@ -7,7 +7,9 @@
 get_normalised_expression_matrix(
   x,
   samples,
+  all_samples = FALSE,
   genes,
+  all_genes = T,
   summarise_replicates = FALSE,
   summarise_method = "median"
 )
@@ -17,7 +19,11 @@ get_normalised_expression_matrix(
 
 \item{samples}{a character vector denoting samples for which normalised gene expression values to be derived.}
 
+\item{all_samples}{logical, default FALSE. If TRUE, all samples from x will be returned.}
+
 \item{genes}{a character vector denoting gene names for which normalised gene expression values to be derived.}
+
+\item{all_genes}{logical, default FALSE. If TRUE, all genes from x will be returned.}
 
 \item{summarise_replicates}{logical, default FALSE, indicating whether gene expression values summarised by mean or median between replicates.}
 

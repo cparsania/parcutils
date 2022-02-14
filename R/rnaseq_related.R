@@ -132,7 +132,7 @@ get_deg <- function(counts,
                     cutoff_padj = 0.01,
                     regul_based_upon = 1,
                     ...
-                    ){
+){
 
   stop("`get_deg` is deprecated.
              Please use `run_deseq_analysis` instead.")
@@ -449,7 +449,7 @@ get_deg <- function(counts,
 
 
   cli::cli_alert_info("Done.")
-    return(xx)
+  return(xx)
 
 }
 
@@ -590,23 +590,23 @@ run_deseq_analysis <- function(
 ){
 
   # defaults
-   # counts <- matrix(rnbinom(n=1000, mu=100, size=1/0.5), ncol=10) %>% as.data.frame() %>% tibble::as_tibble()
-   #
-   # colnames(counts) <- c(paste("c" , c(1:5), sep = ""),c(paste ("d" , 1:5, sep = "")))
-   #
-   # counts %<>%  dplyr::mutate("Geneid" = stringi::stri_rand_strings(n = 100, length = 5))  %>% dplyr::relocate("Geneid")
-   # sample_info <- tibble::tibble(samples = colnames(counts)[-1] , sample_groups = factor(rep(c("c","d"), each=5)))
-   # column_geneid = "Geneid"
-   # column_samples = c("c1","c2","c3","c4" ,"c5" ,"d1" ,"d2","d3" ,"d4" ,"d5")
-   # cutoff_pval = 0.05
-   # cutoff_padj = 0.01
-   # cutoff_lfc = 1.5
-   # delim = "\t"
-   # comment_char = "#"
-   # min_counts <- 10 # minimum counts in anyone sample
-   # min_replicates <- 2 # number of replicates fulfilling criteria of minimum counts in anyone sample (min_counts)
-   # group_numerator = "d"
-   # group_denominator = "c"
+  # counts <- matrix(rnbinom(n=1000, mu=100, size=1/0.5), ncol=10) %>% as.data.frame() %>% tibble::as_tibble()
+  #
+  # colnames(counts) <- c(paste("c" , c(1:5), sep = ""),c(paste ("d" , 1:5, sep = "")))
+  #
+  # counts %<>%  dplyr::mutate("Geneid" = stringi::stri_rand_strings(n = 100, length = 5))  %>% dplyr::relocate("Geneid")
+  # sample_info <- tibble::tibble(samples = colnames(counts)[-1] , sample_groups = factor(rep(c("c","d"), each=5)))
+  # column_geneid = "Geneid"
+  # column_samples = c("c1","c2","c3","c4" ,"c5" ,"d1" ,"d2","d3" ,"d4" ,"d5")
+  # cutoff_pval = 0.05
+  # cutoff_padj = 0.01
+  # cutoff_lfc = 1.5
+  # delim = "\t"
+  # comment_char = "#"
+  # min_counts <- 10 # minimum counts in anyone sample
+  # min_replicates <- 2 # number of replicates fulfilling criteria of minimum counts in anyone sample (min_counts)
+  # group_numerator = "d"
+  # group_denominator = "c"
 
   ## define statics/global
   sample_info_colnames = c("sample_names", "sample_groups")
@@ -949,7 +949,7 @@ dsr_to_tibble <- function(x, .col_gene_id = "gene_id"){
   x %>% as.data.frame() %>%
     tibble::rownames_to_column(.col_gene_id) %>%
     tibble::as_tibble() #%>%
-    #dplyr::mutate_if(is.numeric, ~ round(..1, 3)) ## round by 3 digits
+  #dplyr::mutate_if(is.numeric, ~ round(..1, 3)) ## round by 3 digits
 }
 
 
@@ -1041,7 +1041,7 @@ categorize_diff_genes <-  function(dsr_tibble,
                                    padj_cutoff = 0.01,
                                    add_column_regul = TRUE,
                                    regul_based_upon = 1
-                                   ){
+){
 
   # convert DESeqResult object to tibble
 
@@ -1060,10 +1060,10 @@ categorize_diff_genes <-  function(dsr_tibble,
   log2fc_cutoff <- log2fc_cutoff
 
   dsr_tibble %<>% dplyr::mutate(signif = dplyr::case_when(dplyr::between(log2FoldChange , -log2fc_cutoff, log2fc_cutoff ) &  pvalue >= pval_cutoff ~ "NS",
-                                                        dplyr::between(log2FoldChange , -log2fc_cutoff, log2fc_cutoff  ) &  pvalue <= pval_cutoff ~ "p-value",
-                                                        (log2FoldChange <= -log2fc_cutoff | log2FoldChange >= log2fc_cutoff) & pvalue >= pval_cutoff ~ "log2FC",
-                                                        (log2FoldChange <= -log2fc_cutoff | log2FoldChange >= log2fc_cutoff) & pvalue <= log2fc_cutoff ~ "p-value&log2FC",
-                                                        TRUE ~ "other"))
+                                                          dplyr::between(log2FoldChange , -log2fc_cutoff, log2fc_cutoff  ) &  pvalue <= pval_cutoff ~ "p-value",
+                                                          (log2FoldChange <= -log2fc_cutoff | log2FoldChange >= log2fc_cutoff) & pvalue >= pval_cutoff ~ "log2FC",
+                                                          (log2FoldChange <= -log2fc_cutoff | log2FoldChange >= log2fc_cutoff) & pvalue <= log2fc_cutoff ~ "p-value&log2FC",
+                                                          TRUE ~ "other"))
 
   # add column 'regul' having one of the three values
 
@@ -1187,7 +1187,9 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param samples a character vector denoting samples for which normalised gene expression values to be derived.
+#' @param all_samples logical, default FALSE. If TRUE, all samples from x will be returned.
 #' @param genes a character vector denoting gene names for which normalised gene expression values to be derived.
+#' @param all_genes logical, default FALSE. If TRUE, all genes from x will be returned.
 #' @param summarise_replicates logical, default FALSE, indicating whether gene expression values summarised by mean or median between replicates.
 #' @param summarise_method a character string either "mean" or "median" by which normalised gene expression values will be summarised between replicates.
 #'
@@ -1199,7 +1201,7 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #'
 #' // TO DO
 #' }
-get_normalised_expression_matrix <- function(x , samples, genes, summarise_replicates = FALSE, summarise_method = "median" ){
+get_normalised_expression_matrix <- function(x , samples, all_samples = FALSE,genes, all_genes = T, summarise_replicates = FALSE, summarise_method = "median" ){
 
   # validate x
 
@@ -1227,8 +1229,15 @@ get_normalised_expression_matrix <- function(x , samples, genes, summarise_repli
   ## get all samples gene expression matrix.
   all_expr_mats <-  get_all_named_expression_matrix(x)
 
-  # merge df and make them long format
-  expr_mat_long <- all_expr_mats[samples] %>%
+  # Keep only user supplied samples
+  if(!all_samples) {
+    cols_selected_expr_mats <- all_expr_mats[samples]
+  } else{
+    cols_selected_expr_mats <- all_expr_mats
+  }
+
+  # make data long format.
+  expr_mat_long <- cols_selected_expr_mats %>%
     purrr::map_df(~ ..1 %>% tidyr::pivot_longer(cols = -1 , values_to = "vals" , names_to = "replicate") , .id = "sample") %>%
     dplyr::select(-1,dplyr::everything(),1) %>%
     dplyr::distinct()
@@ -1260,7 +1269,10 @@ get_normalised_expression_matrix <- function(x , samples, genes, summarise_repli
 
   # filter by user supplied genes
 
-  expr_mat_wide <- filter_df_by_genes(df = expr_mat_wide, genes = genes)
+  if(!all_genes) {
+    expr_mat_wide <- filter_df_by_genes(df = expr_mat_wide, genes = genes)
+  }
+
 
   return(expr_mat_wide)
 
