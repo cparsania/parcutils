@@ -291,3 +291,151 @@ plot_regions_relative_to_reference <- function(query , reference){
 }
 
 
+
+#' Generate a PCA plot.
+#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
+#' @param samples a character vector denoting samples to plot in PCA plot, default \code{NULL}. If set to NULL all samples are accounted.
+#' @param genes a character vector denoting genes to consider for PCA plot, default \code{NULL}. If set to NULL all genes are accounted.
+#' @param circle_size a numeric value,  default  10, denoting size of the circles in PCA plot.
+#' @param show_replicates a logical, degfault FALSE, denoting whether to label replicates in the PCA plot.
+#'
+#' @return an object of ggplot2.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'  // TO DO
+#' }
+#'
+#'
+get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10, label_replicates = FALSE){
+
+  # validate x
+  parcutils:::validata_parcutils_obj(x)
+
+  # validate samples
+  stopifnot("'samples' must be a character vector or NULL." = is.character(samples) | is.null(samples))
+
+  # validate genes
+  stopifnot("'genes' must be a character vector or NULL." = is.character(genes) | is.null(genes))
+
+  # validate show_replicates
+  stopifnot("'show_replicates' must be a logical." = is.logical(show_replicates))
+
+  # get gene expression matrix
+
+  norm_expr_mat <- parcutils::get_normalised_expression_matrix(x = x, samples = samples, genes = genes , summarise_replicates = FALSE)
+
+  # convert log2
+
+  norm_expr_mat_log2 <- norm_expr_mat %>% dplyr::mutate_if(is.numeric, ~log2(. + 0.1))
+
+  # get column name for gene id
+
+  gene_id_col = norm_expr_mat_log2 %>% colnames() %>% .[1]
+
+
+  # prepare sample for PCA.
+
+  pca_input <- norm_expr_mat_log2  %>%
+    tidyr::pivot_longer(names_to = "sample" ,values_to  = "value" , -!!rlang::sym(gene_id_col)) %>%
+    tidyr::pivot_wider(names_from = !!rlang::sym(gene_id_col), values_from = !!rlang::sym("value")) %>%
+    as.data.frame() %>%
+    tibble::column_to_rownames("sample")
+
+  pr_comps <- prcomp(pca_input,scale = T)
+
+  pr_comps_tbl <- pr_comps %>%
+    .$x %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column("samples") %>%
+    tibble::as_tibble()
+
+  # get prop of variance
+
+  pc_prop_of_var <- summary(pr_comps)$importance %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column(var = "feature_type") %>%
+    tidyr::gather("pc" , "value" , -feature_type) %>%
+    dplyr::filter(feature_type == "Proportion of Variance") %>%
+    dplyr::select(-dplyr::all_of("feature_type")) %>%
+    dplyr::mutate(value = round(value * 100 ,1)) %>% ## convert to percentage
+    dplyr::mutate(with_var = paste(pc ," (" , value ,"%",")" , sep = "")) %>%
+    dplyr::select(-dplyr::all_of("value"))
+
+  # return named vector
+
+  pc_prop_of_var <- pc_prop_of_var %>%
+    dplyr::pull(with_var) %>%
+    rlang::set_names( pc_prop_of_var$pc)
+
+  # prepare sample_info from x
+
+  sample_info <- group_replicates_by_sample(x = x)
+
+  # add sample info
+
+  pr_comps_tbl %<>% dplyr::left_join(sample_info , by = c("samples"))
+
+  # select which PCs to plot
+
+  x_pc = rlang::quo(PC1)
+  y_pc = rlang::quo(PC2)
+
+  # pca plot  ----
+
+  pca_plot <- pr_comps_tbl %>%
+    ggplot2::ggplot(ggplot2::aes(x = !!x_pc, y = !!y_pc)) +
+    ggplot2::geom_point(ggplot2::aes(fill = groups),size = circle_size, pch=21)
+
+  ## show replicates
+  if(label_replicates){
+    pca_plot <- pca_plot + ggrepel::geom_label_repel(ggplot2::aes(label = samples),max.overlaps = 100000)
+  }
+
+  # alter theme
+
+  pca_plot <- pca_plot + ggplot2::theme_bw()+
+    ggplot2::theme(text = ggplot2::element_text(size = 15,colour = "black"))+
+    ggplot2::xlab(pc_prop_of_var[[rlang::as_label(x_pc)]]) +
+    ggplot2::ylab(pc_prop_of_var[[rlang::as_label(y_pc)]])
+
+  # pca_plot
+
+  pca_plot <- pca_plot +
+    ggplot2::scale_fill_manual(values = MetBrewer::met.brewer(n = 6 ,
+                                                              name = "Austria")) +
+    ggplot2::guides(fill = ggplot2::guide_legend("Samples"))
+
+
+
+  return(pca_plot)
+
+}
+
+
+#' Group replicates by samples.
+#'
+#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
+#'
+#' @return a tbl.
+#' @export
+#' @keywords internal.
+#' @examples
+#' \dontrun{
+#' // TO DO
+#' }
+group_replicates_by_sample <- function(x){
+
+  parcutils:::validata_parcutils_obj(x)
+
+  sample_info <- purrr::map(parcutils:::get_all_named_expression_matrix(x), ~ ..1 %>% colnames() %>% .[-1]) %>%
+    tibble::tibble(groups = names(.) , samples = .) %>%
+    tidyr::unnest(cols = "samples")
+
+  return(sample_info)
+}
+
+
+
+

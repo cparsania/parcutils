@@ -1909,8 +1909,8 @@ fix_hm_colors <- function(hm_matrix){
   col_choices <- c("min" = MetBrewer::met.brewer(name = "Austria")[2],
                    "max" = MetBrewer::met.brewer(name = "Austria")[1])
 
-  max_val <- hm_matrix %>% dplyr::select_if(is.numeric) %>% max() %>% ceiling()
-  min_val <- hm_matrix %>% dplyr::select_if(is.numeric) %>% min() %>% floor()
+  max_val <-  ceiling(hm_matrix %>% dplyr::select_if(is.numeric) %>% max())
+  min_val <-  floor(hm_matrix %>% dplyr::select_if(is.numeric) %>% min() )
   mid_val <- (max_val + min_val) / 2
 
   col = circlize::colorRamp2(c(min_val , mid_val, max_val), c(col_choices["min"], "white", col_choices["max"]))

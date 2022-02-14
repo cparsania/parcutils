@@ -35,6 +35,8 @@ Imports:
     ggplot2,
     plyranges,
     stringr
+Suggests:
+  magrittr 
 Remotes: 
     cparsania/TidyWrappers,
     jokergoo/circlize
