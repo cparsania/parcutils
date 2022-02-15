@@ -618,7 +618,7 @@ get_replicates_by_sample_list <- function(x){
 #' @param sample_comparison a character string denoting a valid differatnial gene comparison. Possible comparisons can be found from x$comp.
 #' @param log2fc_cutoff a numeric value, default 1.
 #' @param pval_cutoff a numeric value, default 0.05.
-#' @param genes_to_display a character vector of the genes to display in volcano plot.
+#' @param genes_to_display a character vector of the genes to display in volcano plot, default NULL, displays non overlapping genes.
 #' @param lab_size a numeric value, default 3, denoting size of the lables.
 #' @param point_size a numeric value, default 1, denoting size of the points
 #' @param col_up a character string, default "a40000", denoting valid color code for up regulated genes.
@@ -637,7 +637,7 @@ get_volcano_plot <- function(x,
                              sample_comparison,
                              log2fc_cutoff = 1,
                              pval_cutoff = 0.05,
-                             genes_to_display,
+                             genes_to_display = NULL,
                              lab_size = 3,
                              point_size = 1,
                              col_up = "#a40000",
@@ -653,7 +653,7 @@ get_volcano_plot <- function(x,
 
   # validate genes_to_display
 
-  stopifnot("genes_to_display must be a character vector" = is.character(genes_to_display))
+  stopifnot("genes_to_display must be a character vector" = is.character(genes_to_display) | is.null(genes_to_display))
 
 
   # prepare volcano plots
