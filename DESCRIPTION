@@ -34,7 +34,8 @@ Imports:
     forcats,
     ggplot2,
     plyranges,
-    stringr
+    stringr,
+    GGally
 Suggests:
   magrittr 
 Remotes: 

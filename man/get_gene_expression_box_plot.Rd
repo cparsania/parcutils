@@ -34,5 +34,4 @@ Generate a box plot
  // TO DO
 }
 
-
 }
