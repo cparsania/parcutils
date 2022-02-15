@@ -525,6 +525,92 @@ get_gene_expression_box_plot <- function(x, samples = NULL, genes = NULL,
 
 
 
+#' Get replicates correlation scatter plot
+#'
+#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
+#' @param samples a character vector denoting samples to plot in scatter plot, default \code{NULL}. If set to NULL all samples are accounted.
+#' @param genes a character vector denoting genes to consider in scatter plot, default \code{NULL}. If set to NULL all genes are accounted.#'
+#' @return a named list.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' // TO DO
+#'}
+#'
+#'
+get_pairwise_corr_plot  <- function(x , samples = NULL, genes = NULL){
+
+  # validate x
+  parcutils:::validata_parcutils_obj(x)
+
+  # validate samples
+  stopifnot("'samples' must be a character vector or NULL." = is.character(samples) | is.null(samples))
+
+  # validate genes
+  stopifnot("'genes' must be a character vector or NULL." = is.character(genes) | is.null(genes))
+
+  # get expression values
+  norm_expr_mat <- parcutils::get_normalised_expression_matrix(x = x, samples = samples, genes = genes, summarise_replicates = F)
+
+  # convert log2
+  if(TRUE){
+    norm_expr_mat <- norm_expr_mat %>% dplyr::mutate_if(is.numeric, ~ log2(. + 1))
+  }
+
+  # replicate groups
+  rep_grps <- get_replicates_by_sample_list(x)
+
+  # filter by user supplied samples
+  if(!is.null(samples)){
+    rep_grps <- rep_grps[samples]
+  }
+
+
+  # plot
+  replicate_corr_plts <- purrr::map(rep_grps , ~ GGally::ggpairs(norm_expr_mat,
+                                                                 columns = ..1) +
+                                      ggplot2::theme_bw() +
+                                      ggplot2::theme(text = ggplot2::element_text(size = 20)))
+
+  return(replicate_corr_plts)
+
+}
+
+
+#' Group replicates by sample - returns list
+#' @rdname get_replicates_by_sample
+#'
+#' @keywords internal
+#' @export
+#' @examples
+#' \dontrun{
+#' // TO DO
+#' }
+get_replicates_by_sample_list <- function(x){
+
+  # validate x
+  parcutils:::validata_parcutils_obj(x)
+
+  y <- parcutils::group_replicates_by_sample(x)
+
+  y_grpd <-
+    y %>%
+    dplyr::group_by(groups) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(data = purrr::map(data, ~ ..1 %>% dplyr::pull(1)))
+
+  y <-
+    y_grpd %>%
+    dplyr::pull(2)
+
+  names(y) <- y_grpd %>% dplyr::pull(1)
+
+  return(y)
+}
+
+
+
 #' Group replicates by samples.
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
