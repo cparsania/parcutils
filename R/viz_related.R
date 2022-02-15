@@ -566,10 +566,6 @@ get_pairwise_corr_plot  <- function(x , samples = NULL, genes = NULL){
     rep_grps <- rep_grps[samples]
   }
 
-  rep_grps <- rep_grps[samples]
-
-
-
   # plot
   replicate_corr_plts <- purrr::map(rep_grps , ~ GGally::ggpairs(norm_expr_mat,
                                                                  columns = ..1) +
