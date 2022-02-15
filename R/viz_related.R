@@ -610,6 +610,99 @@ get_replicates_by_sample_list <- function(x){
 
 
 
+
+
+#' Geenerate a volcano plot.
+#'
+#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
+#' @param sample_comparison a character string denoting a valid differatnial gene comparison. Possible comparisons can be found from x$comp.
+#' @param log2fc_cutoff a numeric value, default 1.
+#' @param pval_cutoff a numeric value, default 0.05.
+#' @param genes_to_display a character vector of the genes to display in volcano plot.
+#' @param lab_size a numeric value, default 3, denoting size of the lables.
+#' @param point_size a numeric value, default 1, denoting size of the points
+#' @param col_up a character string, default "a40000", denoting valid color code for up regulated genes.
+#' @param col_down a character string, default "007e2f", denoting valid color code for down regulated genes.
+#' @param col_other a character string, default "grey", denoting valid color code for other than up and down regulated genes.
+#' @param ... other parameters to be passed to [EnhancedVolcano::EnhancedVolcano()]
+#'
+#' @return ggplot'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' // TO DO
+#' }
+get_volcano_plot <- function(x,
+                             sample_comparison,
+                             log2fc_cutoff = 1,
+                             pval_cutoff = 0.05,
+                             genes_to_display,
+                             lab_size = 3,
+                             point_size = 1,
+                             col_up = "#a40000",
+                             col_down =  "#007e2f",
+                             col_other = "grey",...){
+
+  # validate x
+  parcutils:::validata_parcutils_obj(x)
+
+  # validate sample_comparison
+
+  stopifnot("sample_comparison must be a character string" = is.character(sample_comparison) & length(sample_comparison) == 1)
+
+  # validate genes_to_display
+
+  stopifnot("genes_to_display must be a character vector" = is.character(genes_to_display))
+
+
+  # prepare volcano plots
+
+  # filter by sample_comparison
+  volcano_data <- x$dsr[[sample_comparison]]
+
+
+  # # fix gene name
+
+  # if(repair_genes){
+  #   volcano_data <- volcano_data %>%
+  #     purrr::map( function(x){
+  #     gn <- rownames(x)
+  #     gsym <- stringr::str_replace(gn, pattern = ".*:", replacement = "")
+  #     gid <- stringr::str_replace(gn, pattern = ":.*", replacement = "")
+  #     gn_new <- dplyr::if_else(duplicated(gsym) , gid ,
+  #                              gsym)
+  #     rownames(x) <- gn_new
+  #     return(x)
+  #   })
+  # }
+  #
+
+  # generate plot
+
+  pp <- parcutils::EnhancedVolcano2(toptable = volcano_data,
+                                    x = "log2FoldChange" ,
+                                    y = "pvalue",
+                                    lab = rownames(volcano_data),
+                                    selectLab = genes_to_display,
+                                    FCcutoff = log2fc_cutoff,
+                                    pCutoff = pval_cutoff,
+                                    labSize = lab_size,
+                                    pointSize =point_size,
+                                    col_by_regul = T,
+                                    col_up = col_up,
+                                    col_down = col_down,
+                                    col_other = col_other,
+                                    title = sample_comparison , ...)
+
+  return(pp)
+
+
+}
+
+
+
+
 #' Group replicates by samples.
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
@@ -631,6 +724,8 @@ group_replicates_by_sample <- function(x){
 
   return(sample_info)
 }
+
+
 
 
 
