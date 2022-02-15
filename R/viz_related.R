@@ -430,6 +430,10 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10, labe
 #'  // TO DO
 #' }
 #'
+<<<<<<< HEAD
+=======
+#'
+>>>>>>> master
 get_gene_expression_box_plot <- function(x, samples = NULL, genes = NULL,
                                          group_replicates = F,
                                          convert_log2 = T){
