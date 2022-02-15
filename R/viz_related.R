@@ -414,6 +414,118 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10, labe
 }
 
 
+#' Generate a box plot
+#'
+#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
+#' @param samples a character vector denoting samples to plot in boxplot, default \code{NULL}. If set to NULL all samples are accounted.
+#' @param genes a character vector denoting genes to consider for boxplot, default \code{NULL}. If set to NULL all genes are accounted.
+#' @param group_replicates logical, default \code{FALSE}, whether to group replicates in individual plots.
+#' @param convert_log2 logical, default \code{TRUE}, whether to plot log2(noralised expression + 1) or not.
+#'
+#' @return an object of class ggplot2
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'  // TO DO
+#' }
+#'
+#'
+get_gene_expression_box_plot <- function(x, samples = NULL, genes = NULL,
+                                         group_replicates = F,
+                                         convert_log2 = T){
+
+
+  # validate x
+  parcutils:::validata_parcutils_obj(x)
+
+  # validate samples
+  stopifnot("'samples' must be a character vector or NULL." = is.character(samples) | is.null(samples))
+
+  # validate genes
+  stopifnot("'genes' must be a character vector or NULL." = is.character(genes) | is.null(genes))
+
+  # validate show_replicates
+  stopifnot("'group_replicates' must be a logical." = is.logical(group_replicates))
+
+
+  # get norm counts
+  norm_counts <- parcutils::get_normalised_expression_matrix(x = x,
+                                                             samples = samples,
+                                                             genes = genes,
+                                                             summarise_replicates = FALSE)
+
+  column_gene_id <-  colnames(norm_counts)[1]
+
+  # convert log2
+
+  if(convert_log2){
+    norm_counts <- norm_counts %>%
+      dplyr::mutate_if(is.numeric , ~log2(. + 1))
+  }
+
+  # long format
+  norm_counts_long <- norm_counts %>%
+    tidyr::pivot_longer(cols = -!!rlang::sym(column_gene_id),
+                        names_to = "samples",
+                        values_to ="value")
+
+  # group replicates by samples
+
+  rep_grps <- parcutils::group_replicates_by_sample(x)
+
+  # add groups
+
+  norm_counts_long %<>% dplyr::left_join(rep_grps , by = ("samples"))
+
+  if(!is.null(samples)){
+
+    # order samples in replicate groups by in order of user input samples.
+
+    norm_counts_long$groups <- forcats::fct_relevel(norm_counts_long$groups , samples)
+    norm_counts_long$samples <- factor(norm_counts_long$samples ,
+                                       levels = norm_counts_long$samples %>% unique())
+  }
+
+
+  # generate box plot
+
+  box_plots <- norm_counts_long %>%
+    ggplot2::ggplot() +
+    ggplot2::geom_boxplot(ggplot2::aes(x = samples, y = value, fill =  groups), alpha = 0.9)
+
+  ## theme
+
+  box_plots  <- box_plots + ggplot2::theme_bw()+
+    ggplot2::theme(text = ggplot2::element_text(size = 15) ,
+                   axis.text.x  = ggplot2::element_text(angle = 90))
+
+
+  ## col
+
+  box_plots <- box_plots +
+    ggplot2::scale_fill_manual(values = MetBrewer::met.brewer(n = 6 , name = "Austria"))  +
+    ggplot2::guides(fill = ggplot2::guide_legend("Samples"))
+
+
+  ## axis lab
+
+  if(convert_log2){
+    box_plots <- box_plots + ggplot2::ylab("Log2(Normalised count + 1)")
+  } else{
+    box_plots <- box_plots + ggplot2::ylab("Normalised counts")
+  }
+
+  ## group replicates
+  if(group_replicates){
+    box_plots <- box_plots + ggplot2::facet_wrap(~groups , scales = "free_x")
+  }
+
+  return(box_plots)
+}
+
+
+
 #' Group replicates by samples.
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
