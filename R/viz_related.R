@@ -562,9 +562,13 @@ get_pairwise_corr_plot  <- function(x , samples = NULL, genes = NULL){
   rep_grps <- get_replicates_by_sample_list(x)
 
   # filter by user supplied samples
+<<<<<<< HEAD
   if(!is.null(samples)){
     rep_grps <- rep_grps[samples]
   }
+=======
+  rep_grps <- rep_grps[samples]
+>>>>>>> master
 
 
   # plot
