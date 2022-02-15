@@ -320,7 +320,7 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10, labe
   stopifnot("'genes' must be a character vector or NULL." = is.character(genes) | is.null(genes))
 
   # validate show_replicates
-  stopifnot("'show_replicates' must be a logical." = is.logical(show_replicates))
+  stopifnot("'label_replicates' must be a logical." = is.logical(label_replicates))
 
   # get gene expression matrix
 
