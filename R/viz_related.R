@@ -611,8 +611,7 @@ get_replicates_by_sample_list <- function(x){
 
 
 
-
-#' Geenerate a volcano plot.
+#' Generate a volcano plot.
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param sample_comparison a character string denoting a valid differatnial gene comparison. Possible comparisons can be found from x$comp.
@@ -626,13 +625,15 @@ get_replicates_by_sample_list <- function(x){
 #' @param col_other a character string, default "grey", denoting valid color code for other than up and down regulated genes.
 #' @param ... other parameters to be passed to [EnhancedVolcano::EnhancedVolcano()]
 #'
-#' @return ggplot'
+#' @return ggplot
 #' @export
 #'
 #' @examples
 #' \dontrun{
+#'
 #' // TO DO
 #' }
+#'
 get_volcano_plot <- function(x,
                              sample_comparison,
                              log2fc_cutoff = 1,

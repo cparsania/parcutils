@@ -172,7 +172,7 @@ get_tpm <- function(counts, lengths) {
 #' @return a tbl.
 #' @import fs
 #' @export
-get_star_aling_log_summary <- function(log_file){
+get_star_align_log_summary <- function(log_file){
 
 
   # check if extension of the file is valid
@@ -310,7 +310,7 @@ get_upset_intersects <- function(upset_data, upset_plot){
 
 
 
-#' split grouped data with names. A wrapper around dplyr::group_by()
+#' Split grouped data with names. A wrapper around dplyr::group_by()
 #' ref: https://github.com/tidyverse/dplyr/issues/4223
 #'
 #' @param .tbl a data frame

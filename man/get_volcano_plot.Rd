@@ -2,14 +2,14 @@
 % Please edit documentation in R/viz_related.R
 \name{get_volcano_plot}
 \alias{get_volcano_plot}
-\title{Geenerate a volcano plot.}
+\title{Generate a volcano plot.}
 \usage{
 get_volcano_plot(
   x,
   sample_comparison,
   log2fc_cutoff = 1,
   pval_cutoff = 0.05,
-  genes_to_display,
+  genes_to_display = NULL,
   lab_size = 3,
   point_size = 1,
   col_up = "#a40000",
@@ -27,7 +27,7 @@ get_volcano_plot(
 
 \item{pval_cutoff}{a numeric value, default 0.05.}
 
-\item{genes_to_display}{a character vector of the genes to display in volcano plot.}
+\item{genes_to_display}{a character vector of the genes to display in volcano plot, default NULL, displays non overlapping genes.}
 
 \item{lab_size}{a numeric value, default 3, denoting size of the lables.}
 
@@ -42,13 +42,15 @@ get_volcano_plot(
 \item{...}{other parameters to be passed to \code{\link[EnhancedVolcano:EnhancedVolcano]{EnhancedVolcano::EnhancedVolcano()}}}
 }
 \value{
-ggplot'
+ggplot
 }
 \description{
-Geenerate a volcano plot.
+Generate a volcano plot.
 }
 \examples{
 \dontrun{
+
 // TO DO
 }
+
 }

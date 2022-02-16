@@ -2,7 +2,7 @@
 % Please edit documentation in R/general_bioinfo.R
 \name{named_group_split}
 \alias{named_group_split}
-\title{split grouped data with names. A wrapper around dplyr::group_by()
+\title{Split grouped data with names. A wrapper around dplyr::group_by()
 ref: https://github.com/tidyverse/dplyr/issues/4223}
 \usage{
 named_group_split(.tbl, ..., keep_order = T)
@@ -18,7 +18,7 @@ named_group_split(.tbl, ..., keep_order = T)
 a named list
 }
 \description{
-split grouped data with names. A wrapper around dplyr::group_by()
+Split grouped data with names. A wrapper around dplyr::group_by()
 ref: https://github.com/tidyverse/dplyr/issues/4223
 }
 \examples{
