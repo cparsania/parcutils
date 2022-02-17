@@ -28,9 +28,25 @@ For a given set of DEG comparisons, the functions returns \code{\link[UpSetR:ups
 For each upset plot generated function also returns interaction between gene sets in form of dataframe.
 }
 \examples{
-\dontrun{
 
-// TO DO.
-}
+count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+count_data <- readr::read_delim(count_file, delim = "\t")
+
+sample_info <- count_data \%>\% colnames() \%>\% .[-1]  \%>\%
+ tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+
+
+res <- run_deseq_analysis(counts = count_data ,
+                         sample_info = sample_info,
+                         column_geneid = "gene_id" ,
+                         group_numerator = c("treatment1", "treatment2") ,
+                         group_denominator = c("control"),
+                         column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+
+yy <- plot_deg_upsets(x= res, sample_comparisons = c("treatment1_VS_control","treatment2_VS_control"))
+
+yy[[1]]$upset_plot \%>\% print()
+
+yy[[1]]$upset_intersects \%>\% print()
 
 }

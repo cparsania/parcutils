@@ -30,10 +30,6 @@ an object of named list where each element is a list of two - 1)  an upset plots
 This function called from \code{\link[=plot_deg_upsets]{plot_deg_upsets()}}.
 }
 \examples{
-\dontrun{
-
-// TO DO.
-}
 
 }
 \keyword{internal}

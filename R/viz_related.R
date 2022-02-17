@@ -303,10 +303,26 @@ plot_regions_relative_to_reference <- function(query , reference){
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'  // TO DO
-#' }
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
 #'
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"),
+#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'
+#'
+#'  get_pca_plot(x = res) %>% print()
+#'
+#' # label replicates
+#'
+#' get_pca_plot(x = res, label_replicates =  T)
 #'
 get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10, label_replicates = FALSE){
 
@@ -426,9 +442,23 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10, labe
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'  // TO DO
-#' }
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
+#'
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"),
+#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'
+#' get_gene_expression_box_plot(x = res ) %>% print()
+#'
+#' get_gene_expression_box_plot(x = res , group_replicates = T ) %>% print()
 #'
 get_gene_expression_box_plot <- function(x, samples = NULL, genes = NULL,
                                          group_replicates = F,
@@ -534,10 +564,30 @@ get_gene_expression_box_plot <- function(x, samples = NULL, genes = NULL,
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' // TO DO
-#'}
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
 #'
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"),
+#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'
+#' cp <- get_pairwise_corr_plot(res)
+#'
+#'
+#' names(cp) %>% print()
+#'
+#' cp[1] %>% print
+#'
+#' cp[2] %>% print
+#'
+#' cp[3] %>% print
 #'
 get_pairwise_corr_plot  <- function(x , samples = NULL, genes = NULL){
 
@@ -629,10 +679,24 @@ get_replicates_by_sample_list <- function(x){
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
 #'
-#' // TO DO
-#' }
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"),
+#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'
+#'
+#' get_volcano_plot(res,  sample_comparison = res$comp[1]) %>% print()
+#'
+#' get_volcano_plot(res,  sample_comparison = res$comp[2]) %>% print()
 #'
 get_volcano_plot <- function(x,
                              sample_comparison,

@@ -76,7 +76,477 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">count_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,<span class="st">"toy_counts.txt"</span> , package <span class="op">=</span> <span class="st">"parcutils"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">count_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_delim</a></span><span class="op">(</span><span class="va">count_file</span>, delim <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">500</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">10</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Delimiter:</span> "\t"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">chr</span> (1): gene_id</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">dbl</span> (9): control_rep1, treat1_rep1, treat2_rep1, control_rep2, treat1_rep2, ...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use <span style="color: #262626; background-color: #DADADA;">`spec()`</span> to retrieve the full column specification for this data.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Specify the column types or set <span style="color: #262626; background-color: #DADADA;">`show_col_types = FALSE`</span> to quiet this message.</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">sample_info</span> <span class="op">&lt;-</span> <span class="va">count_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">.</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span class="r-in"> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>samples <span class="op">=</span> <span class="va">.</span> , groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="run_deseq_analysis.html">run_deseq_analysis</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">count_data</span> ,</span>
+<span class="r-in">                         sample_info <span class="op">=</span> <span class="va">sample_info</span>,</span>
+<span class="r-in">                         column_geneid <span class="op">=</span> <span class="st">"gene_id"</span> ,</span>
+<span class="r-in">                         group_numerator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment1"</span>, <span class="st">"treatment2"</span><span class="op">)</span> ,</span>
+<span class="r-in">                         group_denominator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span><span class="op">)</span>,</span>
+<span class="r-in">                         column_samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control_rep1"</span>, <span class="st">"treat1_rep1"</span>, <span class="st">"treat2_rep1"</span>, <span class="st">"control_rep2"</span>, <span class="st">"treat1_rep2"</span>, <span class="st">"treat2_rep2"</span>, <span class="st">"control_rep3"</span>, <span class="st">"treat1_rep3"</span>, <span class="st">"treat2_rep3"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Running DESeq2 ...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> converting counts to integer mode</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>some variables in design formula are characters, converting to factors</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> estimating size factors</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> estimating dispersions</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> gene-wise dispersion estimates</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> mean-dispersion relationship</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> final dispersion estimates</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> fitting model and testing</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Summarizing DEG ...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Done.</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># get both up and down regulated genes</span></span>
+<span class="r-in"><span class="fu">get_genes_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment2_VS_control"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ENSG00000184292:TACSTD2"   "ENSG00000162542:TMCO4"    "ENSG00000047644:WWC3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000089248:ERP29"  "ENSG00000214194:SMIM30"   "ENSG00000137878:GCOM1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ENSG00000215372:ZNF705G"     "ENSG00000119630:PGF"   "ENSG00000166484:MAPK7" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000134827:TCN1"    "ENSG00000176533:GNG7"   "ENSG00000124212:PTGIS" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000093134:VNN3"    "ENSG00000177508:IRX3"  "ENSG00000196458:ZNF605" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000164626:KCNK5"   "ENSG00000172260:NEGR1"  "ENSG00000157119:KLHL40" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000198336:MYL4"    "ENSG00000164900:GBX1"   "ENSG00000101222:SPEF1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000112592:TBP"    "ENSG00000148680:HTR7"    "ENSG00000185053:SGCZ" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000067057:PFKP"  "ENSG00000212710:CTAGE1" "ENSG00000108309:RUNDC3A" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000188038:NRN1L"   "ENSG00000118363:SPCS2"    "ENSG00000257218:GATC" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000112280:COL9A1"   "ENSG00000172059:KLF11"   "ENSG00000117560:FASLG" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000186795:KCNK18"    "ENSG00000169764:UGP2"   "ENSG00000147082:CCNB3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000149218:ENDOD1" "ENSG00000159527:PGLYRP3"    "ENSG00000164530:PI16" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ENSG00000197745:SCGB1D4"   "ENSG00000090581:GNPTG"   "ENSG00000137133:HINT2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000106305:AIMP2"   "ENSG00000113638:TTC33"  "ENSG00000185736:ADARB2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000244474:UGT1A4" "ENSG00000053328:METTL24"    "ENSG00000126778:SIX1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000164619:BMPER"   "ENSG00000066427:ATXN3"   "ENSG00000142459:EVI5L" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000002587:HS3ST1"   "ENSG00000124074:ENKD1"   "ENSG00000249115:HAUS5" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ENSG00000284546:SSU72P3"  "ENSG00000167553:TUBA1C"   "ENSG00000129654:FOXJ1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000138135:CH25H" "ENSG00000106261:ZKSCAN1"    "ENSG00000180787:ZFP3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000171102:OBP2B" "ENSG00000155755:TMEM237"   "ENSG00000118729:CASQ2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000118922:KLF12"    "ENSG00000102878:HSF4" "ENSG00000159289:GOLGA6A" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000284725:SCYGR6"   "ENSG00000106443:PHF14"  "ENSG00000127124:HIVEP3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ENSG00000103978:TMEM87A"    "ENSG00000104055:TGM5"   "ENSG00000115353:TACR1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000173699:SPATA3"   "ENSG00000108433:GOSR2"   "ENSG00000144061:NPHP1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000163069:SGCB"    "ENSG00000043355:ZIC2" "ENSG00000183632:TP53TG3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000197140:ADAM32" "ENSG00000173918:C1QTNF1"     "ENSG00000128052:KDR" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000127483:HP1BP3"  "ENSG00000059378:PARP12"   "ENSG00000198918:RPL39" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000103599:IQCH" </span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># get up genes only</span></span>
+<span class="r-in"><span class="fu">get_genes_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment2_VS_control"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"up"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ENSG00000184292:TACSTD2"   "ENSG00000162542:TMCO4"    "ENSG00000047644:WWC3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000089248:ERP29"  "ENSG00000214194:SMIM30"   "ENSG00000137878:GCOM1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ENSG00000215372:ZNF705G"     "ENSG00000119630:PGF"   "ENSG00000166484:MAPK7" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000134827:TCN1"    "ENSG00000176533:GNG7"   "ENSG00000124212:PTGIS" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000093134:VNN3"    "ENSG00000177508:IRX3"  "ENSG00000196458:ZNF605" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000164626:KCNK5"   "ENSG00000172260:NEGR1"  "ENSG00000157119:KLHL40" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000198336:MYL4"    "ENSG00000164900:GBX1"   "ENSG00000101222:SPEF1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000112592:TBP"    "ENSG00000148680:HTR7"    "ENSG00000185053:SGCZ" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000067057:PFKP"  "ENSG00000212710:CTAGE1" "ENSG00000108309:RUNDC3A" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000188038:NRN1L"   "ENSG00000118363:SPCS2"    "ENSG00000257218:GATC" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        up                        up                        up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000112280:COL9A1"   "ENSG00000172059:KLF11"   "ENSG00000117560:FASLG" </span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># get down genes only</span></span>
+<span class="r-in"><span class="fu">get_genes_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment2_VS_control"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"down"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000186795:KCNK18"    "ENSG00000169764:UGP2"   "ENSG00000147082:CCNB3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000149218:ENDOD1" "ENSG00000159527:PGLYRP3"    "ENSG00000164530:PI16" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ENSG00000197745:SCGB1D4"   "ENSG00000090581:GNPTG"   "ENSG00000137133:HINT2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000106305:AIMP2"   "ENSG00000113638:TTC33"  "ENSG00000185736:ADARB2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000244474:UGT1A4" "ENSG00000053328:METTL24"    "ENSG00000126778:SIX1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000164619:BMPER"   "ENSG00000066427:ATXN3"   "ENSG00000142459:EVI5L" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000002587:HS3ST1"   "ENSG00000124074:ENKD1"   "ENSG00000249115:HAUS5" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ENSG00000284546:SSU72P3"  "ENSG00000167553:TUBA1C"   "ENSG00000129654:FOXJ1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000138135:CH25H" "ENSG00000106261:ZKSCAN1"    "ENSG00000180787:ZFP3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000171102:OBP2B" "ENSG00000155755:TMEM237"   "ENSG00000118729:CASQ2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000118922:KLF12"    "ENSG00000102878:HSF4" "ENSG00000159289:GOLGA6A" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000284725:SCYGR6"   "ENSG00000106443:PHF14"  "ENSG00000127124:HIVEP3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ENSG00000103978:TMEM87A"    "ENSG00000104055:TGM5"   "ENSG00000115353:TACR1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000173699:SPATA3"   "ENSG00000108433:GOSR2"   "ENSG00000144061:NPHP1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000163069:SGCB"    "ENSG00000043355:ZIC2" "ENSG00000183632:TP53TG3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000197140:ADAM32" "ENSG00000173918:C1QTNF1"     "ENSG00000128052:KDR" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down                      down                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000127483:HP1BP3"  "ENSG00000059378:PARP12"   "ENSG00000198918:RPL39" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000103599:IQCH" </span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># get genes other than up and down</span></span>
+<span class="r-in"><span class="fu">get_genes_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparison <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment2_VS_control"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"other"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000172586:CHCHD1"        "ENSG00000088451:TGDS" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000225614:ZNF469"     "ENSG00000135226:UGT2B28" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000090776:EFNB1"      "ENSG00000215784:FAM72D" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000177627:C12orf54"    "ENSG00000134909:ARHGAP32" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000271425:NBPF10"       "ENSG00000126215:XRCC3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000171496:OR1L8"       "ENSG00000256671:LIMS4" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000079841:RIMS1"       "ENSG00000111300:NAA25" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000112246:SIM1"       "ENSG00000145920:CPLX2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000107959:PITRM1"     "ENSG00000069764:PLA2G10" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000141985:SH3GL1"      "ENSG00000103269:RHBDL1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000091137:SLC26A4"        "ENSG00000172915:NBEA" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000274997:H2AC12"     "ENSG00000274443:C8orf89" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000143363:PRUNE1"      "ENSG00000153789:CIBAR2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000175701:MTLN"      "ENSG00000123352:SPATS2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000119699:TGFB3"       "ENSG00000131747:TOP2A" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000116661:FBXO2"       "ENSG00000077009:NMRK2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000164329:TENT2"    "ENSG00000174032:SLC25A30" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000204310:AGPAT1"       "ENSG00000176623:RMDN1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000172115:CYCS"       "ENSG00000198815:FOXJ3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000213822:CEACAM18"      "ENSG00000156976:EIF4A2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000101343:CRNKL1"        "ENSG00000177192:PUS1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000114638:UPK1B"     "ENSG00000183305:MAGEA2B" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000092054:MYH7"       "ENSG00000084676:NCOA1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000101280:ANGPT4"       "ENSG00000167531:LALBA" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000110321:EIF4G2"        "ENSG00000064205:CCN5" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000168878:SFTPB"       "ENSG00000151725:CENPU" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         "ENSG00000198523:PLN"      "ENSG00000198242:RPL23A" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000136161:RCBTB2"     "ENSG00000186806:VSIG10L" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000167791:CABP2"      "ENSG00000271824:SMIM32" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000162062:TEDC2"  "ENSG00000259371:AL136295.3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000133069:TMCC2"       "ENSG00000230178:OR4F3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000135363:LMO2"       "ENSG00000155659:VSIG4" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000011478:QPCTL"     "ENSG00000143452:HORMAD1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000052850:ALX4"        "ENSG00000182768:NGRN" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000156398:SFXN2"       "ENSG00000164985:PSIP1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000149932:TMEM219"  "ENSG00000283205:AL353572.3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000145725:PPIP5K2"      "ENSG00000137709:POU2F3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000128965:CHAC1"        "ENSG00000136881:BAAT" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000160781:PAQR6"       "ENSG00000086289:EPDR1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000124701:APOBEC2"     "ENSG00000114745:GORASP1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000052723:SIKE1"       "ENSG00000169860:P2RY1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000165799:RNASE7"       "ENSG00000116176:TPSG1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000253506:NACA2"         "ENSG00000182667:NTM" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000051009:FAM160A2"      "ENSG00000163605:PPP4R2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000136694:IL36A"     "ENSG00000105472:CLEC11A" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000107736:CDH23"       "ENSG00000116031:CD207" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000087365:SF3B2"       "ENSG00000085982:USP40" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000170473:PYM1"        "ENSG00000145284:SCD5" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         "ENSG00000182511:FES"      "ENSG00000204970:PCDHA1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000072778:ACADVL"        "ENSG00000169418:NPR1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000179134:SAMD4B"       "ENSG00000105364:MRPL4" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000138433:CIR1"          "ENSG00000101981:F9" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000137434:C6orf52"       "ENSG00000145332:KLHL8" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000162849:KIF26B"       "ENSG00000138778:CENPE" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000187583:PLEKHN1"        "ENSG00000115963:RND3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000261408:TEN1-CDK3"  "ENSG00000284057:AP001273.2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000172459:OR5AR1"     "ENSG00000198088:NUP62CL" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000115361:ACADL"       "ENSG00000101019:UQCC1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000198077:CYP2A7"        "ENSG00000168496:FEN1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000213139:CRYGS"     "ENSG00000169122:FAM110B" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000165046:LETM2"    "ENSG00000159314:ARHGAP27" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000090615:GOLGA3"        "ENSG00000124205:EDN3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000139574:NPFF"     "ENSG00000174886:NDUFA11" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000204267:TAP2"       "ENSG00000117139:KDM5B" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000113742:CPEB4"      "ENSG00000198633:ZNF534" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000157856:DRC1"     "ENSG00000134901:POGLUT2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000140795:MYLK3"     "ENSG00000196504:PRPF40A" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000163660:CCNL1"      "ENSG00000156113:KCNMA1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000155438:NIFK"     "ENSG00000151812:SLC35F4" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000197894:ADH5"       "ENSG00000115255:REEP6" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000137411:VARS2"        "ENSG00000111783:RFX4" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000063176:SPHK2"       "ENSG00000213079:SCAF8" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000177710:SLC35G5"    "ENSG00000185761:ADAMTSL5" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000140497:SCAMP2"       "ENSG00000158497:HMHB1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000005156:LIG3"      "ENSG00000147180:ZNF711" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000125485:DDX31"    "ENSG00000149300:C11orf52" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000166938:DIS3L"       "ENSG00000145990:GFOD1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000136002:ARHGEF4"        "ENSG00000204576:PRR3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000178397:FAM220A"       "ENSG00000010219:DYRK4" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000204361:NXPE2"      "ENSG00000188811:NHLRC3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000162642:C1orf52"       "ENSG00000169570:DTWD2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000161929:SCIMP"      "ENSG00000198898:CAPZA2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000183340:JRKL"       "ENSG00000143028:SYPL2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000147100:SLC16A2"        "ENSG00000153002:CPB1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000285953:AC000120.4"       "ENSG00000148671:ADIRF" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000181666:ZNF875"       "ENSG00000009954:BAZ1B" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000109736:MFSD10"       "ENSG00000160856:FCRL3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000136247:ZDHHC4"     "ENSG00000186329:TMEM212" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000187840:EIF4EBP1"      "ENSG00000139644:TMBIM6" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000215305:VPS16"        "ENSG00000121552:CSTA" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000175143:OR2T1"        "ENSG00000113739:STC2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000146276:GABRR1"     "ENSG00000186827:TNFRSF4" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000149564:ESAM"     "ENSG00000225526:MKRN2OS" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000119547:ONECUT2"      "ENSG00000196357:ZNF565" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000134697:GNL2"       "ENSG00000105229:PIAS4" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000115295:CLIP4"      "ENSG00000101890:GUCY2F" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000166971:AKTIP"         "ENSG00000138385:SSB" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000204583:LRCOL1"       "ENSG00000137090:DMRT1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000130787:HIP1R"        "ENSG00000095794:CREM" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000112033:PPARD"       "ENSG00000142961:MOB3C" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000227471:AKR1B15"         "ENSG00000139684:ESD" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000077157:PPP1R12B"        "ENSG00000125821:DTD1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000164047:CAMP"        "ENSG00000060237:WNK1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000120697:ALG5"       "ENSG00000124788:ATXN1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000213967:ZNF726"       "ENSG00000161671:EMC10" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000166436:TRIM66"      "ENSG00000204469:PRRC2A" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000158486:DNAH3"      "ENSG00000186310:NAP1L3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000118705:RPN2"       "ENSG00000053747:LAMA3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000121381:TAS2R9"  "ENSG00000288000:AL031681.3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000278053:DDX52"      "ENSG00000085831:TTC39A" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000100473:COCH"       "ENSG00000171984:SHLD1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000024048:UBR2"        "ENSG00000127922:SEM1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000171532:NEUROD2"      "ENSG00000145491:ROPN1L" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000120860:WASHC3"      "ENSG00000153246:PLA2R1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000006606:CCL26"      "ENSG00000116198:CEP104" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000158161:EYA3"        "ENSG00000092345:DAZL" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000129315:CCNT1"        "ENSG00000166147:FBN1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000076242:MLH1"       "ENSG00000185862:EVI2B" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000135924:DNAJB2"  "ENSG00000124593:AL365205.1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000154678:PDE1C"         "ENSG00000117505:DR1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000196071:OR2L13"         "ENSG00000135605:TEC" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000180694:TMEM64"      "ENSG00000170876:TMEM43" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         "ENSG00000116703:PDC"        "ENSG00000146648:EGFR" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000104369:JPH1"        "ENSG00000148704:VAX1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000184163:C1QTNF12"     "ENSG00000169129:AFAP1L2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000101474:APMAP"      "ENSG00000172752:COL6A5" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000157211:CDCP2"      "ENSG00000272196:H2AC19" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000173041:ZNF680"       "ENSG00000102158:MAGT1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000096070:BRPF3"       "ENSG00000196116:TDRD7" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000172244:C5orf34"      "ENSG00000158042:MRPL17" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000023041:ZDHHC6"        "ENSG00000147274:RBMX" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000234602:MCIDAS"     "ENSG00000089847:ANKRD24" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000022267:FHL1"       "ENSG00000204544:MUC21" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         "ENSG00000106991:ENG"      "ENSG00000010256:UQCRC1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000186564:FOXD2"       "ENSG00000163141:BNIPL" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000178449:COX14"    "ENSG00000138375:SMARCAL1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000176597:B3GNT5"      "ENSG00000164849:GPR146" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000174099:MSRB3"       "ENSG00000119403:PHF19" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000107201:DDX58"      "ENSG00000159915:ZNF233" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "ENSG00000274049:INO80B-WBP1"      "ENSG00000173545:ZNF622" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         "ENSG00000184937:WT1"      "ENSG00000160326:SLC2A6" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000060709:RIMBP2"        "ENSG00000121075:TBX4" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000147099:HDAC8"        "ENSG00000169857:AVEN" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        "ENSG00000100603:SNW1"       "ENSG00000170917:NUDT6" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000092200:RPGRIP1"      "ENSG00000284704:SCYGR3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000140025:EFCAB11"       "ENSG00000170923:OR7G2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000121964:GTDC1"      "ENSG00000254004:ZNF260" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000167004:PDIA3"      "ENSG00000011083:SLC6A7" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000141979:AC008764.1"      "ENSG00000149503:INCENP" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000133246:PRAM1"       "ENSG00000165617:DACT1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000183035:CYLC1"       "ENSG00000204869:IGFL4" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000131732:ZCCHC9"       "ENSG00000000457:SCYL3" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000140675:SLC5A2"       "ENSG00000138400:MDH1B" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000154611:PSMA8" </span>
+<span class="r-in"></span>
+</code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>

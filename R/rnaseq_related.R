@@ -44,43 +44,45 @@
 #' // TO DO : Explain formats of count file and count dataframe.
 #' @return a data frame of DESeq results, DEG, and DEG summary.
 #' @export
+#' @importFrom tidyselect everything
 #' @examples
 #' \dontrun{
 #'
-#' set.seed(123)
-#' # create dummy RNAseq (dummy) count matrix
-#' counts <- matrix(rnbinom(n=1000, mu=100, size=1/0.5), ncol=10) %>%
-#'   as.data.frame() %>% tibble::as_tibble()
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
 #'
-#' colnames(counts) <- c(paste("c" , c(1:5), sep = ""),c(paste ("d" , 1:5, sep = "")))
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
 #'
-#' counts %<>%  dplyr::mutate("Geneid" = stringi::stri_rand_strings(n = 100, length = 5))  %>%
-#'   dplyr::relocate("Geneid")
-#' # create sample info
-#' si <- tibble::tibble(samples = colnames(counts)[-1] , sample_groups = factor(rep(c("c","d"), each=5)))
 #'
-#' res <- run_deseq_analysis(counts = counts ,
-#'                sample_info = si,
-#'                column_geneid = "Geneid" , group_numerator = "d" , group_denominator = "c",
-#'                column_samples = c("c1","c2","c3","c4" ,"c5" ,"d1" ,"d2","d3" ,"d4" ,"d5"))
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"),
+#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
 #'
-#' names <- paste(res$)
+#' res
+#'
+#' ## all comparisons
+#'
+#' print(res$comp)
 #'
 #' ## DESEq result object(s)
-#' res$dsr
+#'
+#' print(res$dsr)
 #'
 #' ## DESEq result data frame
-#' res$dsr_tibble
+#'
+#' print(res$dsr_tibble)
 #'
 #' ## DESEq result data frame  DEG assigned, look at the columns 'signif' and 'regul'
 #'
-#' res$dsr_tibble_deg
-#'
-#' res$dsr_tibble_deg[[1]] %>% dplyr::filter(regul != "other")
+#' print(res$dsr_tibble_deg)
 #'
 #' ## DEG summary
 #'
-#' res$deg_summmary
+#' print(res$deg_summmary)
 #'
 #'}
 #'
@@ -430,9 +432,14 @@ run_deseq_analysis <- function(
   ## use comparisons as names for list elements
   xx  %<>%  dplyr::mutate_if(is.list, ~rlang::set_names(. , xx$comp))
 
+  # column rearrange
+
+  xx %<>% dplyr::select(comp , tidyselect::everything())
+
   # assign names to each list in the tibble
 
   cli::cli_alert_info("Done.")
+
 
   ## set class
 
@@ -651,9 +658,25 @@ categorize_diff_genes <-  function(dsr_tibble,
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' // TO DO
-#' }
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
+#'
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"),
+#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'
+#' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control")
+#'
+#' fc_df <- get_fold_change_matrix(x = res, sample_comparison = c("treatment2_VS_control" , "treatment1_VS_control"), genes = genes)
+#'
+#' print(fc_df)
 #'
 get_fold_change_matrix <- function(x , sample_comparisons , genes){
 
@@ -713,10 +736,26 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
 #'
-#' // TO DO
-#' }
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"),
+#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'
+#'
+#' get_normalised_expression_matrix(x = res) %>% print()
+#'
+#' # summarise replicates by median
+#'
+#' get_normalised_expression_matrix(x = res ,summarise_replicates = T, summarise_method = "median") %>% print()
 get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, summarise_replicates = FALSE, summarise_method = "median" ){
 
   # validate x
@@ -773,8 +812,10 @@ get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, s
       tidyr::pivot_wider(id_cols = !!rlang::sym(column_gene_id), values_from = "vals", names_from = "sample")
 
     # keep original order of columns
-    expr_mat_wide <- expr_mat_wide %>%
-      dplyr::select(!!rlang::sym(column_gene_id),dplyr::all_of(samples))
+    if(!is.null(samples)){
+      expr_mat_wide <- expr_mat_wide %>%
+        dplyr::select(!!rlang::sym(column_gene_id),dplyr::all_of(samples))
+    }
 
   } else{
     #  make it wide
@@ -812,9 +853,31 @@ get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, s
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' // TO DO
-#' }
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
+#'
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"),
+#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'
+#' # get both up and down regulated genes
+#' get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control")) %>% print()
+#'
+#' # get up genes only
+#' get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control") , regul = "up") %>% print()
+#'
+#' # get down genes only
+#' get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control") , regul = "down") %>% print()
+#'
+#' # get genes other than up and down
+#' get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control") , regul = "other") %>% print()
 #'
 get_genes_by_regulation <-  function(x, sample_comparison , regulation = "both"  ) {
 
@@ -880,10 +943,26 @@ get_genes_by_regulation <-  function(x, sample_comparison , regulation = "both" 
 #' @return an object of named list where each element is a list of two - 1)  an upset plots  [UpSetR::upset()] and their intersections in form of tibble.
 #' @export
 #' @examples
-#' \dontrun{
 #'
-#' // TO DO.
-#' }
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
+#'
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"),
+#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'
+#' yy <- plot_deg_upsets(x= res, sample_comparisons = c("treatment1_VS_control","treatment2_VS_control"))
+#'
+#' yy[[1]]$upset_plot %>% print()
+#'
+#' yy[[1]]$upset_intersects %>% print()
 #'
 plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_down = "#006d2c"){
 
@@ -943,10 +1022,6 @@ plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_d
 #' @export
 #' @keywords internal
 #' @examples
-#' \dontrun{
-#'
-#' // TO DO.
-#' }
 #'
 piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_down = "#006d2c",... ){
 
@@ -1053,9 +1128,55 @@ piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_do
 #' with all default parameters.
 #'
 #' @examples
-#' \dontrun{
-#' // TO DO.
-#' }
+#'
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
+#'
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"),
+#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'
+#' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both")
+#' get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"), genes = genes)
+#'
+#' # plot raw expression values
+#'
+#' get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"),
+#' genes = genes, convert_zscore = FALSE)
+#'
+#' # plot log2 expression values
+#'
+#' get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"),
+#' genes = genes, convert_zscore = FALSE,convert_log2 = TRUE)
+#'
+#' # plot all replicates
+#'
+#' get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"),
+#' genes = genes, convert_zscore = TRUE, summarise_replicates = FALSE)
+#'
+#' # show gene names
+#'
+#' get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"),
+#' genes = genes[1:10], convert_zscore = TRUE, summarise_replicates = FALSE , show_row_names = T)
+#'
+#' # repair gene names
+#'
+#'get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"),
+#' genes = genes[1:10], convert_zscore = TRUE, summarise_replicates = FALSE, show_row_names = T, repair_genes = T)
+#'
+#"
+#' # fold change heatmap
+#'
+#' get_fold_change_heatmap(x = res , sample_comparisons = c("treatment2_VS_control" ,"treatment1_VS_control") ,
+#' genes = genes , cluster_columns = F , name = "Log2FC")
+#'
 #'
 get_gene_expression_heatmap <- function(x,
                                         samples,

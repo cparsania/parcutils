@@ -115,8 +115,53 @@ with all default parameters.
 }
 }
 \examples{
-\dontrun{
-// TO DO.
-}
+
+count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+count_data <- readr::read_delim(count_file, delim = "\t")
+
+sample_info <- count_data \%>\% colnames() \%>\% .[-1]  \%>\%
+ tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+
+
+res <- run_deseq_analysis(counts = count_data ,
+                         sample_info = sample_info,
+                         column_geneid = "gene_id" ,
+                         group_numerator = c("treatment1", "treatment2") ,
+                         group_denominator = c("control"),
+                         column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+
+genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both")
+get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"), genes = genes)
+
+# plot raw expression values
+
+get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"),
+genes = genes, convert_zscore = FALSE)
+
+# plot log2 expression values
+
+get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"),
+genes = genes, convert_zscore = FALSE,convert_log2 = TRUE)
+
+# plot all replicates
+
+get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"),
+genes = genes, convert_zscore = TRUE, summarise_replicates = FALSE)
+
+# show gene names
+
+get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"),
+genes = genes[1:10], convert_zscore = TRUE, summarise_replicates = FALSE , show_row_names = T)
+
+# repair gene names
+
+get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"),
+genes = genes[1:10], convert_zscore = TRUE, summarise_replicates = FALSE, show_row_names = T, repair_genes = T)
+
+# fold change heatmap
+
+get_fold_change_heatmap(x = res , sample_comparisons = c("treatment2_VS_control" ,"treatment1_VS_control") ,
+genes = genes , cluster_columns = F , name = "Log2FC")
+
 
 }

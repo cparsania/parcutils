@@ -36,8 +36,8 @@ Imports:
     plyranges,
     stringr,
     GGally
-Suggests:
-  magrittr 
+Depends: 
+    magrittr
 Remotes: 
     cparsania/TidyWrappers,
     jokergoo/circlize

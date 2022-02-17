@@ -84,40 +84,41 @@ the code readability. Besides that,  output of this function can subsequently us
 \examples{
 \dontrun{
 
-set.seed(123)
-# create dummy RNAseq (dummy) count matrix
-counts <- matrix(rnbinom(n=1000, mu=100, size=1/0.5), ncol=10) \%>\%
-  as.data.frame() \%>\% tibble::as_tibble()
+count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+count_data <- readr::read_delim(count_file, delim = "\t")
 
-colnames(counts) <- c(paste("c" , c(1:5), sep = ""),c(paste ("d" , 1:5, sep = "")))
+sample_info <- count_data \%>\% colnames() \%>\% .[-1]  \%>\%
+ tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
 
-counts \%<>\%  dplyr::mutate("Geneid" = stringi::stri_rand_strings(n = 100, length = 5))  \%>\%
-  dplyr::relocate("Geneid")
-# create sample info
-si <- tibble::tibble(samples = colnames(counts)[-1] , sample_groups = factor(rep(c("c","d"), each=5)))
 
-res <- run_deseq_analysis(counts = counts ,
-               sample_info = si,
-               column_geneid = "Geneid" , group_numerator = "d" , group_denominator = "c",
-               column_samples = c("c1","c2","c3","c4" ,"c5" ,"d1" ,"d2","d3" ,"d4" ,"d5"))
+res <- run_deseq_analysis(counts = count_data ,
+                         sample_info = sample_info,
+                         column_geneid = "gene_id" ,
+                         group_numerator = c("treatment1", "treatment2") ,
+                         group_denominator = c("control"),
+                         column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
 
-names <- paste(res$)
+res
+
+## all comparisons
+
+print(res$comp)
 
 ## DESEq result object(s)
-res$dsr
+
+print(res$dsr)
 
 ## DESEq result data frame
-res$dsr_tibble
+
+print(res$dsr_tibble)
 
 ## DESEq result data frame  DEG assigned, look at the columns 'signif' and 'regul'
 
-res$dsr_tibble_deg
-
-res$dsr_tibble_deg[[1]] \%>\% dplyr::filter(regul != "other")
+print(res$dsr_tibble_deg)
 
 ## DEG summary
 
-res$deg_summmary
+print(res$deg_summmary)
 
 }
 

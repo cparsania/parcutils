@@ -30,8 +30,30 @@ Get genes based on their differential regulation
 For a given differential comparison this function returns \code{up}, \code{down}, \code{both}, \code{other} and \code{all} genes.
 }
 \examples{
-\dontrun{
-// TO DO
-}
+count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+count_data <- readr::read_delim(count_file, delim = "\t")
+
+sample_info <- count_data \%>\% colnames() \%>\% .[-1]  \%>\%
+ tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+
+
+res <- run_deseq_analysis(counts = count_data ,
+                         sample_info = sample_info,
+                         column_geneid = "gene_id" ,
+                         group_numerator = c("treatment1", "treatment2") ,
+                         group_denominator = c("control"),
+                         column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+
+# get both up and down regulated genes
+get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control")) \%>\% print()
+
+# get up genes only
+get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control") , regul = "up") \%>\% print()
+
+# get down genes only
+get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control") , regul = "down") \%>\% print()
+
+# get genes other than up and down
+get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control") , regul = "other") \%>\% print()
 
 }
