@@ -15,7 +15,7 @@ Imports:
     dplyr (>= 0.8.5),
     EnhancedVolcano,
     GenomicRanges (>= 1.38.0),
-    glue (>= 1.6.0),
+    glue,
     magrittr (>= 1.5),
     purrr (>= 0.3.4),
     readr (>= 2.0.1),
