@@ -2,7 +2,8 @@
 % Please edit documentation in R/rnaseq_related.R
 \name{run_deseq_analysis}
 \alias{run_deseq_analysis}
-\title{Perform differential expression analysis using \code{\link[DESeq2:DESeq]{DESeq2::DESeq()}}}
+\title{Run differential expression (DE) analysis for several comparisosns at a time. Internally it uses
+\code{\link[DESeq2:DESeq]{DESeq2::DESeq()}} to perform DE analysis.}
 \usage{
 run_deseq_analysis(
   counts,
@@ -23,15 +24,15 @@ run_deseq_analysis(
 )
 }
 \arguments{
-\item{counts}{a character string providing a name of count file or a data frame of counts for each gene.
-See details below to know more about format of file and count data frame.}
+\item{counts}{a character string of the path to a count file or an object of dataframe having raw counts for each gene.
+See details below to know more about format of the count file and count dataframe.}
 
 \item{column_geneid}{a character string denoting a column of geneid in \code{counts}}
 
 \item{column_samples}{a character vector denoting names of sample columns from \code{counts}}
 
-\item{sample_info}{a character string denoting a name of sample information file or a data frame.
-A file or a data frame both must have at least two columns without column names. First column denotes to samples names
+\item{sample_info}{a character string denoting a name of sample information file or a dataframe.
+A file or a dataframe both must have at least two columns without column names. First column denotes to samples names
 and second column denotes group name for each sample in first column. For e.g.\tabular{ll}{
     \tab  \cr
    sample 1 \tab WT \cr
@@ -54,7 +55,7 @@ gene for differential expression analysis.}
 \item{min_replicates}{a numeric value, default 1, denoting minimum samples within a group must have \code{minimum_counts}.
 Value provided must not be higher than number of replicates in each group.
 For example for given values \code{min_replicates = 2} and  \code{minimum_counts = 10}
-the genes which have minimum counts 10 in atleast 2 sample groups will be used for DEG.}
+the genes which have minimum counts 10 in at least 2 sample groups will be used for DEG.}
 
 \item{cutoff_lfc}{a numeric value which is internally passed to \link{categorize_diff_genes}}
 
@@ -70,10 +71,15 @@ the genes which have minimum counts 10 in atleast 2 sample groups will be used f
 a data frame of DESeq results, DEG, and DEG summary.
 }
 \description{
-This is a wrapper function build upon \code{\link[DESeq2:DESeq]{DESeq2::DESeq()}}  and  \code{\link[DESeq2:DESeqResults]{DESeq2::DESeqResults()}}
-to find diff genes and categories them based on various cutoffs such p-value, padj-value, log2fc etc.
-It also allows selecting genes for diff analysis based upon minimum counts across
-samples within a group (e.g. minimum counts across replicate samples).
+DESeq2 is a popular method to perform DE analysis for RNA-seq data. Pre and post DESeq run, however,
+involves several data wrangling steps. For example, prior to run DESeq genes may need to be filtered out based on
+number of reads mapped to genes across replicates. Similarly,  post DESeq run user needs to set cutoffs (log2fc, pvalue and padj)
+to define \code{up} and \code{down} regulated genes. For large RNA-seq experiments involving several DE comparison such as sub-setting
+and different cutoffs creates messy and less readable code. This function helps to make things bit tidy and increase
+the code readability. Besides that,  output of this function can subsequently used for several other functions of this package.
+}
+\details{
+// TO DO : Explain formats of count file and count dataframe.
 }
 \examples{
 \dontrun{

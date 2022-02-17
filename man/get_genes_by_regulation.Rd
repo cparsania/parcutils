@@ -2,7 +2,7 @@
 % Please edit documentation in R/rnaseq_related.R
 \name{get_genes_by_regulation}
 \alias{get_genes_by_regulation}
-\title{Get genes from based on their differential regulation (up, down, both, other and all)}
+\title{Get genes based on their differential regulation}
 \usage{
 get_genes_by_regulation(x, sample_comparison, regulation = "both")
 }
@@ -24,7 +24,10 @@ get_genes_by_regulation(x, sample_comparison, regulation = "both")
 a named vector.
 }
 \description{
-Get genes from based on their differential regulation (up, down, both, other and all)
+Get genes based on their differential regulation
+}
+\details{
+For a given differential comparison this function returns \code{up}, \code{down}, \code{both}, \code{other} and \code{all} genes.
 }
 \examples{
 \dontrun{

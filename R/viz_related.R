@@ -88,7 +88,7 @@ sort_geom_box <- function(x, decreasing = T){
 
 # volcano plot
 
-#' Wrapper around EnhancedVolcano::EnhancedVolcano
+#' Wrapper around [EnhancedVolcano::EnhancedVolcano()]
 #'
 #' @param toptable \code{toptable} [EnhancedVolcano::EnhancedVolcano()]
 #' @param lab \code{lab} [EnhancedVolcano::EnhancedVolcano()]
@@ -525,7 +525,7 @@ get_gene_expression_box_plot <- function(x, samples = NULL, genes = NULL,
 
 
 
-#' Get replicates correlation scatter plot
+#' Get a scatter plot showing correlation between replicates.
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param samples a character vector denoting samples to plot in scatter plot, default \code{NULL}. If set to NULL all samples are accounted.

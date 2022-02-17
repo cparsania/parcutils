@@ -14,7 +14,7 @@ get_fold_change_matrix(x, sample_comparisons, genes)
 \item{genes}{a character vector denoting gene names for which fold change values to be derived.}
 }
 \value{
-a tbl.
+a dataframe.
 }
 \description{
 This function returns a dataframe having first column gene names and subsequent columns are

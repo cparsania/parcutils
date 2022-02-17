@@ -3,7 +3,7 @@
 \name{get_gene_expression_heatmap}
 \alias{get_gene_expression_heatmap}
 \alias{get_fold_change_heatmap}
-\title{Generate a heatmap of normalised gene expression values, z-score or log2 fold-change values.}
+\title{Generate a heatmap of normalised gene expression values, z-score or log2Fold-change values.}
 \usage{
 get_gene_expression_heatmap(
   x,

@@ -11,8 +11,8 @@
 <!-- badges: end -->
 
 The goal of `parcutils` is to provide day to day bioinformatics utility
-functions. Those functions are mostly wrapper functions written on top
-of core bioconductor functions.
+functions. Most of the functions in the package are useful for analyzing
+and visualizing complex RNA-seq studies.
 
 ## Installation
 
@@ -30,11 +30,9 @@ if(require("devtools") && require("BiocManager")){
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+### Get intergalactic regions and signal intensity from a .bw file.
 
-## Intergenic regions and signal intensity
-
-Given the .gff file and .bw file, identify genome wide intergenic
+Given the .gff file and .bw file, identify genome wide intergalactic
 regions and their signal intensity.
 
 ``` r
@@ -65,7 +63,7 @@ oo
 #>   seqinfo: 14 sequences from an unspecified genome; no seqlengths
 ```
 
-Export results
+#### Export results
 
 ``` r
 ## export bed file 
@@ -76,6 +74,8 @@ oo %>% rtracklayer::export.bed(con = file(paste("intergenic", ".bed",sep = "")))
 
 oo %>% rtracklayer::export.bedGraph(con = file(paste("intergenic", ".bdg",sep = "")))
 ```
+
+#### Visualize results
 
 Below is the IGV snapshot showing genes(blue), intergenic regions (red)
 and intergenic intensities (green).

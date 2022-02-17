@@ -2,7 +2,7 @@
 % Please edit documentation in R/rnaseq_related.R
 \name{filter_df_by_genes}
 \alias{filter_df_by_genes}
-\title{Filter expression matrix (dataframe) by genes(first column).}
+\title{Filter expression matrix (dataframe) by genes (first column).}
 \usage{
 filter_df_by_genes(df, genes)
 }
@@ -15,7 +15,7 @@ filter_df_by_genes(df, genes)
 a filtered dataframe.
 }
 \description{
-Filter expression matrix (dataframe) by genes(first column).
+Filter expression matrix (dataframe) by genes (first column).
 }
 \examples{
 \dontrun{

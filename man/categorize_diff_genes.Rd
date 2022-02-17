@@ -2,7 +2,7 @@
 % Please edit documentation in R/rnaseq_related.R
 \name{categorize_diff_genes}
 \alias{categorize_diff_genes}
-\title{Categorize diff genes based on log2FC, p-value and p-adj value.}
+\title{Categorize diff genes in to \code{up} and \code{down} based on log2FC, p-value and p-adj values.}
 \usage{
 categorize_diff_genes(
   dsr_tibble,
@@ -14,7 +14,7 @@ categorize_diff_genes(
 )
 }
 \arguments{
-\item{dsr_tibble}{a data frame obtained from DESeqResult object or an object of DESeqResult.}
+\item{dsr_tibble}{a dataframe obtained from DESeqResult object or an object of DESeqResult.}
 
 \item{log2fc_cutoff, pval_cutoff, padj_cutoff}{a numeric value, default \verb{(log2fc_cutoff = 1, pval_cutoff =  0.05, padj_cutoff = 0.01)}
 denoting cutoffs. These criteria will be used to decide significance  \verb{(NS, p-value, log2FC, p-value&log2FC)} and
@@ -53,7 +53,11 @@ Up', 'Down' or 'other'.}
 a data frame
 }
 \description{
-// TO DO
+Usually fold change 1.5 (log2FC ~0.6) and statistical significance defined by p and/or p.adj values
+are considered to mark gene as differential expressed. However, these cutoffs change based on data quality.
+This function allows changing these cutoffs and mark genes differently expressed.
+While using this package, most of the time user do not need to call this function explicitly as it is internally called by
+\code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.
 }
 \details{
 // TO DO. --> explain columns 'signif' and 'type' in the returned data frame.

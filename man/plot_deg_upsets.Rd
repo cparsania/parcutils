@@ -2,7 +2,7 @@
 % Please edit documentation in R/rnaseq_related.R
 \name{plot_deg_upsets}
 \alias{plot_deg_upsets}
-\title{Generate upset plots for DEG between comparisons.}
+\title{Generate upset plots for differently expressed genes between comparisons.}
 \usage{
 plot_deg_upsets(
   x,
@@ -24,8 +24,8 @@ plot_deg_upsets(
 an object of named list where each element is a list of two - 1)  an upset plots  \code{\link[UpSetR:upset]{UpSetR::upset()}} and their intersections in form of tibble.
 }
 \description{
-Given a set of DEG comparisons, the functions returns \code{\link[UpSetR:upset]{UpSetR::upset()}} plots for up and down genes for any 2 comparisons.
-For each upset plot generated function also returns interaction in form of tibble.
+For a given set of DEG comparisons, the functions returns \code{\link[UpSetR:upset]{UpSetR::upset()}} plots for up and down genes between any 2 comparisons.
+For each upset plot generated function also returns interaction between gene sets in form of dataframe.
 }
 \examples{
 \dontrun{

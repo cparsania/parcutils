@@ -1,15 +1,21 @@
-#' @title Perform differential expression analysis using [DESeq2::DESeq()]
-#' @description This is a wrapper function build upon [DESeq2::DESeq()]  and  [DESeq2::DESeqResults()]
-#' to find diff genes and categories them based on various cutoffs such p-value, padj-value, log2fc etc.
-#' It also allows selecting genes for diff analysis based upon minimum counts across
-#' samples within a group (e.g. minimum counts across replicate samples).
+#' Run differential expression (DE) analysis for several comparisosns at a time. Internally it uses
+#' [DESeq2::DESeq()] to perform DE analysis.
 #'
-#' @param counts a character string providing a name of count file or a data frame of counts for each gene.
-#' See details below to know more about format of file and count data frame.
+#' @description
+#'
+#' DESeq2 is a popular method to perform DE analysis for RNA-seq data. Pre and post DESeq run, however,
+#' involves several data wrangling steps. For example, prior to run DESeq genes may need to be filtered out based on
+#' number of reads mapped to genes across replicates. Similarly,  post DESeq run user needs to set cutoffs (log2fc, pvalue and padj)
+#' to define `up` and `down` regulated genes. For large RNA-seq experiments involving several DE comparison such as sub-setting
+#' and different cutoffs creates messy and less readable code. This function helps to make things bit tidy and increase
+#' the code readability. Besides that,  output of this function can subsequently used for several other functions of this package.
+#'
+#' @param counts a character string of the path to a count file or an object of dataframe having raw counts for each gene.
+#' See details below to know more about format of the count file and count dataframe.
 #' @param column_geneid a character string denoting a column of geneid in \code{counts}
 #' @param column_samples a character vector denoting names of sample columns from \code{counts}
-#' @param sample_info a character string denoting a name of sample information file or a data frame.
-#' A file or a data frame both must have at least two columns without column names. First column denotes to samples names
+#' @param sample_info a character string denoting a name of sample information file or a dataframe.
+#' A file or a dataframe both must have at least two columns without column names. First column denotes to samples names
 #' and second column denotes group name for each sample in first column. For e.g.
 #'
 #'  |       |  |
@@ -28,51 +34,16 @@
 #' @param min_replicates a numeric value, default 1, denoting minimum samples within a group must have `minimum_counts`.
 #' Value provided must not be higher than number of replicates in each group.
 #' For example for given values `min_replicates = 2` and  `minimum_counts = 10`
-#' the genes which have minimum counts 10 in atleast 2 sample groups will be used for DEG.
+#' the genes which have minimum counts 10 in at least 2 sample groups will be used for DEG.
 #' @param cutoff_lfc a numeric value which is internally passed to \link{categorize_diff_genes}
 #' @param cutoff_padj a numeric value which is internally passed to \link{categorize_diff_genes}
 #' @param ... for future use
 #' @param cutoff_pval a numeric value which is internally passed to \link{categorize_diff_genes}
 #' @param regul_based_upon either of 1, 2 or 3 which is internally passed to \link{categorize_diff_genes}
-#'
+#' @details
+#' // TO DO : Explain formats of count file and count dataframe.
 #' @return a data frame of DESeq results, DEG, and DEG summary.
 #' @export
-#' @importFrom cli cli_alert
-#' @importFrom cli cli_alert_info
-#' @importFrom cli cli_alert_success
-#' @importFrom cli cli_alert_warning
-#' @importFrom DESeq2 DESeq
-#' @importFrom DESeq2 DESeqDataSetFromMatrix
-#' @importFrom DESeq2 results
-#' @importFrom dplyr arrange
-#' @importFrom dplyr filter
-#' @importFrom dplyr group_by
-#' @importFrom dplyr left_join
-#' @importFrom dplyr mutate_if
-#' @importFrom dplyr pull
-#' @importFrom dplyr rename
-#' @importFrom dplyr select
-#' @importFrom dplyr tally
-#' @importFrom dplyr ungroup
-#' @importFrom glue glue
-#' @importFrom magrittr `%<>%`
-#' @importFrom magrittr `%>%`
-#' @importFrom purrr map
-#' @importFrom readr read_delim
-#' @importFrom rlang `:=`
-#' @importFrom rlang `!!!`
-#' @importFrom rlang `!!`
-#' @importFrom rlang enquo
-#' @importFrom rlang enquos
-#' @importFrom rlang is_scalar_double
-#' @importFrom rlang new_formula
-#' @importFrom rlang quo
-#' @importFrom rlang sym
-#' @importFrom tibble column_to_rownames
-#' @importFrom tidyr expand_grid
-#' @importFrom tidyr gather
-#' @import DESeq2
-#' @import TidyWrappers
 #' @examples
 #' \dontrun{
 #'
@@ -549,10 +520,14 @@ filter_gff <- function(gtf_file ,
 }
 
 
-#' @title  Categorize diff genes based on log2FC, p-value and p-adj value.
-#' @description // TO DO
+#' @title  Categorize diff genes in to `up` and `down` based on log2FC, p-value and p-adj values.
+#' @description Usually fold change 1.5 (log2FC ~0.6) and statistical significance defined by p and/or p.adj values
+#' are considered to mark gene as differential expressed. However, these cutoffs change based on data quality.
+#' This function allows changing these cutoffs and mark genes differently expressed.
+#' While using this package, most of the time user do not need to call this function explicitly as it is internally called by
+#' [parcutils::run_deseq_analysis()].
 #'
-#' @param dsr_tibble  a data frame obtained from DESeqResult object or an object of DESeqResult.
+#' @param dsr_tibble  a dataframe obtained from DESeqResult object or an object of DESeqResult.
 #' @param log2fc_cutoff,pval_cutoff,padj_cutoff a numeric value, default `(log2fc_cutoff = 1, pval_cutoff =  0.05, padj_cutoff = 0.01)`
 #' denoting cutoffs. These criteria will be used to decide significance  `(NS, p-value, log2FC, p-value&log2FC)` and
 #' type of regulation `(Up, Down & other)` of diff genes.
@@ -672,7 +647,7 @@ categorize_diff_genes <-  function(dsr_tibble,
 #' @param sample_comparisons a character vector denoting sample comparisons for which fold change values to be derived.
 #' @param genes a character vector denoting gene names for which fold change values to be derived.
 #'
-#' @return a tbl.
+#' @return a dataframe.
 #' @export
 #'
 #' @examples
@@ -726,7 +701,7 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 
 #' Prepare a matrix of normalised gene expression values
 #' @description This function returns a dataframe having first column gene names and subsequent columns are
-#' normalised gene expression values for the comparisons passed through sample_comparisons.
+#' normalised gene expression values for the samples passed through `samples`.
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param samples a character vector denoting samples for which normalised gene expression values to be derived, Default NULL. If NULL it returns all samples in x
@@ -734,7 +709,7 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #' @param summarise_replicates logical, default FALSE, indicating whether gene expression values summarised by mean or median between replicates.
 #' @param summarise_method a character string either "mean" or "median" by which normalised gene expression values will be summarised between replicates.
 #'
-#' @return a tbl.
+#' @return a dataframe.
 #' @export
 #'
 #' @examples
@@ -823,8 +798,8 @@ get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, s
 
 
 
-#' Get genes from based on their differential regulation (up, down, both, other and all)
-#'
+#' Get genes based on their differential regulation
+#' @details For a given differential comparison this function returns `up`, `down`, `both`, `other` and `all` genes.
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param sample_comparison a character string denoting a sample comparison for which genes to be obtained.
 #' @param regulation a character string, default \code{both}. Values can be one of the \code{up}, \code{down}, \code{both}, \code{other}, \code{all}.
@@ -894,9 +869,9 @@ get_genes_by_regulation <-  function(x, sample_comparison , regulation = "both" 
 
 
 
-#' Generate upset plots for DEG between comparisons.
-#' @description  Given a set of DEG comparisons, the functions returns [UpSetR::upset()] plots for up and down genes for any 2 comparisons.
-#' For each upset plot generated function also returns interaction in form of tibble.
+#' Generate upset plots for differently expressed genes between comparisons.
+#' @description  For a given set of DEG comparisons, the functions returns [UpSetR::upset()] plots for up and down genes between any 2 comparisons.
+#' For each upset plot generated function also returns interaction between gene sets in form of dataframe.
 #' @param x x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param sample_comparisons a character vector denoting  sample comparisons between upset plot to be generated.
 #' @param color_up a character string denoting a valid color code for bars in upset plot for up regulated genes.
@@ -904,10 +879,6 @@ get_genes_by_regulation <-  function(x, sample_comparison , regulation = "both" 
 #'
 #' @return an object of named list where each element is a list of two - 1)  an upset plots  [UpSetR::upset()] and their intersections in form of tibble.
 #' @export
-#' @importFrom  UpSetR upset fromList
-#' @importFrom  purrr map set_names cross map_chr
-#' @importFrom  glue glue
-#' @importFrom  magrittr %>% %<>%
 #' @examples
 #' \dontrun{
 #'
@@ -960,7 +931,6 @@ plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_d
 
 
 
-##
 #' Generate upset plots for DEG between a comparison.
 #' @description This function called from [parcutils::plot_deg_upsets()].
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
@@ -1032,7 +1002,7 @@ piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_do
 
 
 
-#' Generate a heatmap of normalised gene expression values, z-score or log2 fold-change values.
+#' Generate a heatmap of normalised gene expression values, z-score or log2Fold-change values.
 #' @description Heatmap is a common tool to show gene expression pattern across samples in RNA-seq experiment.
 #' While doing data exploration, it is a common practice to generate several heatmaps to identify interesting
 #' patterns of gene expression across sample. Most heatmap generating tools require data in a tabular form.
@@ -1359,7 +1329,7 @@ get_fold_change_heatmap <-  function(x,
 
 
 
-#' Filter expression matrix (dataframe) by genes(first column).
+#' Filter expression matrix (dataframe) by genes (first column).
 #'
 #' @param df a gene expression data frame
 #' @param genes acharacter vector of genes to be filtred from df.
@@ -1463,10 +1433,10 @@ fix_hm_colors <- function(hm_matrix){
 
 
 
-## given a heatmap,  x and destination file  save expression values and / or zscore values.
+
 
 #' Get data from a heatmap in the same order.
-#'
+#' @description extract genes or gene clusters from the heatmap in same order.
 #' @param h an object of class [ComplexHeatmap::Heatmap()]
 #'
 #' @return a tbl.

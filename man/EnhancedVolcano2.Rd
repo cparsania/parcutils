@@ -2,7 +2,7 @@
 % Please edit documentation in R/viz_related.R
 \name{EnhancedVolcano2}
 \alias{EnhancedVolcano2}
-\title{Wrapper around EnhancedVolcano::EnhancedVolcano}
+\title{Wrapper around \code{\link[EnhancedVolcano:EnhancedVolcano]{EnhancedVolcano::EnhancedVolcano()}}}
 \usage{
 EnhancedVolcano2(
   toptable,
@@ -45,5 +45,5 @@ EnhancedVolcano2(
 a volcano plot
 }
 \description{
-Wrapper around EnhancedVolcano::EnhancedVolcano
+Wrapper around \code{\link[EnhancedVolcano:EnhancedVolcano]{EnhancedVolcano::EnhancedVolcano()}}
 }

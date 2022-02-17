@@ -2,7 +2,7 @@
 % Please edit documentation in R/general_bioinfo.R
 \name{normalise_counts}
 \alias{normalise_counts}
-\title{Derive normalized counts from raw read numbers}
+\title{Convert raw read counts in to normalised values.}
 \usage{
 normalise_counts(x, .vars, method = "TPM")
 }
@@ -17,20 +17,20 @@ normalise_counts(x, .vars, method = "TPM")
 A dataframe with all mandatory columns along with columns mentioned in \code{.vars}. Remaining columns from \code{x} will be dropped.
 }
 \description{
-This function allows converting raw read counts into normalized counts either by method Tags Per Million (TPM) or Reads Per Kilo-base Per Million (RPKM)
+Reads Per Kilo Base Per Million (RPKM) and Tags Per Million (TPM) are two most waidely used normalisation methods in RNA-seq experiments.
+This function convert raw read counts either into RPKM or TPM values.
 }
 \details{
 implemntaion of RPKM and TPM can be seen in functions \code{\link[=get_tpm]{get_tpm()}} and \code{\link[=get_rpkm]{get_rpkm()}} respectively.
 }
 \examples{
-\dontrun{
 set.seed(123)
-tt <- tibble::tibble(GeneID = c(paste("Gene_",1:5,sep = "")),
-                     Chr = "Chr1",
-                     Start = sample(1:100, 5),
-                     End = sample(100:200,5),
-                     Strand = sample(c("+" ,"-"), 5, replace = T),
-                     Length = (End - Start )+ 1 )
+tt <- tibble::tibble(gene_id = c(paste("Gene_",1:5,sep = "")),
+                     chr = "Chr1",
+                     start = sample(1:100, 5),
+                     end = sample(100:200,5),
+                     strand = sample(c("+" ,"-"), 5, replace = T),
+                     length = (End - Start )+ 1 )
 
 tt \%<>\% dplyr::mutate(sample_1 = sample(c(1:100),5)*10 ,
                       sample_2 = sample(c(1:100),5)*10 ,
@@ -40,5 +40,8 @@ tt \%<>\% dplyr::mutate(sample_1 = sample(c(1:100),5)*10 ,
 
 normalise_counts(x = tt, .vars = c("sample_1","sample_2") ,method = "TPM")
 normalise_counts(x = tt, .vars = c("sample_1","sample_2") ,method = "RPKM")
+
 }
+\seealso{
+\code{\link[=get_tpm]{get_tpm()}}  \code{\link[=get_rpkm]{get_rpkm()}}
 }

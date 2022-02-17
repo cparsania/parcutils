@@ -24,11 +24,11 @@ get_normalised_expression_matrix(
 \item{summarise_method}{a character string either "mean" or "median" by which normalised gene expression values will be summarised between replicates.}
 }
 \value{
-a tbl.
+a dataframe.
 }
 \description{
 This function returns a dataframe having first column gene names and subsequent columns are
-normalised gene expression values for the comparisons passed through sample_comparisons.
+normalised gene expression values for the samples passed through \code{samples}.
 }
 \examples{
 \dontrun{

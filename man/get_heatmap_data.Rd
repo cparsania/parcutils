@@ -13,7 +13,7 @@ get_heatmap_data(h)
 a tbl.
 }
 \description{
-Get data from a heatmap in the same order.
+extract genes or gene clusters from the heatmap in same order.
 }
 \examples{
 \dontrun{

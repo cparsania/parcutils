@@ -2,7 +2,7 @@
 % Please edit documentation in R/viz_related.R
 \name{get_pairwise_corr_plot}
 \alias{get_pairwise_corr_plot}
-\title{Get replicates correlation scatter plot}
+\title{Get a scatter plot showing correlation between replicates.}
 \usage{
 get_pairwise_corr_plot(x, samples = NULL, genes = NULL)
 }
@@ -17,7 +17,7 @@ get_pairwise_corr_plot(x, samples = NULL, genes = NULL)
 a named list.
 }
 \description{
-Get replicates correlation scatter plot
+Get a scatter plot showing correlation between replicates.
 }
 \examples{
 \dontrun{

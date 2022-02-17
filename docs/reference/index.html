@@ -55,22 +55,23 @@
           
           <code><a href="get_star_align_log_summary.html">get_star_align_log_summary()</a></code> 
         </dt>
-        <dd>Get alignment summary of STAR aligner</dd>
+        <dd>Get alignment summary from the output of STAR program.</dd>
       </dl><dl><dt>
           
           <code><a href="normalise_counts.html">normalise_counts()</a></code> 
         </dt>
-        <dd>Derive normalized counts from raw read numbers</dd>
+        <dd>Convert raw read counts in to normalised values.</dd>
       </dl><dl><dt>
           
           <code><a href="run_deseq_analysis.html">run_deseq_analysis()</a></code> 
         </dt>
-        <dd>Perform differential expression analysis using <code><a href="https://rdrr.io/pkg/DESeq2/man/DESeq.html" class="external-link">DESeq2::DESeq()</a></code></dd>
+        <dd>Run differential expression (DE) analysis for several comparisosns at a time. Internally it uses
+<code><a href="https://rdrr.io/pkg/DESeq2/man/DESeq.html" class="external-link">DESeq2::DESeq()</a></code> to perform DE analysis.</dd>
       </dl><dl><dt>
           
           <code><a href="categorize_diff_genes.html">categorize_diff_genes()</a></code> 
         </dt>
-        <dd>Categorize diff genes based on log2FC, p-value and p-adj value.</dd>
+        <dd>Categorize diff genes in to <code>up</code> and <code>down</code> based on log2FC, p-value and p-adj values.</dd>
       </dl><dl><dt>
           
           <code><a href="get_fold_change_matrix.html">get_fold_change_matrix()</a></code> 
@@ -85,7 +86,7 @@
           
           <code><a href="get_genes_by_regulation.html">get_genes_by_regulation()</a></code> 
         </dt>
-        <dd>Get genes from based on their differential regulation (up, down, both, other and all)</dd>
+        <dd>Get genes based on their differential regulation</dd>
       </dl><dl><dt>
           
           <code><a href="group_replicates_by_sample.html">group_replicates_by_sample()</a></code> 
@@ -106,7 +107,7 @@
           
           <code><a href="get_pairwise_corr_plot.html">get_pairwise_corr_plot()</a></code> 
         </dt>
-        <dd>Get replicates correlation scatter plot</dd>
+        <dd>Get a scatter plot showing correlation between replicates.</dd>
       </dl><dl><dt>
           
           <code><a href="get_gene_expression_box_plot.html">get_gene_expression_box_plot()</a></code> 
@@ -116,7 +117,7 @@
           
           <code><a href="get_gene_expression_heatmap.html">get_gene_expression_heatmap()</a></code> <code><a href="get_gene_expression_heatmap.html">get_fold_change_heatmap()</a></code> 
         </dt>
-        <dd>Generate a heatmap of normalised gene expression values, z-score or log2 fold-change values.</dd>
+        <dd>Generate a heatmap of normalised gene expression values, z-score or log2Fold-change values.</dd>
       </dl><dl><dt>
           
           <code><a href="get_heatmap_data.html">get_heatmap_data()</a></code> 
@@ -136,7 +137,7 @@
           
           <code><a href="EnhancedVolcano2.html">EnhancedVolcano2()</a></code> 
         </dt>
-        <dd>Wrapper around EnhancedVolcano::EnhancedVolcano</dd>
+        <dd>Wrapper around <code><a href="https://rdrr.io/pkg/EnhancedVolcano/man/EnhancedVolcano.html" class="external-link">EnhancedVolcano::EnhancedVolcano()</a></code></dd>
       </dl><dl><dt>
           
           <code><a href="get_volcano_plot.html">get_volcano_plot()</a></code> 
@@ -146,7 +147,7 @@
           
           <code><a href="plot_deg_upsets.html">plot_deg_upsets()</a></code> 
         </dt>
-        <dd>Generate upset plots for DEG between comparisons.</dd>
+        <dd>Generate upset plots for differently expressed genes between comparisons.</dd>
       </dl><dl><dt>
           
           <code><a href="plot_regions_relative_to_reference.html">plot_regions_relative_to_reference()</a></code> 
