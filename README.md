@@ -364,13 +364,18 @@ ComplexHeatmap::draw(hm1)
 <img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
 
 ``` r
-# Visualise  z-score 
+# Visualise  z-score and show all replicates.
 
 hm2 <- parcutils::get_gene_expression_heatmap(x = res, 
-                                       samples = c("control","treatment1" , "treatment2") , name = "Z-score",
+                                       samples = c("control","treatment1") , 
+                                       name = "Z-score",
+                                       summarise_replicates = F, 
                                        genes = genes_for_hm , 
                                        convert_zscore = TRUE, 
                                        cluster_columns = FALSE)
+#> Warning in parcutils::get_gene_expression_heatmap(x =
+#> res, samples = c("control", : Genes having value NA -
+#> ENSG00000170820:FSHR,ENSG00000129862:VCY1B are removed from heatmap.
 
 
 ComplexHeatmap::draw(hm2)
@@ -421,7 +426,7 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% pri
 ### Alignment summary
 
 ``` r
-star_align_log_file <- system.file("extdata" , "toy_star_align_Log.final.out" , package = "parcutils")
+star_align_log_file <- system.file("extdata" , "a_Log.final.out" , package = "parcutils")
 
 x =  parcutils::get_star_align_log_summary(log_file = star_align_log_file)
 
@@ -442,6 +447,22 @@ print(x)
 #> 11 % of reads unmapped: too short          2.20%   
 #> 12 Number of reads unmapped: other         14418   
 #> 13 % of reads unmapped: other              0.03%
+
+
+# plot alignment summary
+
+
+star_align_log_file_dir <- system.file("extdata" , package = "parcutils")
+
+star_align_log_files <- fs::dir_ls(star_align_log_file_dir, 
+                                   glob = "*Log.final.out" ,
+                                   recurse = T,type = "file")
+names(star_align_log_files) <- NULL
+parcutils::get_star_align_log_summary_plot(x = star_align_log_files,
+                                col_total_reads = "red", 
+                                col_mapped_reads  = "blue") 
 ```
+
+<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
 
 ## 

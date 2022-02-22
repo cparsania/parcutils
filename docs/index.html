@@ -399,13 +399,18 @@
 <span class="fu">ComplexHeatmap</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">draw</a></span><span class="op">(</span><span class="va">hm1</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-15-1.png" width="100%"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Visualise  z-score </span>
+<code class="sourceCode R"><span class="co"># Visualise  z-score and show all replicates.</span>
 
 <span class="va">hm2</span> <span class="op">&lt;-</span> <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_gene_expression_heatmap.html">get_gene_expression_heatmap</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, 
-                                       samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span>,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span> , name <span class="op">=</span> <span class="st">"Z-score"</span>,
+                                       samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span>,<span class="st">"treatment1"</span><span class="op">)</span> , 
+                                       name <span class="op">=</span> <span class="st">"Z-score"</span>,
+                                       summarise_replicates <span class="op">=</span> <span class="cn">F</span>, 
                                        genes <span class="op">=</span> <span class="va">genes_for_hm</span> , 
                                        convert_zscore <span class="op">=</span> <span class="cn">TRUE</span>, 
                                        cluster_columns <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="co">#&gt; Warning in parcutils::get_gene_expression_heatmap(x =</span>
+<span class="co">#&gt; res, samples = c("control", : Genes having value NA -</span>
+<span class="co">#&gt; ENSG00000170820:FSHR,ENSG00000129862:VCY1B are removed from heatmap.</span>
 
 
 <span class="fu">ComplexHeatmap</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">draw</a></span><span class="op">(</span><span class="va">hm2</span><span class="op">)</span></code></pre></div>

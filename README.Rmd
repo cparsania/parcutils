@@ -49,11 +49,11 @@ if(require("devtools") && require("BiocManager")){
 
 ```
 
-## RNA-seq analysis 
+## RNA-seq analysis
 
-### Differential expression analysis 
+### Differential expression analysis
 
-#### Prepare a count table 
+#### Prepare a count table
 
 ```{r, message=FALSE, warning=FALSE}
 
@@ -64,7 +64,7 @@ count_data <- readr::read_delim(count_file, delim = "\t")
 count_data %>% head() %>% print()
 ```
 
-#### Group replicates by samples.  
+#### Group replicates by samples.
 
 ```{r , message=FALSE , warning=FALSE}
 
@@ -124,7 +124,7 @@ print(res$dsr_tibble_deg)
 
 As described below, there are several helper functions to get data from the `res` .
 
-## Get data from `res`  using helper functions
+## Get data from `res` using helper functions
 
 ```{r}
 
@@ -167,9 +167,9 @@ parcutils::group_replicates_by_sample(res)
 
 ```
 
-## Generate several visualizations from `res` 
+## Generate several visualizations from `res`
 
-### Visualize  pairwise correlation between replicates
+### Visualize pairwise correlation between replicates
 
 ```{r}
 
@@ -185,7 +185,7 @@ parcutils::get_pca_plot(x = res,
 
 ```
 
-### Visualize gene expression distribution using box plot 
+### Visualize gene expression distribution using box plot
 
 ```{r}
 
@@ -205,7 +205,7 @@ parcutils::get_gene_expression_box_plot(x = res,
 
 ### Visualize genes by heatmaps
 
-```{r , fig.width=3 , fig.height=4}
+```{r , fig.width=7,fig.height=5}
 
 
 
@@ -225,16 +225,20 @@ hm1 <- parcutils::get_gene_expression_heatmap(x = res,
                                        cluster_columns = FALSE)
 
 ComplexHeatmap::draw(hm1)
-# Visualise  z-score 
+
+# Visualise  z-score and show all replicates.
 
 hm2 <- parcutils::get_gene_expression_heatmap(x = res, 
-                                       samples = c("control","treatment1" , "treatment2") , name = "Z-score",
+                                       samples = c("control","treatment1") , 
+                                       name = "Z-score",
+                                       summarise_replicates = F, 
                                        genes = genes_for_hm , 
                                        convert_zscore = TRUE, 
                                        cluster_columns = FALSE)
 
 
 ComplexHeatmap::draw(hm2)
+
 # log2 FC heatamap
 hm3 <- parcutils::get_fold_change_heatmap(x = res, 
                                    sample_comparisons = res$comp, 
@@ -243,10 +247,9 @@ hm3 <- parcutils::get_fold_change_heatmap(x = res,
 
 ComplexHeatmap::draw(hm3)
 
-
 ```
 
-### Visualize differential genes overlap between comparison 
+### Visualize differential genes overlap between comparison
 
 ```{r}
 
@@ -259,18 +262,31 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_plot %>% print()
 us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% print()
 ```
 
-## Other functions 
+## Other functions
 
-### Alignment summary 
+### Alignment summary
 
-```{r}
+```{r , message=FALSE,warning=FALSE}
 
-star_align_log_file <- system.file("extdata" , "toy_star_align_Log.final.out" , package = "parcutils")
+star_align_log_file <- system.file("extdata" , "a_Log.final.out" , package = "parcutils")
 
 x =  parcutils::get_star_align_log_summary(log_file = star_align_log_file)
 
 print(x)
 
+
+# plot alignment summary
+
+
+star_align_log_file_dir <- system.file("extdata" , package = "parcutils")
+
+star_align_log_files <- fs::dir_ls(star_align_log_file_dir, 
+                                   glob = "*Log.final.out" ,
+                                   recurse = T,type = "file")
+names(star_align_log_files) <- NULL
+parcutils::get_star_align_log_summary_plot(x = star_align_log_files,
+                                col_total_reads = "red", 
+                                col_mapped_reads  = "blue") 
 ```
 
 ## 
