@@ -14,7 +14,6 @@
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @examples
-#' \dontrun{
 #' library(ggplot2)
 #' dd <- iris %>%
 #'   tidyr::pivot_longer(cols = Sepal.Length:Petal.Width)
@@ -33,7 +32,6 @@
 #'   geom_boxplot(aes(x = name, y = value))
 #' sort_geom_box(x = ss,decreasing = T)
 #' sort_geom_box(x = ss,decreasing = F)
-#' }
 #'
 sort_geom_box <- function(x, decreasing = T){
   #x <- ss

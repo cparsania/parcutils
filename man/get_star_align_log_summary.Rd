@@ -20,7 +20,7 @@ This function parse *Log.final.out file and extract the mapping statistics in a 
 }
 \examples{
 
-star_align_log_file <- system.file("extdata" , "toy_star_align_Log.final.out" , package = "parcutils")
+star_align_log_file <- system.file("extdata" , "a_Log.final.out" , package = "parcutils")
 x =  get_star_align_log_summary(log_file = star_align_log_file)
 print(x)
 

@@ -18,7 +18,6 @@ a ggplot.
 Sort order of box obtained from geom_boxplot
 }
 \examples{
-\dontrun{
 library(ggplot2)
 dd <- iris \%>\%
   tidyr::pivot_longer(cols = Sepal.Length:Petal.Width)
@@ -37,6 +36,5 @@ ss <- dd \%>\%
   geom_boxplot(aes(x = name, y = value))
 sort_geom_box(x = ss,decreasing = T)
 sort_geom_box(x = ss,decreasing = F)
-}
 
 }
