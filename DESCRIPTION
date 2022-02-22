@@ -35,7 +35,8 @@ Imports:
     ggplot2,
     plyranges,
     stringr,
-    GGally
+    GGally,
+    fs
 Depends: 
     magrittr
 Remotes: 

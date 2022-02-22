@@ -82,7 +82,6 @@ the code readability. Besides that,  output of this function can subsequently us
 // TO DO : Explain formats of count file and count dataframe.
 }
 \examples{
-\dontrun{
 
 count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
 count_data <- readr::read_delim(count_file, delim = "\t")
@@ -120,6 +119,5 @@ print(res$dsr_tibble_deg)
 
 print(res$deg_summmary)
 
-}
 
 }

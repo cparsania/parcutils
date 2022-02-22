@@ -136,10 +136,17 @@ the genes which have minimum counts 10 in at least 2 sample groups will be used 
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="va">count_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,<span class="st">"toy_counts.txt"</span> , package <span class="op">=</span> <span class="st">"parcutils"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">count_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_delim</a></span><span class="op">(</span><span class="va">count_file</span>, delim <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">5000</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">10</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Delimiter:</span> "\t"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">chr</span> (1): gene_id</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">dbl</span> (9): control_rep1, control_rep2, control_rep3, treat1_rep1, treat1_rep2,...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use <span style="color: #C6C6C6; background-color: #262626;">`spec()`</span> to retrieve the full column specification for this data.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Specify the column types or set <span style="color: #C6C6C6; background-color: #262626;">`show_col_types = FALSE`</span> to quiet this message.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">sample_info</span> <span class="op">&lt;-</span> <span class="va">count_data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="va">.</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>  <span class="op">%&gt;%</span></span>
 <span class="r-in"> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>samples <span class="op">=</span> <span class="va">.</span> , groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">)</span></span>
@@ -151,30 +158,190 @@ the genes which have minimum counts 10 in at least 2 sample groups will be used 
 <span class="r-in">                         group_numerator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment1"</span>, <span class="st">"treatment2"</span><span class="op">)</span> ,</span>
 <span class="r-in">                         group_denominator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span><span class="op">)</span>,</span>
 <span class="r-in">                         column_samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control_rep1"</span>, <span class="st">"treat1_rep1"</span>, <span class="st">"treat2_rep1"</span>, <span class="st">"control_rep2"</span>, <span class="st">"treat1_rep2"</span>, <span class="st">"treat2_rep2"</span>, <span class="st">"control_rep3"</span>, <span class="st">"treat1_rep3"</span>, <span class="st">"treat2_rep3"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Running DESeq2 ...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> converting counts to integer mode</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>some variables in design formula are characters, converting to factors</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> estimating size factors</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> estimating dispersions</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> gene-wise dispersion estimates</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> mean-dispersion relationship</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> final dispersion estimates</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> fitting model and testing</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Summarizing DEG ...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Done.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">res</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   comp                  numerator denominator norm_counts dsr   dsr_tibble dsr_tibble_deg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;named lis&gt;</span> <span style="color: #949494; font-style: italic;">&lt;nam&gt;</span> <span style="color: #949494; font-style: italic;">&lt;named li&gt;</span> <span style="color: #949494; font-style: italic;">&lt;named list&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> treatment1_VS_control treatmen… control     <span style="color: #949494;">&lt;named lis</span>… <span style="color: #949494;">&lt;DES</span>… <span style="color: #949494;">&lt;tibble [</span>… <span style="color: #949494;">&lt;tibble [4,03</span>…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> treatment2_VS_control treatmen… control     <span style="color: #949494;">&lt;named lis</span>… <span style="color: #949494;">&lt;DES</span>… <span style="color: #949494;">&lt;tibble [</span>… <span style="color: #949494;">&lt;tibble [4,03</span>…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 1 more variable: deg_summmary &lt;named list&gt;</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## all comparisons</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">comp</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "treatment1_VS_control" "treatment2_VS_control"</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## DESEq result object(s)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">dsr</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment1_VS_control</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log2 fold change (MLE): sample_groups treatment1 vs control </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Wald test p-value: sample groups treatment1 vs control </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 4034 rows and 6 columns</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           baseMean log2FoldChange     lfcSE      stat</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000154342:WNT3A     715.7962     -0.6014175 0.0931795 -6.454399</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000196415:PRTN3    4242.8862     -0.0713742 0.0748438 -0.953643</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000173020:GRK2      671.9682     -0.2560099 0.1139957 -2.245787</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000140598:EFL1       80.7054     -0.1764337 0.2040219 -0.864778</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000139263:LRIG3    1279.0478     -0.1378660 0.1788328 -0.770921</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ...                            ...            ...       ...       ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000198046:ZNF667     99.3996     -0.3200579 0.1852360 -1.727839</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000231051:USP17L28   78.8482     -0.0354036 0.2034285 -0.174035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000188783:PRELP    1106.4538      0.1615409 0.0828499  1.949802</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000213822:CEACAM18  834.6362     -0.2330325 0.0727700 -3.202317</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000167588:GPD1     2225.9670      0.3957288 0.0767754  5.154371</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                               pvalue        padj</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            &lt;numeric&gt;   &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000154342:WNT3A    1.08649e-10 6.58175e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000196415:PRTN3    3.40264e-01 5.52032e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000173020:GRK2     2.47177e-02 9.02358e-02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000140598:EFL1     3.87161e-01 5.92821e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000139263:LRIG3    4.40754e-01 6.38483e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ...                              ...         ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000198046:ZNF667   8.40172e-02 2.18175e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000231051:USP17L28 8.61838e-01 9.35689e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000188783:PRELP    5.11997e-02 1.53283e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000213822:CEACAM18 1.36327e-03 9.68022e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000167588:GPD1     2.54484e-07 7.41830e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment2_VS_control</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> log2 fold change (MLE): sample_groups treatment2 vs control </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Wald test p-value: sample groups treatment2 vs control </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 4034 rows and 6 columns</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           baseMean log2FoldChange     lfcSE       stat</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000154342:WNT3A     715.7962      0.5571318 0.0895747   6.219743</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000196415:PRTN3    4242.8862      0.7288109 0.0744285   9.792097</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000173020:GRK2      671.9682     -0.5424934 0.1157404  -4.687156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000140598:EFL1       80.7054      0.0145278 0.2046425   0.070991</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000139263:LRIG3    1279.0478     -1.1836335 0.1804990  -6.557562</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ...                            ...            ...       ...        ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000198046:ZNF667     99.3996    -0.02731340 0.1844465 -0.1480831</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000231051:USP17L28   78.8482    -0.58915168 0.2158321 -2.7296765</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000188783:PRELP    1106.4538     0.27690150 0.0831212  3.3312999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000213822:CEACAM18  834.6362    -0.54878553 0.0750902 -7.3083473</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000167588:GPD1     2225.9670    -0.00404444 0.0776078 -0.0521138</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                               pvalue        padj</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            &lt;numeric&gt;   &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000154342:WNT3A    4.97971e-10 1.55722e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000196415:PRTN3    1.21745e-22 8.13110e-22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000173020:GRK2     2.77028e-06 6.29949e-06</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000140598:EFL1     9.43405e-01 9.51662e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000139263:LRIG3    5.46947e-11 1.84019e-10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ...                              ...         ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000198046:ZNF667   8.82277e-01 8.98311e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000231051:USP17L28 6.33965e-03 9.94329e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000188783:PRELP    8.64414e-04 1.51348e-03</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000213822:CEACAM18 2.70448e-13 1.06334e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000167588:GPD1     9.58438e-01 9.64655e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## DESEq result data frame</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">dsr_tibble</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment1_VS_control</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4,034 × 7</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    gene_id                 baseMean log2FoldChange  lfcSE   stat   pvalue     padj</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ENSG00000154342:WNT3A     716.          -<span style="color: #BB0000;">0.601</span>  0.093<span style="text-decoration: underline;">2</span> -<span style="color: #BB0000;">6.45</span>  1.09<span style="color: #949494;">e</span><span style="color: #BB0000;">-10</span>  6.58<span style="color: #949494;">e</span><span style="color: #BB0000;">-9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ENSG00000196415:PRTN3    <span style="text-decoration: underline;">4</span>243.          -<span style="color: #BB0000;">0.071</span><span style="color: #BB0000; text-decoration: underline;">4</span> 0.074<span style="text-decoration: underline;">8</span> -<span style="color: #BB0000;">0.954</span> 3.40<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>  5.52<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ENSG00000173020:GRK2      672.          -<span style="color: #BB0000;">0.256</span>  0.114  -<span style="color: #BB0000;">2.25</span>  2.47<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span>  9.02<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ENSG00000140598:EFL1       80.7         -<span style="color: #BB0000;">0.176</span>  0.204  -<span style="color: #BB0000;">0.865</span> 3.87<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>  5.93<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ENSG00000139263:LRIG3    <span style="text-decoration: underline;">1</span>279.          -<span style="color: #BB0000;">0.138</span>  0.179  -<span style="color: #BB0000;">0.771</span> 4.41<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>  6.38<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ENSG00000165898:ISCA2    <span style="text-decoration: underline;">4</span>072.          -<span style="color: #BB0000;">0.359</span>  0.181  -<span style="color: #BB0000;">1.99</span>  4.69<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span>  1.44<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ENSG00000179454:KLHL28  <span style="text-decoration: underline;">13</span>435.          -<span style="color: #BB0000;">0.062</span><span style="color: #BB0000; text-decoration: underline;">7</span> 0.098<span style="text-decoration: underline;">9</span> -<span style="color: #BB0000;">0.634</span> 5.26<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>  7.11<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ENSG00000188868:ZNF563    529.          -<span style="color: #BB0000;">0.326</span>  0.111  -<span style="color: #BB0000;">2.93</span>  3.36<span style="color: #949494;">e</span><span style="color: #BB0000;">- 3</span>  2.01<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> ENSG00000249158:PCDHA11     2.38        -<span style="color: #BB0000;">2.21</span>   1.40   -<span style="color: #BB0000;">1.58</span>  1.14<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> <span style="color: #BB0000;">NA</span>   <span style="color: #949494;"> </span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> ENSG00000110852:CLEC2B      7.51        -<span style="color: #BB0000;">0.698</span>  0.672  -<span style="color: #BB0000;">1.04</span>  2.99<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> <span style="color: #BB0000;">NA</span>   <span style="color: #949494;"> </span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 4,024 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment2_VS_control</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4,034 × 7</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    gene_id              baseMean log2FoldChange  lfcSE    stat   pvalue     padj</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ENSG00000154342:WNT…   716.          0.557   0.089<span style="text-decoration: underline;">6</span>  6.22   4.98<span style="color: #949494;">e</span><span style="color: #BB0000;">-10</span> 1.56<span style="color: #949494;">e</span><span style="color: #BB0000;">- 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ENSG00000196415:PRT…  <span style="text-decoration: underline;">4</span>243.          0.729   0.074<span style="text-decoration: underline;">4</span>  9.79   1.22<span style="color: #949494;">e</span><span style="color: #BB0000;">-22</span> 8.13<span style="color: #949494;">e</span><span style="color: #BB0000;">-22</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ENSG00000173020:GRK2   672.         -<span style="color: #BB0000;">0.542</span>   0.116  -<span style="color: #BB0000;">4.69</span>   2.77<span style="color: #949494;">e</span><span style="color: #BB0000;">- 6</span> 6.30<span style="color: #949494;">e</span><span style="color: #BB0000;">- 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ENSG00000140598:EFL1    80.7         0.014<span style="text-decoration: underline;">5</span>  0.205   0.071<span style="text-decoration: underline;">0</span> 9.43<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 9.52<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ENSG00000139263:LRI…  <span style="text-decoration: underline;">1</span>279.         -<span style="color: #BB0000;">1.18</span>    0.180  -<span style="color: #BB0000;">6.56</span>   5.47<span style="color: #949494;">e</span><span style="color: #BB0000;">-11</span> 1.84<span style="color: #949494;">e</span><span style="color: #BB0000;">-10</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ENSG00000165898:ISC…  <span style="text-decoration: underline;">4</span>072.          0.193   0.181   1.07   2.86<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 3.32<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ENSG00000179454:KLH… <span style="text-decoration: underline;">13</span>435.          0.025<span style="text-decoration: underline;">7</span>  0.099<span style="text-decoration: underline;">0</span>  0.260  7.95<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 8.21<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ENSG00000188868:ZNF…   529.          0.009<span style="text-decoration: underline;">83</span> 0.111   0.089<span style="text-decoration: underline;">0</span> 9.29<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 9.40<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> ENSG00000249158:PCD…     2.38       -<span style="color: #BB0000;">1.31</span>    1.31   -<span style="color: #BB0000;">1.00</span>   3.17<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 3.65<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> ENSG00000110852:CLE…     7.51       -<span style="color: #BB0000;">1.39</span>    0.731  -<span style="color: #BB0000;">1.90</span>   5.69<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 7.65<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 4,024 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## DESEq result data frame  DEG assigned, look at the columns 'signif' and 'regul'</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">dsr_tibble_deg</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment1_VS_control</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4,034 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    gene_id  baseMean log2FoldChange  lfcSE   stat   pvalue     padj signif regul</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ENSG000…   716.          -<span style="color: #BB0000;">0.601</span>  0.093<span style="text-decoration: underline;">2</span> -<span style="color: #BB0000;">6.45</span>  1.09<span style="color: #949494;">e</span><span style="color: #BB0000;">-10</span>  6.58<span style="color: #949494;">e</span><span style="color: #BB0000;">-9</span> p-val… other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ENSG000…  <span style="text-decoration: underline;">4</span>243.          -<span style="color: #BB0000;">0.071</span><span style="color: #BB0000; text-decoration: underline;">4</span> 0.074<span style="text-decoration: underline;">8</span> -<span style="color: #BB0000;">0.954</span> 3.40<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>  5.52<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> NS     other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ENSG000…   672.          -<span style="color: #BB0000;">0.256</span>  0.114  -<span style="color: #BB0000;">2.25</span>  2.47<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span>  9.02<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> p-val… other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ENSG000…    80.7         -<span style="color: #BB0000;">0.176</span>  0.204  -<span style="color: #BB0000;">0.865</span> 3.87<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>  5.93<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> NS     other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ENSG000…  <span style="text-decoration: underline;">1</span>279.          -<span style="color: #BB0000;">0.138</span>  0.179  -<span style="color: #BB0000;">0.771</span> 4.41<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>  6.38<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> NS     other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ENSG000…  <span style="text-decoration: underline;">4</span>072.          -<span style="color: #BB0000;">0.359</span>  0.181  -<span style="color: #BB0000;">1.99</span>  4.69<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span>  1.44<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> p-val… other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ENSG000… <span style="text-decoration: underline;">13</span>435.          -<span style="color: #BB0000;">0.062</span><span style="color: #BB0000; text-decoration: underline;">7</span> 0.098<span style="text-decoration: underline;">9</span> -<span style="color: #BB0000;">0.634</span> 5.26<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>  7.11<span style="color: #949494;">e</span><span style="color: #BB0000;">-1</span> NS     other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ENSG000…   529.          -<span style="color: #BB0000;">0.326</span>  0.111  -<span style="color: #BB0000;">2.93</span>  3.36<span style="color: #949494;">e</span><span style="color: #BB0000;">- 3</span>  2.01<span style="color: #949494;">e</span><span style="color: #BB0000;">-2</span> p-val… other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> ENSG000…     2.38        -<span style="color: #BB0000;">2.21</span>   1.40   -<span style="color: #BB0000;">1.58</span>  1.14<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> <span style="color: #BB0000;">NA</span>   <span style="color: #949494;"> </span>   log2FC other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> ENSG000…     7.51        -<span style="color: #BB0000;">0.698</span>  0.672  -<span style="color: #BB0000;">1.04</span>  2.99<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> <span style="color: #BB0000;">NA</span>   <span style="color: #949494;"> </span>   NS     other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 4,024 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment2_VS_control</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4,034 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    gene_id baseMean log2FoldChange  lfcSE    stat   pvalue     padj signif regul</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ENSG00…   716.          0.557   0.089<span style="text-decoration: underline;">6</span>  6.22   4.98<span style="color: #949494;">e</span><span style="color: #BB0000;">-10</span> 1.56<span style="color: #949494;">e</span><span style="color: #BB0000;">- 9</span> p-val… other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ENSG00…  <span style="text-decoration: underline;">4</span>243.          0.729   0.074<span style="text-decoration: underline;">4</span>  9.79   1.22<span style="color: #949494;">e</span><span style="color: #BB0000;">-22</span> 8.13<span style="color: #949494;">e</span><span style="color: #BB0000;">-22</span> p-val… other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ENSG00…   672.         -<span style="color: #BB0000;">0.542</span>   0.116  -<span style="color: #BB0000;">4.69</span>   2.77<span style="color: #949494;">e</span><span style="color: #BB0000;">- 6</span> 6.30<span style="color: #949494;">e</span><span style="color: #BB0000;">- 6</span> p-val… other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ENSG00…    80.7         0.014<span style="text-decoration: underline;">5</span>  0.205   0.071<span style="text-decoration: underline;">0</span> 9.43<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 9.52<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> NS     other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ENSG00…  <span style="text-decoration: underline;">1</span>279.         -<span style="color: #BB0000;">1.18</span>    0.180  -<span style="color: #BB0000;">6.56</span>   5.47<span style="color: #949494;">e</span><span style="color: #BB0000;">-11</span> 1.84<span style="color: #949494;">e</span><span style="color: #BB0000;">-10</span> p-val… Down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ENSG00…  <span style="text-decoration: underline;">4</span>072.          0.193   0.181   1.07   2.86<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 3.32<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> NS     other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ENSG00… <span style="text-decoration: underline;">13</span>435.          0.025<span style="text-decoration: underline;">7</span>  0.099<span style="text-decoration: underline;">0</span>  0.260  7.95<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 8.21<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> NS     other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ENSG00…   529.          0.009<span style="text-decoration: underline;">83</span> 0.111   0.089<span style="text-decoration: underline;">0</span> 9.29<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 9.40<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> NS     other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> ENSG00…     2.38       -<span style="color: #BB0000;">1.31</span>    1.31   -<span style="color: #BB0000;">1.00</span>   3.17<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 3.65<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> log2FC other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> ENSG00…     7.51       -<span style="color: #BB0000;">1.39</span>    0.731  -<span style="color: #BB0000;">1.90</span>   5.69<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 7.65<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> log2FC other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 4,024 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## DEG summary</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">deg_summmary</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment1_VS_control</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   regul     n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Down     28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Up       13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> other  <span style="text-decoration: underline;">3</span>993</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment2_VS_control</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   regul     n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Down    502</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Up      333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> other  <span style="text-decoration: underline;">3</span>199</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
-<span class="r-in"><span class="op">}</span></span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
@@ -183,7 +350,7 @@ the genes which have minimum counts 10 in at least 2 sample groups will be used 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by The package maintainer.</p>
+  <p></p><p>Developed by Chirag Parsania.</p>
 </div>
 
 <div class="pkgdown-footer-right">
