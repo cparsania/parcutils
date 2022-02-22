@@ -73,11 +73,25 @@ This function parse *Log.final.out file and extract the mapping statistics in a 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">star_align_log_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span> , <span class="st">"toy_star_align_Log.final.out"</span> , package <span class="op">=</span> <span class="st">"parcutils"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">star_align_log_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span> , <span class="st">"a_Log.final.out"</span> , package <span class="op">=</span> <span class="st">"parcutils"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">x</span> <span class="op">=</span>  <span class="fu">get_star_align_log_summary</span><span class="op">(</span>log_file <span class="op">=</span> <span class="va">star_align_log_file</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in get_star_align_log_summary(log_file = star_align_log_file):</span> Extension of file must be "*Log.final.out</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in print(x):</span> object 'x' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 13 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    type                                    val     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Number of input reads                   41936201</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Uniquely mapped reads number            40090105</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Uniquely mapped reads %                 95.60%  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Average input read length               300     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Average mapped length                   298.24  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Number of reads mapped to multiple loci 900879  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> % of reads mapped to multiple loci      2.15%   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Number of reads mapped to too many loci 9335    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> % of reads mapped to too many loci      0.02%   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Number of reads unmapped: too short     921464  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> % of reads unmapped: too short          2.20%   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> Number of reads unmapped: other         14418   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> % of reads unmapped: other              0.03%   </span>
 <span class="r-in"></span>
 <span class="r-in"></span>
 </code></pre></div>
