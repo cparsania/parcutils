@@ -26,6 +26,7 @@ reference:
       - get_volcano_plot
       - plot_deg_upsets
       - plot_regions_relative_to_reference
+      - get_star_align_log_summary_plot
 
   - title: "Others"
     contents:
