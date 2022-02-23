@@ -2,7 +2,7 @@
 % Please edit documentation in R/rnaseq_related.R
 \name{get_normalised_expression_matrix}
 \alias{get_normalised_expression_matrix}
-\title{Prepare a matrix of normalised gene expression values}
+\title{Prepare a matrix of normalised gene expression values.}
 \usage{
 get_normalised_expression_matrix(
   x,
@@ -28,7 +28,9 @@ a dataframe.
 }
 \description{
 This function returns a dataframe having first column gene names and subsequent columns are
-normalised gene expression values for the samples passed through \code{samples}.
+normalised gene expression values for the samples passed through argument \code{samples}. Internally it filters
+the data from the  \code{norm_counts} of argument \code{x}. For more details on how \code{norm_counts} created refer to
+the documentation of \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.
 }
 \examples{
 count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")

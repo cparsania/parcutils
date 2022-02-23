@@ -42,7 +42,23 @@
 #' @param regul_based_upon either of 1, 2 or 3 which is internally passed to \link{categorize_diff_genes}
 #' @details
 #' // TO DO : Explain formats of count file and count dataframe.
-#' @return a data frame of DESeq results, DEG, and DEG summary.
+#' @return A dataframe having each row is a differential comparison. There are total 8 columns as explained below.
+#' + Column `comp` : It stores the name of differential comparison for each row.
+#' + Column `numerator` : It stores name of samples which were used as numerator for the differential comparison in each row.
+#' + Column `denominator` : It stores name of samples which were used as denominator for the differential comparison in each row.
+#' + Column `norm_counts` : This is a `named-list` column. Each row in this column is a list of two containing normalised
+#' genes expression values in a dataframe for the samples - numerator and denominator. The first column of the dataframe is `gene_id`
+#' and subsequent columns are gene expression values in replicates of corresponding samples. This normalised gene expression values are
+#' obtained using  `counts` slot of a DESeqDataSet object. e.g.: `counts(dds,normalized=TRUE)`
+#' + Column `dsr` : This is a `named-list` column stores an object of class [DESeq2::DESeqResults()] for the
+#' differential comparison in each row.
+#' + Column `dsr_tibble`:  This is a `named-list`column stores and an output of [DESeq2::DESeqResults()] in the dataframe format for the
+#' differential comparison in each row.
+#' + Column `dsr_tibble_deg`: The data in this column is same as in the column `dsr_tibble` except it contains two extra columns `signif` and `regul`.
+#' Values in the `signif` specifies statistical and fold change significance of the gene while values in the `regul` denotes whether the gene is `up` or `down`
+#' regulated or not.
+#' + Column `deg_summmary` : This is a `named-list` column. Each element of the list is a dataframe summarizing number of differential expressed gene for the differential
+#' comparison for each row.
 #' @export
 #' @importFrom tidyselect everything
 #' @examples
@@ -720,9 +736,11 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 
 
 
-#' Prepare a matrix of normalised gene expression values
+#' Prepare a matrix of normalised gene expression values.
 #' @description This function returns a dataframe having first column gene names and subsequent columns are
-#' normalised gene expression values for the samples passed through `samples`.
+#' normalised gene expression values for the samples passed through argument `samples`. Internally it filters
+#' the data from the  `norm_counts` of argument `x`. For more details on how `norm_counts` created refer to
+#' the documentation of [parcutils::run_deseq_analysis()].
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param samples a character vector denoting samples for which normalised gene expression values to be derived, Default NULL. If NULL it returns all samples in x

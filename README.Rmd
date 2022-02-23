@@ -61,18 +61,19 @@ count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
 
 count_data <- readr::read_delim(count_file, delim = "\t")
 
-count_data %>% head() %>% print()
+count_data 
 ```
 
 #### Group replicates by samples.
+
+To run DESeq2 sample replicates replicates needs to be grouped by sample.
 
 ```{r , message=FALSE , warning=FALSE}
 
 sample_info <- count_data %>% colnames() %>% .[-1]  %>%
  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2") , 
                                            each = 3))
-print(sample_info)
-
+sample_info
 
 ```
 
@@ -93,12 +94,11 @@ res <- parcutils::run_deseq_analysis(counts = count_data ,
 
 ```
 
-#### Let's have a look in to res
+#### Let's have a look in to `res`
 
 ```{r}
 
-print(res)
-
+res
 
 ```
 
@@ -106,23 +106,21 @@ print(res)
 
 ```{r}
 
-print(res$comp)
-
-
+res$comp
 
 ```
 
 Data related to each differential comparison can be found from other columns of `res`.
 
-For example, summary of differently expressed genes can be find from the column `deg_summmary`
+For example, summary of differently expressed genes can be found from the column `deg_summmary`
 
 ```{r}
 
-print(res$dsr_tibble_deg)
+res$deg_summmary
 
 ```
 
-As described below, there are several helper functions to get data from the `res` .
+As described below there are several helper functions to get data from the `res` .
 
 ## Get data from `res` using helper functions
 
@@ -182,6 +180,28 @@ parcutils::get_pairwise_corr_plot(res, samples =c("control" ,"treatment1"))
 
 parcutils::get_pca_plot(x = res, 
                         samples  =c("control" ,"treatment1" ,"treatment2"))
+
+```
+
+### Visualize differential expressed genes by volcano plot 
+
+```{r, fig.width==4, fig.height=7}
+
+
+parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control",
+                            col_up = "#a40000",
+                            col_down = "#007e2f", 
+                            col_other = "grey")
+
+# change cutoffs 
+
+parcutils::get_volcano_plot(x = res, 
+                            sample_comparison = "treatment2_VS_control",
+                            pval_cutoff = 0.01,
+                            log2fc_cutoff = 0.6, 
+                            col_up = "#a40000",
+                            col_down = "#007e2f",
+                            col_other = "grey")
 
 ```
 

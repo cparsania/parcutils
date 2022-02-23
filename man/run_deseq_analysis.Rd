@@ -68,7 +68,25 @@ the genes which have minimum counts 10 in at least 2 sample groups will be used 
 \item{...}{for future use}
 }
 \value{
-a data frame of DESeq results, DEG, and DEG summary.
+A dataframe having each row is a differential comparison. There are total 8 columns as explained below.
+\itemize{
+\item Column \code{comp} : It stores the name of differential comparison for each row.
+\item Column \code{numerator} : It stores name of samples which were used as numerator for the differential comparison in each row.
+\item Column \code{denominator} : It stores name of samples which were used as denominator for the differential comparison in each row.
+\item Column \code{norm_counts} : This is a \code{named-list} column. Each row in this column is a list of two containing normalised
+genes expression values in a dataframe for the samples - numerator and denominator. The first column of the dataframe is \code{gene_id}
+and subsequent columns are gene expression values in replicates of corresponding samples. This normalised gene expression values are
+obtained using  \code{counts} slot of a DESeqDataSet object. e.g.: \code{counts(dds,normalized=TRUE)}
+\item Column \code{dsr} : This is a \code{named-list} column stores an object of class \code{\link[DESeq2:DESeqResults]{DESeq2::DESeqResults()}} for the
+differential comparison in each row.
+\item Column \code{dsr_tibble}:  This is a \code{named-list}column stores and an output of \code{\link[DESeq2:DESeqResults]{DESeq2::DESeqResults()}} in the dataframe format for the
+differential comparison in each row.
+\item Column \code{dsr_tibble_deg}: The data in this column is same as in the column \code{dsr_tibble} except it contains two extra columns \code{signif} and \code{regul}.
+Values in the \code{signif} specifies statistical and fold change significance of the gene while values in the \code{regul} denotes whether the gene is \code{up} or \code{down}
+regulated or not.
+\item Column \code{deg_summmary} : This is a \code{named-list} column. Each element of the list is a dataframe summarizing number of differential expressed gene for the differential
+comparison for each row.
+}
 }
 \description{
 DESeq2 is a popular method to perform DE analysis for RNA-seq data. Pre and post DESeq run, however,

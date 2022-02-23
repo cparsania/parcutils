@@ -39,27 +39,34 @@ count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
 
 count_data <- readr::read_delim(count_file, delim = "\t")
 
-count_data %>% head() %>% print()
-#> # A tibble: 6 × 10
-#>   gene_id         control_rep1 control_rep2 control_rep3 treat1_rep1 treat1_rep2
-#>   <chr>                  <dbl>        <dbl>        <dbl>       <dbl>       <dbl>
-#> 1 ENSG0000017359…            0            0            0           0           0
-#> 2 ENSG0000010634…            1            0            2           0           0
-#> 3 ENSG0000013112…            2            0            2           0           0
-#> 4 ENSG0000015434…          652          690          639         607         453
-#> 5 ENSG0000019641…         3372         3631         3188        4644        3168
-#> 6 ENSG0000017302…          694          784          829         974         580
-#> # … with 4 more variables: treat1_rep3 <dbl>, treat2_rep1 <dbl>,
-#> #   treat2_rep2 <dbl>, treat2_rep3 <dbl>
+count_data 
+#> # A tibble: 5,000 × 10
+#>    gene_id        control_rep1 control_rep2 control_rep3 treat1_rep1 treat1_rep2
+#>    <chr>                 <dbl>        <dbl>        <dbl>       <dbl>       <dbl>
+#>  1 ENSG000001735…            0            0            0           0           0
+#>  2 ENSG000001063…            1            0            2           0           0
+#>  3 ENSG000001311…            2            0            2           0           0
+#>  4 ENSG000001543…          652          690          639         607         453
+#>  5 ENSG000001964…         3372         3631         3188        4644        3168
+#>  6 ENSG000001730…          694          784          829         974         580
+#>  7 ENSG000001405…           87           73           81         100          77
+#>  8 ENSG000001875…            4            4            2           0           5
+#>  9 ENSG000001392…         1374         1789         1564        1933        1459
+#> 10 ENSG000001658…         3639         4533         3921        3879        3500
+#> # … with 4,990 more rows, and 4 more variables: treat1_rep3 <dbl>,
+#> #   treat2_rep1 <dbl>, treat2_rep2 <dbl>, treat2_rep3 <dbl>
 ```
 
 #### Group replicates by samples.
+
+To run DESeq2 sample replicates replicates needs to be grouped by
+sample.
 
 ``` r
 sample_info <- count_data %>% colnames() %>% .[-1]  %>%
  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2") , 
                                            each = 3))
-print(sample_info)
+sample_info
 #> # A tibble: 9 × 2
 #>   samples      groups    
 #>   <chr>        <chr>     
@@ -87,15 +94,15 @@ res <- parcutils::run_deseq_analysis(counts = count_data ,
                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
 ```
 
-#### Let’s have a look in to res
+#### Let’s have a look in to `res`
 
 ``` r
-print(res)
+res
 #> # A tibble: 2 × 8
-#>   comp                  numerator denominator norm_counts dsr   dsr_tibble dsr_tibble_deg
-#>   <chr>                 <chr>     <chr>       <named lis> <nam> <named li> <named list>  
-#> 1 treatment1_VS_control treatmen… control     <named lis… <DES… <tibble [… <tibble [4,03…
-#> 2 treatment2_VS_control treatmen… control     <named lis… <DES… <tibble [… <tibble [4,03…
+#>   comp     numerator  denominator norm_counts  dsr    dsr_tibble  dsr_tibble_deg
+#>   <chr>    <chr>      <chr>       <named list> <name> <named lis> <named list>  
+#> 1 treatme… treatment1 control     <named list… <DESq… <tibble [4… <tibble [4,03…
+#> 2 treatme… treatment2 control     <named list… <DESq… <tibble [4… <tibble [4,03…
 #> # … with 1 more variable: deg_summmary <named list>
 ```
 
@@ -104,52 +111,36 @@ print(res)
 from the column `comp`.
 
 ``` r
-print(res$comp)
+res$comp
 #> [1] "treatment1_VS_control" "treatment2_VS_control"
 ```
 
 Data related to each differential comparison can be found from other
 columns of `res`.
 
-For example, summary of differently expressed genes can be find from the
-column `deg_summmary`
+For example, summary of differently expressed genes can be found from
+the column `deg_summmary`
 
 ``` r
-print(res$dsr_tibble_deg)
+res$deg_summmary
 #> $treatment1_VS_control
-#> # A tibble: 4,034 × 9
-#>    gene_id  baseMean log2FoldChange  lfcSE   stat   pvalue     padj signif regul
-#>    <chr>       <dbl>          <dbl>  <dbl>  <dbl>    <dbl>    <dbl> <chr>  <chr>
-#>  1 ENSG000…   716.          -0.601  0.0932 -6.45  1.09e-10  6.58e-9 p-val… other
-#>  2 ENSG000…  4243.          -0.0714 0.0748 -0.954 3.40e- 1  5.52e-1 NS     other
-#>  3 ENSG000…   672.          -0.256  0.114  -2.25  2.47e- 2  9.02e-2 p-val… other
-#>  4 ENSG000…    80.7         -0.176  0.204  -0.865 3.87e- 1  5.93e-1 NS     other
-#>  5 ENSG000…  1279.          -0.138  0.179  -0.771 4.41e- 1  6.38e-1 NS     other
-#>  6 ENSG000…  4072.          -0.359  0.181  -1.99  4.69e- 2  1.44e-1 p-val… other
-#>  7 ENSG000… 13435.          -0.0627 0.0989 -0.634 5.26e- 1  7.11e-1 NS     other
-#>  8 ENSG000…   529.          -0.326  0.111  -2.93  3.36e- 3  2.01e-2 p-val… other
-#>  9 ENSG000…     2.38        -2.21   1.40   -1.58  1.14e- 1 NA       log2FC other
-#> 10 ENSG000…     7.51        -0.698  0.672  -1.04  2.99e- 1 NA       NS     other
-#> # … with 4,024 more rows
+#> # A tibble: 3 × 2
+#>   regul     n
+#>   <chr> <int>
+#> 1 Down     28
+#> 2 other  3993
+#> 3 Up       13
 #> 
 #> $treatment2_VS_control
-#> # A tibble: 4,034 × 9
-#>    gene_id baseMean log2FoldChange  lfcSE    stat   pvalue     padj signif regul
-#>    <chr>      <dbl>          <dbl>  <dbl>   <dbl>    <dbl>    <dbl> <chr>  <chr>
-#>  1 ENSG00…   716.          0.557   0.0896  6.22   4.98e-10 1.56e- 9 p-val… other
-#>  2 ENSG00…  4243.          0.729   0.0744  9.79   1.22e-22 8.13e-22 p-val… other
-#>  3 ENSG00…   672.         -0.542   0.116  -4.69   2.77e- 6 6.30e- 6 p-val… other
-#>  4 ENSG00…    80.7         0.0145  0.205   0.0710 9.43e- 1 9.52e- 1 NS     other
-#>  5 ENSG00…  1279.         -1.18    0.180  -6.56   5.47e-11 1.84e-10 p-val… Down 
-#>  6 ENSG00…  4072.          0.193   0.181   1.07   2.86e- 1 3.32e- 1 NS     other
-#>  7 ENSG00… 13435.          0.0257  0.0990  0.260  7.95e- 1 8.21e- 1 NS     other
-#>  8 ENSG00…   529.          0.00983 0.111   0.0890 9.29e- 1 9.40e- 1 NS     other
-#>  9 ENSG00…     2.38       -1.31    1.31   -1.00   3.17e- 1 3.65e- 1 log2FC other
-#> 10 ENSG00…     7.51       -1.39    0.731  -1.90   5.69e- 2 7.65e- 2 log2FC other
-#> # … with 4,024 more rows
+#> # A tibble: 3 × 2
+#>   regul     n
+#>   <chr> <int>
+#> 1 Down    502
+#> 2 other  3199
+#> 3 Up      333
 ```
 
-As described below, there are several helper functions to get data from
+As described below there are several helper functions to get data from
 the `res` .
 
 ## Get data from `res` using helper functions
@@ -315,6 +306,46 @@ parcutils::get_pca_plot(x = res,
 ```
 
 <img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
+
+### Visualize differential expressed genes by volcano plot
+
+``` r
+
+parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control",
+                            col_up = "#a40000",
+                            col_down = "#007e2f", 
+                            col_other = "grey")
+#> Registered S3 methods overwritten by 'ggalt':
+#>   method                  from   
+#>   grid.draw.absoluteGrob  ggplot2
+#>   grobHeight.absoluteGrob ggplot2
+#>   grobWidth.absoluteGrob  ggplot2
+#>   grobX.absoluteGrob      ggplot2
+#>   grobY.absoluteGrob      ggplot2
+#> Warning: One or more p-values is 0. Converting to 10^-1 * current lowest non-
+#> zero p-value...
+#> Warning: Ignoring unknown parameters: xlim, ylim
+```
+
+<img src="man/figures/README-fig.width==4-1.png" width="100%" />
+
+``` r
+# change cutoffs 
+
+parcutils::get_volcano_plot(x = res, 
+                            sample_comparison = "treatment2_VS_control",
+                            pval_cutoff = 0.01,
+                            log2fc_cutoff = 0.6, 
+                            col_up = "#a40000",
+                            col_down = "#007e2f",
+                            col_other = "grey")
+#> Warning: One or more p-values is 0. Converting to 10^-1 * current lowest non-
+#> zero p-value...
+
+#> Warning: Ignoring unknown parameters: xlim, ylim
+```
+
+<img src="man/figures/README-fig.width==4-2.png" width="100%" />
 
 ### Visualize gene expression distribution using box plot
 
