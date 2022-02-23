@@ -127,8 +127,23 @@ the genes which have minimum counts 10 in at least 2 sample groups will be used 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>a data frame of DESeq results, DEG, and DEG summary.</p>
-    </div>
+    <p>A dataframe having each row is a differential comparison. There are total 8 columns as explained below.</p><ul><li><p>Column <code>comp</code> : It stores the name of differential comparison for each row.</p></li>
+<li><p>Column <code>numerator</code> : It stores name of samples which were used as numerator for the differential comparison in each row.</p></li>
+<li><p>Column <code>denominator</code> : It stores name of samples which were used as denominator for the differential comparison in each row.</p></li>
+<li><p>Column <code>norm_counts</code> : This is a <code>named-list</code> column. Each row in this column is a list of two containing normalised
+genes expression values in a dataframe for the samples - numerator and denominator. The first column of the dataframe is <code>gene_id</code>
+and subsequent columns are gene expression values in replicates of corresponding samples. This normalised gene expression values are
+obtained using  <code>counts</code> slot of a DESeqDataSet object. e.g.: <code>counts(dds,normalized=TRUE)</code></p></li>
+<li><p>Column <code>dsr</code> : This is a <code>named-list</code> column stores an object of class <code><a href="https://rdrr.io/pkg/DESeq2/man/DESeqResults.html" class="external-link">DESeq2::DESeqResults()</a></code> for the
+differential comparison in each row.</p></li>
+<li><p>Column <code>dsr_tibble</code>:  This is a <code>named-list</code>column stores and an output of <code><a href="https://rdrr.io/pkg/DESeq2/man/DESeqResults.html" class="external-link">DESeq2::DESeqResults()</a></code> in the dataframe format for the
+differential comparison in each row.</p></li>
+<li><p>Column <code>dsr_tibble_deg</code>: The data in this column is same as in the column <code>dsr_tibble</code> except it contains two extra columns <code>signif</code> and <code>regul</code>.
+Values in the <code>signif</code> specifies statistical and fold change significance of the gene while values in the <code>regul</code> denotes whether the gene is <code>up</code> or <code>down</code>
+regulated or not.</p></li>
+<li><p>Column <code>deg_summmary</code> : This is a <code>named-list</code> column. Each element of the list is a dataframe summarizing number of differential expressed gene for the differential
+comparison for each row.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>// TO DO : Explain formats of count file and count dataframe.</p>
