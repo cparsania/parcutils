@@ -1,0 +1,312 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+```{r, include=FALSE}
+library(magrittr)
+```
+
+# parcutils
+
+<!-- badges: start -->
+
+```{r , echo=FALSE , results='asis' , message=FALSE}
+cat(
+badger::badge_devel("cparsania/parcutils" , color = "blue"),
+badger::badge_lifecycle()
+)
+```
+
+<!-- badges: end -->
+
+The goal of `parcutils` is to provide day to day bioinformatics utility functions. Most of the functions in the package are useful for analyzing and visualizing complex RNA-seq studies.
+
+## Installation
+
+```{r, eval=FALSE}
+
+
+if(require("devtools") && require("BiocManager")){
+  options(repos = BiocManager::repositories() )
+  devtools::install_github("cparsania/parcutils")
+} else{
+  install.packages(c("devtools","BiocManager"))
+  options(repos = BiocManager::repositories() )
+  devtools::install_github("cparsania/parcutils")
+}
+
+
+```
+
+## RNA-seq analysis
+
+### Differential expression analysis
+
+#### Prepare a count table
+
+```{r, message=FALSE, warning=FALSE}
+
+count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+
+count_data <- readr::read_delim(count_file, delim = "\t")
+
+count_data 
+```
+
+#### Group replicates by samples.
+
+To run DESeq2 sample replicates replicates needs to be grouped by sample.
+
+```{r , message=FALSE , warning=FALSE}
+
+sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+ tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2") , 
+                                           each = 3))
+sample_info
+
+```
+
+#### Run `DESeq2` for multiple differential gene comparison.
+
+```{r , message=FALSE, warning=FALSE}
+
+res <- parcutils::run_deseq_analysis(counts = count_data ,
+                         sample_info = sample_info,
+                         column_geneid = "gene_id" ,
+                         log2fc_cutoff = 0.6,
+                         cutoff_pval = 0.05,
+                         group_numerator = c("treatment1", "treatment2") ,
+                         group_denominator = c("control"),
+                         column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+
+
+
+```
+
+#### Let's have a look in to `res`
+
+```{r}
+
+res
+
+```
+
+`res` is an object of improved `dataframe` - `tibble`. Each row in the `res` is a differential comparison which can be identified by the value from the column `comp`.
+
+```{r}
+
+res$comp
+
+```
+
+Data related to each differential comparison can be found from other columns of `res`.
+
+For example, summary of differently expressed genes can be found from the column `deg_summmary`
+
+```{r}
+
+res$deg_summmary
+
+```
+
+As described below there are several helper functions to get data from the `res` .
+
+## Get data from `res` using helper functions
+
+```{r}
+
+# get normalised gene expression value for all genes across all samples. 
+parcutils::get_normalised_expression_matrix(x = res, 
+                                            samples = NULL,
+                                            genes = NULL,
+                                            summarise_replicates = FALSE)
+
+# average gene expression values across relicates  
+parcutils::get_normalised_expression_matrix(x = res, 
+                                            samples = NULL,
+                                            genes = NULL,
+                                            summarise_replicates = T, 
+                                            summarise_method = "median")
+
+
+
+
+# get fold change values for all genes and all comparisons.
+
+q_genes = c("ENSG00000196415:PRTN3", "ENSG00000221988:PPT2", "ENSG00000163138:PACRGL", "ENSG00000183840:GPR39", "ENSG00000146700:SSC4D", "ENSG00000163746:PLSCR2", "ENSG00000155918:RAET1L", "ENSG00000151458:ANKRD50", "ENSG00000167074:TEF", "ENSG00000130159:ECSIT")
+
+parcutils::get_fold_change_matrix(x = res, sample_comparisons = res$comp, 
+                                  genes = q_genes)
+
+
+
+# get differentially expressed genes for given comparison 
+
+parcutils::get_genes_by_regulation(x = res, 
+                                  sample_comparison = "treatment1_VS_control", 
+                                  regulation = "both" # can be one of the "up" , "down" , "both", "other", "all"
+                                  )
+
+# get replicates group data 
+
+parcutils::group_replicates_by_sample(res)
+
+
+```
+
+## Generate several visualizations from `res`
+
+### Visualize pairwise correlation between replicates
+
+```{r}
+
+parcutils::get_pairwise_corr_plot(res, samples =c("control" ,"treatment1"))
+```
+
+### Visualize samples by Principle Component Analysis (PCA)
+
+```{r}
+
+parcutils::get_pca_plot(x = res, 
+                        samples  =c("control" ,"treatment1" ,"treatment2"))
+
+```
+
+### Visualize differential expressed genes by volcano plot 
+
+```{r, fig.width==4, fig.height=7}
+
+
+parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control",
+                            col_up = "#a40000",
+                            col_down = "#007e2f", 
+                            col_other = "grey")
+
+# change cutoffs 
+
+parcutils::get_volcano_plot(x = res, 
+                            sample_comparison = "treatment2_VS_control",
+                            pval_cutoff = 0.01,
+                            log2fc_cutoff = 0.6, 
+                            col_up = "#a40000",
+                            col_down = "#007e2f",
+                            col_other = "grey")
+
+```
+
+### Visualize gene expression distribution using box plot
+
+```{r}
+
+# all replicates 
+parcutils::get_gene_expression_box_plot(x = res, 
+                                        samples =c("control" ,"treatment1"), 
+                                        group_replicates = FALSE,
+                                        convert_log2 = T)
+# summarise  replicates 
+parcutils::get_gene_expression_box_plot(x = res, 
+                                        samples =c("control" ,"treatment1"), 
+                                        group_replicates = T,
+                                        convert_log2 = T)
+
+
+```
+
+### Visualize genes by heatmaps
+
+```{r , fig.width=7,fig.height=5}
+
+
+
+genes_for_hm = parcutils::get_genes_by_regulation(x = res,
+                                                  sample_comparison = res$comp[[2]], 
+                                                  regulation = "both")
+
+# heatmap of normalised gene expression values across samples 
+
+hm1 <- parcutils::get_gene_expression_heatmap(x = res, 
+                                       samples = c("control","treatment1" , "treatment2") , 
+                                       genes = genes_for_hm , 
+                                       convert_zscore = FALSE, 
+                                       convert_log2 = T, 
+                                       summarise_replicates = T,
+                                       name = "log2(value)" , 
+                                       cluster_columns = FALSE)
+
+ComplexHeatmap::draw(hm1)
+
+# Visualise  z-score and show all replicates.
+
+hm2 <- parcutils::get_gene_expression_heatmap(x = res, 
+                                       samples = c("control","treatment1") , 
+                                       name = "Z-score",
+                                       summarise_replicates = F, 
+                                       genes = genes_for_hm , 
+                                       convert_zscore = TRUE, 
+                                       cluster_columns = FALSE)
+
+
+ComplexHeatmap::draw(hm2)
+
+# log2 FC heatamap
+hm3 <- parcutils::get_fold_change_heatmap(x = res, 
+                                   sample_comparisons = res$comp, 
+                                   genes = genes_for_hm , 
+                                   name= "Log2FC")
+
+ComplexHeatmap::draw(hm3)
+
+```
+
+### Visualize differential genes overlap between comparison
+
+```{r}
+
+us_plot <- parcutils::plot_deg_upsets(x = res, sample_comparisons = res$comp)
+
+us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_plot %>% print()
+
+# get list of intersecting genes. 
+
+us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% print()
+```
+
+## Other functions
+
+### Alignment summary
+
+```{r , message=FALSE,warning=FALSE}
+
+star_align_log_file <- system.file("extdata" , "a_Log.final.out" , package = "parcutils")
+
+x =  parcutils::get_star_align_log_summary(log_file = star_align_log_file)
+
+print(x)
+
+
+# plot alignment summary
+
+
+star_align_log_file_dir <- system.file("extdata" , package = "parcutils")
+
+star_align_log_files <- fs::dir_ls(star_align_log_file_dir, 
+                                   glob = "*Log.final.out" ,
+                                   recurse = T,type = "file")
+names(star_align_log_files) <- NULL
+parcutils::get_star_align_log_summary_plot(x = star_align_log_files,
+                                col_total_reads = "red", 
+                                col_mapped_reads  = "blue") 
+```
+
+## 
