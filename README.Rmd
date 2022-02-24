@@ -64,7 +64,7 @@ count_data <- readr::read_delim(count_file, delim = "\t")
 count_data 
 ```
 
-#### Group replicates by samples.
+#### Group replicates by samples
 
 To run DESeq2 sample replicates replicates needs to be grouped by sample.
 
@@ -183,7 +183,7 @@ parcutils::get_pca_plot(x = res,
 
 ```
 
-### Visualize differential expressed genes by volcano plot 
+### Visualize differential expressed genes by volcano plot
 
 ```{r, fig.width==4, fig.height=7}
 

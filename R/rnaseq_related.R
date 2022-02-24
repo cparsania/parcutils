@@ -20,44 +20,60 @@
 #'
 #'  |       |  |
 #'  | ----------- | ----------- |
-#'  | sample 1      | WT       |
-#'  | sample 2      | WT       |
-#'  | sample 3      | KO       |
-#'  | sample 4      | KO       |
+#'  | control_rep_1      | Control       |
+#'  | control_rep_2      | Control       |
+#'  | control_rep_3      | Control       |
+#'  | treat_1_rep_1     | Treatment_1       |
+#'  | treat_1_rep_2      | Treatment_1       |
+#'  | treat_1_rep_3      | Treatment_1       |
+#'  | treat_2_rep_1      | Treatment_2      |
+#'  | treat_2_rep_2      | Treatment_2       |
+#'  | treat_2_rep_3      | Treatment_2       |
 #'
 #' @param group_numerator a character vector denoting sample groups to use in numerator to calculate fold change.
 #' @param group_denominator a character vector denoting sample groups to use in denominator to calculate fold change.
 #' @param delim a character denoting deliminator for `count` file. Only valid if `count` is a file path.
 #' @param comment_char a character denoting comments line in count file. Only valid if `count` is a file path.
-#' @param min_counts a numeric value, default 10,  denoting minimum counts for a gene to be used o consider a
+#' @param min_counts a numeric value, default 10,  denoting minimum counts for a gene to be used to consider a
 #' gene for differential expression analysis.
-#' @param min_replicates a numeric value, default 1, denoting minimum samples within a group must have `minimum_counts`.
-#' Value provided must not be higher than number of replicates in each group.
+#' @param min_replicates a numeric value, default 1, denoting minimum samples within a sample group must have `minimum_counts`.
+#' Value provided must not be higher than number of samples in each group.
 #' For example for given values `min_replicates = 2` and  `minimum_counts = 10`
-#' the genes which have minimum counts 10 in at least 2 sample groups will be used for DEG.
-#' @param cutoff_lfc a numeric value which is internally passed to \link{categorize_diff_genes}
-#' @param cutoff_padj a numeric value which is internally passed to \link{categorize_diff_genes}
-#' @param ... for future use
-#' @param cutoff_pval a numeric value which is internally passed to \link{categorize_diff_genes}
-#' @param regul_based_upon either of 1, 2 or 3 which is internally passed to \link{categorize_diff_genes}
+#' the genes which have minimum counts 10 in at least 2 samples within a groups will be accounted for DEG. Rest will be filtered out prior to run DESeq.
+#' @param cutoff_lfc,cutoff_pval,cutoff_padj a numeric value, default `(cutoff_lfc = 1, cutoff_pval =  0.05, cutoff_padj = 0.01)`denoting cutoffs to categorize
+#' genes in to either `Up`, `Down` or `Other` category.
+#' @param regul_based_upon one of the numeric choices  1, 2, or 3.
+#' ## if 1 ...
+#'  - Up : log2fc >= log2fc_cutoff & pvalue <= pvalue_cutoff
+#'  - Down : log2fc  <= (-1) * log2fc_cutoff & pvalue <= pvalue_cutoff
+#'  - Other : remaining genes
+#' ## if 2 ...
+#'  - Up : log2fc >= log2fc_cutoff & padj <= padj_cutoff
+#'  - Down : log2fc  <= (-1) * log2fc_cutoff & padj <= padj_cutoff
+#'  - Other : remaining genes
+#' ## if 3 ...
+#'  - Up : log2fc >= log2fc_cutoff & pvalue <= pvalue_cutoff & padj <= padj_cutoff
+#'  - Down : log2fc  <= (-1) * log2fc_cutoff pvalue <= pvalue_cutoff & padj <= padj_cutoff
+#'  - Other : remaining genes
+#' @param ... for future use.
 #' @details
 #' // TO DO : Explain formats of count file and count dataframe.
-#' @return A dataframe having each row is a differential comparison. There are total 8 columns as explained below.
-#' + Column `comp` : It stores the name of differential comparison for each row.
-#' + Column `numerator` : It stores name of samples which were used as numerator for the differential comparison in each row.
-#' + Column `denominator` : It stores name of samples which were used as denominator for the differential comparison in each row.
-#' + Column `norm_counts` : This is a `named-list` column. Each row in this column is a list of two containing normalised
+#' @return Return object is a dataframe (tibble) having each row denoting a unique differential comparison. There are total 8 columns as explained below.
+#' + `comp` : It stores the name of differential comparison for each row.
+#' + `numerator` : It stores name of samples which were used as numerator for the differential comparison in each row.
+#' + `denominator` : It stores name of samples which were used as denominator for the differential comparison in each row.
+#' + `norm_counts` : This is a `named-list` column. Each row in this column is a list of two containing normalised
 #' genes expression values in a dataframe for the samples - numerator and denominator. The first column of the dataframe is `gene_id`
 #' and subsequent columns are gene expression values in replicates of corresponding samples. This normalised gene expression values are
 #' obtained using  `counts` slot of a DESeqDataSet object. e.g.: `counts(dds,normalized=TRUE)`
-#' + Column `dsr` : This is a `named-list` column stores an object of class [DESeq2::DESeqResults()] for the
+#' + `dsr` : This is a `named-list` column stores an object of class [DESeq2::DESeqResults()] for the
 #' differential comparison in each row.
-#' + Column `dsr_tibble`:  This is a `named-list`column stores and an output of [DESeq2::DESeqResults()] in the dataframe format for the
+#' + `dsr_tibble`:  This is a `named-list`column stores and an output of [DESeq2::DESeqResults()] in the dataframe format for the
 #' differential comparison in each row.
-#' + Column `dsr_tibble_deg`: The data in this column is same as in the column `dsr_tibble` except it contains two extra columns `signif` and `regul`.
+#' + `dsr_tibble_deg`: The data in this column is same as in the column `dsr_tibble` except it contains two extra columns `signif` and `regul`.
 #' Values in the `signif` specifies statistical and fold change significance of the gene while values in the `regul` denotes whether the gene is `up` or `down`
 #' regulated or not.
-#' + Column `deg_summmary` : This is a `named-list` column. Each element of the list is a dataframe summarizing number of differential expressed gene for the differential
+#' + `deg_summmary` : This is a `named-list` column. Each element of the list is a dataframe summarizing number of differential expressed gene for the differential
 #' comparison for each row.
 #' @export
 #' @importFrom tidyselect everything
@@ -570,6 +586,7 @@ filter_gff <- function(gtf_file ,
 #'  - Other : remaining genes
 #' @return a data frame
 #' @details // TO DO. --> explain columns 'signif' and 'type' in the returned data frame.
+#' @keywords internal
 #' @examples
 #' \dontrun{
 #' // TO DO

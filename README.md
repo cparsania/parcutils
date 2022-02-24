@@ -57,7 +57,7 @@ count_data
 #> #   treat2_rep1 <dbl>, treat2_rep2 <dbl>, treat2_rep3 <dbl>
 ```
 
-#### Group replicates by samples.
+#### Group replicates by samples
 
 To run DESeq2 sample replicates replicates needs to be grouped by
 sample.

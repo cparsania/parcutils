@@ -35,10 +35,15 @@ See details below to know more about format of the count file and count datafram
 A file or a dataframe both must have at least two columns without column names. First column denotes to samples names
 and second column denotes group name for each sample in first column. For e.g.\tabular{ll}{
     \tab  \cr
-   sample 1 \tab WT \cr
-   sample 2 \tab WT \cr
-   sample 3 \tab KO \cr
-   sample 4 \tab KO \cr
+   control_rep_1 \tab Control \cr
+   control_rep_2 \tab Control \cr
+   control_rep_3 \tab Control \cr
+   treat_1_rep_1 \tab Treatment_1 \cr
+   treat_1_rep_2 \tab Treatment_1 \cr
+   treat_1_rep_3 \tab Treatment_1 \cr
+   treat_2_rep_1 \tab Treatment_2 \cr
+   treat_2_rep_2 \tab Treatment_2 \cr
+   treat_2_rep_3 \tab Treatment_2 \cr
 }}
 
 \item{group_numerator}{a character vector denoting sample groups to use in numerator to calculate fold change.}
@@ -49,42 +54,62 @@ and second column denotes group name for each sample in first column. For e.g.\t
 
 \item{comment_char}{a character denoting comments line in count file. Only valid if \code{count} is a file path.}
 
-\item{min_counts}{a numeric value, default 10,  denoting minimum counts for a gene to be used o consider a
+\item{min_counts}{a numeric value, default 10,  denoting minimum counts for a gene to be used to consider a
 gene for differential expression analysis.}
 
-\item{min_replicates}{a numeric value, default 1, denoting minimum samples within a group must have \code{minimum_counts}.
-Value provided must not be higher than number of replicates in each group.
+\item{min_replicates}{a numeric value, default 1, denoting minimum samples within a sample group must have \code{minimum_counts}.
+Value provided must not be higher than number of samples in each group.
 For example for given values \code{min_replicates = 2} and  \code{minimum_counts = 10}
-the genes which have minimum counts 10 in at least 2 sample groups will be used for DEG.}
+the genes which have minimum counts 10 in at least 2 samples within a groups will be accounted for DEG. Rest will be filtered out prior to run DESeq.}
 
-\item{cutoff_lfc}{a numeric value which is internally passed to \link{categorize_diff_genes}}
+\item{cutoff_lfc, cutoff_pval, cutoff_padj}{a numeric value, default \verb{(cutoff_lfc = 1, cutoff_pval =  0.05, cutoff_padj = 0.01)}denoting cutoffs to categorize
+genes in to either \code{Up}, \code{Down} or \code{Other} category.}
 
-\item{cutoff_pval}{a numeric value which is internally passed to \link{categorize_diff_genes}}
+\item{regul_based_upon}{one of the numeric choices  1, 2, or 3.
+\subsection{if 1 ...}{
+\itemize{
+\item Up : log2fc >= log2fc_cutoff & pvalue <= pvalue_cutoff
+\item Down : log2fc  <= (-1) * log2fc_cutoff & pvalue <= pvalue_cutoff
+\item Other : remaining genes
+}
+}
 
-\item{cutoff_padj}{a numeric value which is internally passed to \link{categorize_diff_genes}}
+\subsection{if 2 ...}{
+\itemize{
+\item Up : log2fc >= log2fc_cutoff & padj <= padj_cutoff
+\item Down : log2fc  <= (-1) * log2fc_cutoff & padj <= padj_cutoff
+\item Other : remaining genes
+}
+}
 
-\item{regul_based_upon}{either of 1, 2 or 3 which is internally passed to \link{categorize_diff_genes}}
+\subsection{if 3 ...}{
+\itemize{
+\item Up : log2fc >= log2fc_cutoff & pvalue <= pvalue_cutoff & padj <= padj_cutoff
+\item Down : log2fc  <= (-1) * log2fc_cutoff pvalue <= pvalue_cutoff & padj <= padj_cutoff
+\item Other : remaining genes
+}
+}}
 
-\item{...}{for future use}
+\item{...}{for future use.}
 }
 \value{
-A dataframe having each row is a differential comparison. There are total 8 columns as explained below.
+Return object is a dataframe (tibble) having each row denoting a unique differential comparison. There are total 8 columns as explained below.
 \itemize{
-\item Column \code{comp} : It stores the name of differential comparison for each row.
-\item Column \code{numerator} : It stores name of samples which were used as numerator for the differential comparison in each row.
-\item Column \code{denominator} : It stores name of samples which were used as denominator for the differential comparison in each row.
-\item Column \code{norm_counts} : This is a \code{named-list} column. Each row in this column is a list of two containing normalised
+\item \code{comp} : It stores the name of differential comparison for each row.
+\item \code{numerator} : It stores name of samples which were used as numerator for the differential comparison in each row.
+\item \code{denominator} : It stores name of samples which were used as denominator for the differential comparison in each row.
+\item \code{norm_counts} : This is a \code{named-list} column. Each row in this column is a list of two containing normalised
 genes expression values in a dataframe for the samples - numerator and denominator. The first column of the dataframe is \code{gene_id}
 and subsequent columns are gene expression values in replicates of corresponding samples. This normalised gene expression values are
 obtained using  \code{counts} slot of a DESeqDataSet object. e.g.: \code{counts(dds,normalized=TRUE)}
-\item Column \code{dsr} : This is a \code{named-list} column stores an object of class \code{\link[DESeq2:DESeqResults]{DESeq2::DESeqResults()}} for the
+\item \code{dsr} : This is a \code{named-list} column stores an object of class \code{\link[DESeq2:DESeqResults]{DESeq2::DESeqResults()}} for the
 differential comparison in each row.
-\item Column \code{dsr_tibble}:  This is a \code{named-list}column stores and an output of \code{\link[DESeq2:DESeqResults]{DESeq2::DESeqResults()}} in the dataframe format for the
+\item \code{dsr_tibble}:  This is a \code{named-list}column stores and an output of \code{\link[DESeq2:DESeqResults]{DESeq2::DESeqResults()}} in the dataframe format for the
 differential comparison in each row.
-\item Column \code{dsr_tibble_deg}: The data in this column is same as in the column \code{dsr_tibble} except it contains two extra columns \code{signif} and \code{regul}.
+\item \code{dsr_tibble_deg}: The data in this column is same as in the column \code{dsr_tibble} except it contains two extra columns \code{signif} and \code{regul}.
 Values in the \code{signif} specifies statistical and fold change significance of the gene while values in the \code{regul} denotes whether the gene is \code{up} or \code{down}
 regulated or not.
-\item Column \code{deg_summmary} : This is a \code{named-list} column. Each element of the list is a dataframe summarizing number of differential expressed gene for the differential
+\item \code{deg_summmary} : This is a \code{named-list} column. Each element of the list is a dataframe summarizing number of differential expressed gene for the differential
 comparison for each row.
 }
 }
