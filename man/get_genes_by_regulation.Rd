@@ -4,12 +4,17 @@
 \alias{get_genes_by_regulation}
 \title{Get genes based on their differential regulation}
 \usage{
-get_genes_by_regulation(x, sample_comparison, regulation = "both")
+get_genes_by_regulation(
+  x,
+  sample_comparisons,
+  regulation = "both",
+  simplify = FALSE
+)
 }
 \arguments{
 \item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
 
-\item{sample_comparison}{a character string denoting a sample comparison for which genes to be obtained.}
+\item{sample_comparisons}{a character vector denoting  sample comparisons for which genes to be obtained.}
 
 \item{regulation}{a character string, default \code{both}. Values can be one of the \code{up}, \code{down}, \code{both}, \code{other}, \code{all}.
 \itemize{
@@ -17,11 +22,15 @@ get_genes_by_regulation(x, sample_comparison, regulation = "both")
 \item down : returns all down regulated genes.
 \item both : returns all up and down regulated genes.
 \item other : returns genes other than up and down regulated genes.
+}}
+
+\item{simplify}{logical, default FALSE, if TRUE returns result in a dataframe format.
+\itemize{
 \item all : returns all genes.
 }}
 }
 \value{
-a named vector.
+a list or dataframe.
 }
 \description{
 Get genes based on their differential regulation
@@ -45,15 +54,15 @@ res <- run_deseq_analysis(counts = count_data ,
                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
 
 # get both up and down regulated genes
-get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control")) \%>\% print()
+get_genes_by_regulation(x = res, sample_comparisons = c("treatment2_VS_control")) \%>\% print()
 
 # get up genes only
-get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control") , regul = "up") \%>\% print()
+get_genes_by_regulation(x = res, sample_comparisons = c("treatment2_VS_control") , regul = "up") \%>\% print()
 
 # get down genes only
-get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control") , regul = "down") \%>\% print()
+get_genes_by_regulation(x = res, sample_comparisons = c("treatment2_VS_control") , regul = "down") \%>\% print()
 
 # get genes other than up and down
-get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control") , regul = "other") \%>\% print()
+get_genes_by_regulation(x = res, sample_comparisons = c("treatment2_VS_control") , regul = "other") \%>\% print()
 
 }

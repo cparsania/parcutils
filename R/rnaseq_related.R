@@ -874,15 +874,17 @@ get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, s
 
 #' Get genes based on their differential regulation
 #' @details For a given differential comparison this function returns `up`, `down`, `both`, `other` and `all` genes.
+#'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
-#' @param sample_comparison a character string denoting a sample comparison for which genes to be obtained.
+#' @param sample_comparisons a character vector denoting  sample comparisons for which genes to be obtained.
 #' @param regulation a character string, default \code{both}. Values can be one of the \code{up}, \code{down}, \code{both}, \code{other}, \code{all}.
 #'  + up : returns all up regulated genes.
 #'  + down : returns all down regulated genes.
 #'  + both : returns all up and down regulated genes.
 #'  + other : returns genes other than up and down regulated genes.
+#' @param simplify logical, default FALSE, if TRUE returns result in a dataframe format.
 #'  + all : returns all genes.
-#' @return a named vector.
+#' @return a list or dataframe.
 #' @export
 #'
 #' @examples
@@ -901,32 +903,43 @@ get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, s
 #'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
 #'
 #' # get both up and down regulated genes
-#' get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control")) %>% print()
+#' get_genes_by_regulation(x = res, sample_comparisons = c("treatment2_VS_control")) %>% print()
 #'
 #' # get up genes only
-#' get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control") , regul = "up") %>% print()
+#' get_genes_by_regulation(x = res, sample_comparisons = c("treatment2_VS_control") , regul = "up") %>% print()
 #'
 #' # get down genes only
-#' get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control") , regul = "down") %>% print()
+#' get_genes_by_regulation(x = res, sample_comparisons = c("treatment2_VS_control") , regul = "down") %>% print()
 #'
 #' # get genes other than up and down
-#' get_genes_by_regulation(x = res, sample_comparison = c("treatment2_VS_control") , regul = "other") %>% print()
+#' get_genes_by_regulation(x = res, sample_comparisons = c("treatment2_VS_control") , regul = "other") %>% print()
 #'
-get_genes_by_regulation <-  function(x, sample_comparison , regulation = "both"  ) {
+get_genes_by_regulation <-  function(x, sample_comparisons , regulation = "both" , simplify = FALSE  ) {
 
   # validate x.
   stopifnot("x must be an object of class 'parcutils'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils"))
 
   # validate sample comparison.
-  stopifnot("sample_comparison must be a character string" = is.character(sample_comparison) & length(sample_comparison) ==1)
+  stopifnot("sample_comparisons must be a character vector" = is.character(sample_comparisons) & length(sample_comparisons) >= 1)
 
   # validate regulation.
   match.arg(regulation , choices = c("up","down" , "both", "other" ,"all"), several.ok = F)
 
+  # validate simplify
+  stopifnot("simplify must be a logical value" = is.logical(simplify))
+
+  # if length of  sample_comparisons > 1, use this function recursively
+  if(length(sample_comparisons) > 1){
+    rslt <- purrr::map(sample_comparisons,
+               ~get_genes_by_regulation(x = x,sample_comparisons = ..1,regulation = regulation , simplify = simplify))
+    names(rslt) <- sample_comparisons
+    return(rslt)
+  }
+
   # split by column regul.
   # NOTE: do not group by column name instead use index. The reason is because if the column name of column 'regul' change in future it will break this code.
 
-  genes_by_comp <- x$dsr_tibble_deg[[sample_comparison]] %>%
+  genes_by_comp <- x$dsr_tibble_deg[[sample_comparisons]] %>%
     dplyr::select(1, dplyr::last_col())
 
   genes_by_comp <- genes_by_comp %>%
@@ -934,7 +947,7 @@ get_genes_by_regulation <-  function(x, sample_comparison , regulation = "both" 
 
   grp_keys <- genes_by_comp %>%
     dplyr::group_keys() %>%
-    pull(1)
+    dplyr::pull(1)
 
   genes_by_comp <- genes_by_comp %>%
     dplyr::group_split()
@@ -955,6 +968,10 @@ get_genes_by_regulation <-  function(x, sample_comparison , regulation = "both" 
   rslt <- rslt[[1]] %>%
     purrr::set_names(rslt[[2]] %>% tolower())
 
+  if(simplify){
+    rslt %<>% tibble::enframe() %>% dplyr::rename(c("regul" = "name" , "genes" = "value")) %>%
+      dplyr::mutate(sample_comparisons = sample_comparisons) %>% dplyr::select(dplyr::all_of(c("sample_comparisons", "genes", "regul")))
+  }
   return(rslt)
 
 }
