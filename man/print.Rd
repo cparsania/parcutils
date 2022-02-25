@@ -15,4 +15,3 @@ print(object)
 \description{
 S3 print for object \code{parcutils}
 }
-\keyword{internal}

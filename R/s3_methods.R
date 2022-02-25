@@ -4,13 +4,11 @@
 #'
 #' @return
 #' @export
-#' @keywords internal
 print <- function(object) {
   UseMethod("print")
 }
 
 #' @export
-#' @keywords internal
 print.parcutils <- function(object) {
   if(TRUE){
     cli::cat_line()
