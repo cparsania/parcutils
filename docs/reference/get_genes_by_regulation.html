@@ -53,7 +53,9 @@
   <span class="va">sample_comparisons</span>,
   regulation <span class="op">=</span> <span class="st">"both"</span>,
   simplify <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+<span class="op">)</span>
+
+<span class="fu">get_genesets_by_regulation</span><span class="op">(</span><span class="va">x</span>, <span class="va">sample_comparisons</span>, regulation <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -63,14 +65,14 @@
 <dt>sample_comparisons</dt>
 <dd><p>a character vector denoting  sample comparisons for which genes to be obtained.</p></dd>
 <dt>regulation</dt>
-<dd><p>a character string, default <code>both</code>. Values can be one of the <code>up</code>, <code>down</code>, <code>both</code>, <code>other</code>, <code>all</code>.</p><ul><li><p>up : returns all up regulated genes.</p></li>
-<li><p>down : returns all down regulated genes.</p></li>
-<li><p>both : returns all up and down regulated genes.</p></li>
-<li><p>other : returns genes other than up and down regulated genes.</p></li>
+<dd><p>a character string, default <code>both</code>. Values can be one of the <code>up</code>, <code>down</code>, <code>both</code>, <code>other</code>, <code>all</code>.</p><ul><li><p><code>up</code> : returns all up regulated genes.</p></li>
+<li><p><code>down</code> : returns all down regulated genes.</p></li>
+<li><p><code>both</code> : returns all up and down regulated genes.</p></li>
+<li><p><code>other</code> : returns genes other than up and down regulated genes.</p></li>
+<li><p><code>all</code> : returns all genes.</p></li>
 </ul></dd>
 <dt>simplify</dt>
-<dd><p>logical, default FALSE, if TRUE returns result in a dataframe format.</p><ul><li><p>all : returns all genes.</p></li>
-</ul></dd>
+<dd><p>logical, default FALSE, if TRUE returns result in a dataframe format.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -91,8 +93,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">chr</span> (1): gene_id</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">dbl</span> (9): control_rep1, control_rep2, control_rep3, treat1_rep1, treat1_rep2,...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use <span style="color: #262626; background-color: #DADADA;">`spec()`</span> to retrieve the full column specification for this data.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Specify the column types or set <span style="color: #262626; background-color: #DADADA;">`show_col_types = FALSE`</span> to quiet this message.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use <span style="color: #C6C6C6; background-color: #262626;">`spec()`</span> to retrieve the full column specification for this data.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Specify the column types or set <span style="color: #C6C6C6; background-color: #262626;">`show_col_types = FALSE`</span> to quiet this message.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">sample_info</span> <span class="op">&lt;-</span> <span class="va">count_data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="va">.</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>  <span class="op">%&gt;%</span></span>
 <span class="r-in"> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>samples <span class="op">=</span> <span class="va">.</span> , groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">)</span></span>
@@ -185,6 +187,37 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> treatment2_VS_control ENSG00000112379:ARFGEF3 up   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 825 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># get genesets by regulation. It uses sample comparison and regulation to name each output geneset.</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="fu">get_genesets_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="st">"treatment1_VS_control"</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment1_VS_control_up</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "ENSG00000187193:MT1X"       "ENSG00000269533:AC003002.3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "ENSG00000065427:KARS1"      "ENSG00000007171:NOS2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "ENSG00000285447:ZNF883"     "ENSG00000111275:ALDH2"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "ENSG00000279111:OR10X1"     "ENSG00000167617:CDC42EP5"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "ENSG00000186566:GPATCH8"    "ENSG00000232423:PRAMEF6"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "ENSG00000182103:FAM181B"    "ENSG00000172500:FIBP"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "ENSG00000151033:LYZL2"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment1_VS_control_down</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "ENSG00000250305:TRMT9B"   "ENSG00000134308:YWHAQ"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "ENSG00000123575:FAM199X"  "ENSG00000148482:SLC39A12"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "ENSG00000175264:CHST1"    "ENSG00000141933:TPGS1"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "ENSG00000165621:OXGR1"    "ENSG00000104081:BMF"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "ENSG00000278023:RDM1"     "ENSG00000172264:MACROD2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "ENSG00000162971:TYW5"     "ENSG00000198682:PAPSS2"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "ENSG00000125445:MRPS7"    "ENSG00000138670:RASGEF1B"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "ENSG00000124839:RAB17"    "ENSG00000069869:NEDD4"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "ENSG00000174576:NPAS4"    "ENSG00000143514:TP53BP2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "ENSG00000181009:OR52N5"   "ENSG00000257315:ZBED6"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "ENSG00000141748:ARL5C"    "ENSG00000198886:MT-ND4"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [23] "ENSG00000157045:NTAN1"    "ENSG00000165131:LLCFC1"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] "ENSG00000277611:Z98752.3" "ENSG00000158089:GALNT14" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [27] "ENSG00000124784:RIOK1"    "ENSG00000103197:TSC2"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

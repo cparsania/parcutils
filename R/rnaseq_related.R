@@ -878,12 +878,12 @@ get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, s
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param sample_comparisons a character vector denoting  sample comparisons for which genes to be obtained.
 #' @param regulation a character string, default \code{both}. Values can be one of the \code{up}, \code{down}, \code{both}, \code{other}, \code{all}.
-#'  + up : returns all up regulated genes.
-#'  + down : returns all down regulated genes.
-#'  + both : returns all up and down regulated genes.
-#'  + other : returns genes other than up and down regulated genes.
+#'  + `up` : returns all up regulated genes.
+#'  + `down` : returns all down regulated genes.
+#'  + `both` : returns all up and down regulated genes.
+#'  + `other` : returns genes other than up and down regulated genes.
+#'  + `all` : returns all genes.
 #' @param simplify logical, default FALSE, if TRUE returns result in a dataframe format.
-#'  + all : returns all genes.
 #' @return a list or dataframe.
 #' @export
 #'
@@ -916,7 +916,12 @@ get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, s
 #'
 #' # Simplify output for multiple sample comparisons
 #' get_genes_by_regulation(x = res, sample_comparisons = res$comp, simplify = T)
-
+#'
+#'
+#' # get genesets by regulation. It uses sample comparison and regulation to name each output geneset.
+#'
+#' get_genesets_by_regulation(x = res, sample_comparisons = "treatment1_VS_control")
+#'
 get_genes_by_regulation <-  function(x, sample_comparisons , regulation = "both" , simplify = FALSE  ) {
 
   # validate x.
@@ -979,6 +984,22 @@ get_genes_by_regulation <-  function(x, sample_comparisons , regulation = "both"
 
 }
 
+#' @rdname get_genes_by_regulation
+#' @export
+get_genesets_by_regulation <- function(x, sample_comparisons, regulation = "both" ){
+
+
+  genes <- get_genes_by_regulation(x, sample_comparisons = sample_comparisons,
+                                   regulation = regulation,
+                                   simplify = T)
+
+  gene_sets <- dplyr::bind_rows(genes) %>%
+    dplyr::mutate(gene_set_name = stringr::str_c(sample_comparisons, regul , sep = "_")) %>%
+    parcutils:::named_group_split(gene_set_name) %>%
+    purrr::map(~ ..1 %>% dplyr::pull(genes))
+
+  return(gene_sets)
+}
 
 
 
@@ -1659,9 +1680,6 @@ get_heatmap_data <- function(h){
 
   return(mat_ordered)
 }
-
-
-
 
 
 

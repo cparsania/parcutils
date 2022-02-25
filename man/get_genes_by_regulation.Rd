@@ -2,6 +2,7 @@
 % Please edit documentation in R/rnaseq_related.R
 \name{get_genes_by_regulation}
 \alias{get_genes_by_regulation}
+\alias{get_genesets_by_regulation}
 \title{Get genes based on their differential regulation}
 \usage{
 get_genes_by_regulation(
@@ -10,6 +11,8 @@ get_genes_by_regulation(
   regulation = "both",
   simplify = FALSE
 )
+
+get_genesets_by_regulation(x, sample_comparisons, regulation = "both")
 }
 \arguments{
 \item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
@@ -18,16 +21,14 @@ get_genes_by_regulation(
 
 \item{regulation}{a character string, default \code{both}. Values can be one of the \code{up}, \code{down}, \code{both}, \code{other}, \code{all}.
 \itemize{
-\item up : returns all up regulated genes.
-\item down : returns all down regulated genes.
-\item both : returns all up and down regulated genes.
-\item other : returns genes other than up and down regulated genes.
+\item \code{up} : returns all up regulated genes.
+\item \code{down} : returns all down regulated genes.
+\item \code{both} : returns all up and down regulated genes.
+\item \code{other} : returns genes other than up and down regulated genes.
+\item \code{all} : returns all genes.
 }}
 
-\item{simplify}{logical, default FALSE, if TRUE returns result in a dataframe format.
-\itemize{
-\item all : returns all genes.
-}}
+\item{simplify}{logical, default FALSE, if TRUE returns result in a dataframe format.}
 }
 \value{
 a list or dataframe.
@@ -67,4 +68,10 @@ get_genes_by_regulation(x = res, sample_comparisons = c("treatment1_VS_control")
 
 # Simplify output for multiple sample comparisons
 get_genes_by_regulation(x = res, sample_comparisons = res$comp, simplify = T)
+
+
+# get genesets by regulation. It uses sample comparison and regulation to name each output geneset.
+
+get_genesets_by_regulation(x = res, sample_comparisons = "treatment1_VS_control")
+
 }
