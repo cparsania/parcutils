@@ -54,15 +54,17 @@ res <- run_deseq_analysis(counts = count_data ,
                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
 
 # get both up and down regulated genes
-get_genes_by_regulation(x = res, sample_comparisons = c("treatment2_VS_control")) \%>\% print()
+get_genes_by_regulation(x = res, sample_comparisons = c("treatment1_VS_control")) \%>\% head()
 
 # get up genes only
-get_genes_by_regulation(x = res, sample_comparisons = c("treatment2_VS_control") , regul = "up") \%>\% print()
+get_genes_by_regulation(x = res, sample_comparisons = c("treatment1_VS_control") , regul = "up") \%>\% head()
 
 # get down genes only
-get_genes_by_regulation(x = res, sample_comparisons = c("treatment2_VS_control") , regul = "down") \%>\% print()
+get_genes_by_regulation(x = res, sample_comparisons = c("treatment1_VS_control") , regul = "down") \%>\% head()
 
 # get genes other than up and down
-get_genes_by_regulation(x = res, sample_comparisons = c("treatment2_VS_control") , regul = "other") \%>\% print()
+get_genes_by_regulation(x = res, sample_comparisons = c("treatment1_VS_control") , regul = "other") \%>\% head()
 
+# Simplify output for multiple sample comparisons
+get_genes_by_regulation(x = res, sample_comparisons = res$comp, simplify = T)
 }
