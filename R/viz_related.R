@@ -872,6 +872,59 @@ get_star_align_log_summary_plot <- function(x,
 }
 
 
+# plot diff genes counts
 
+#' Generate a barplot of DEG counts.
+#'
+#' @param x an object of class parcutils
+#' @param col_up a character string, default #a40000, denoting valid a color name for "Up" regulated genes.
+#' @param col_down a character string, default #16317d, denoting valid a color name "Down" regulated genes.
+#' @param font_size a numeric, default 12, denoting font size in the plot.
+#'
+#' @return a ggplot
+#' @export
+#'
+#' @examples
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
+#'
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"),
+#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'
+#'get_diff_gene_count_barplot(res)
+get_diff_gene_count_barplot <- function(x,
+                                        col_up="#a40000",
+                                        col_down="#16317d",
+                                        font_size = 12){
+
+  validata_parcutils_obj(x)
+
+  gp <- x$deg_summmary %>%
+    tibble::enframe(name = "comparison" ,
+                    value = "deg_count") %>%
+    tidyr::unnest(cols = "deg_count") %>%
+    dplyr::filter(regul != "other") %>%
+    ggplot2::ggplot(ggplot2::aes(x = regul, y = n , fill = regul)) +
+    ggplot2::facet_wrap(~comparison) +
+    ggplot2::geom_bar(stat = "identity", position = "dodge") +
+    ggplot2::theme_bw() +
+    ggplot2::scale_fill_manual(breaks = c("Up","Down"),
+                               values = c(col_up,col_down) ) +
+    ggplot2::theme(text = ggplot2::element_text(size = font_size)) +
+    ggplot2::xlab("Regulation") +
+    ggplot2::ylab("Counts") +
+    ggplot2::guides(fill =  ggplot2::guide_legend("Regulation"))
+
+return(gp)
+
+}
 
 

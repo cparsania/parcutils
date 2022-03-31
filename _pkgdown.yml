@@ -27,6 +27,7 @@ reference:
       - plot_deg_upsets
       - plot_regions_relative_to_reference
       - get_star_align_log_summary_plot
+      - get_diff_gene_count_barplot
 
   - title: "Others"
     contents:
