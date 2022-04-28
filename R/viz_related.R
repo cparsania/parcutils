@@ -798,6 +798,9 @@ group_replicates_by_sample <- function(x){
 #' Names will be used to label Y axis in the plot. If not named, file names will be used to label.
 #' @param col_total_reads a character string denoting bar color total reads. Default "#007e2f".
 #' @param col_mapped_reads a character string denoting bar color total reads. Default "#ffcd12".
+#' @param is_paired_data  a logical, default TRUE, denoting weather data is paired or single end.
+#' By default STAR counts a paired-end read as one read. When `is_paired_data` set to `TRUE` it
+#' doubles the count of total and mapped reads.
 #'
 #' @return a bar plot.
 #' @export
@@ -814,7 +817,7 @@ group_replicates_by_sample <- function(x){
 #' col_mapped_reads = "blue")
 #'
 #'
-get_star_align_log_summary_plot <- function(x,
+get_star_align_log_summary_plot <- function(x,is_paired_data = TRUE,
                                             col_total_reads = "#007e2f" ,
                                             col_mapped_reads = "#ffcd12") {
 
@@ -853,6 +856,11 @@ get_star_align_log_summary_plot <- function(x,
     tidyr::pivot_longer(cols  = c(`Total reads`,`Mapped reads`),
                         names_to = "read_status" , values_to = "number_of_reads")
 
+  if(is_paired_data){
+    align_sumary_long <- align_sumary_long %>%
+      dplyr::mutate(number_of_reads = number_of_reads * 2)
+  }
+
   ## plot
 
   gp_align_summary <- align_sumary_long %>%
@@ -863,9 +871,15 @@ get_star_align_log_summary_plot <- function(x,
                                values = c(col_total_reads,col_mapped_reads) ) +
     ggplot2::coord_flip() +
     ggplot2::theme_bw() + ggplot2::theme(legend.title = ggplot2::element_blank()) +
-    ggplot2:: ylab("Number of reads\n(Note that STAR counts a paired-end read as one read)") +
     ggplot2:: xlab("Samples")
 
+  if(is_paired_data){
+    gp_align_summary <- gp_align_summary +
+      ggplot2::ylab("Total Number of Reads (R1 + R2)")
+  } else{
+    gp_align_summary <- gp_align_summary +
+      ggplot2::ylab("Total Number of Reads")
+  }
   return(gp_align_summary)
 
 
