@@ -863,7 +863,7 @@ get_star_align_log_summary_plot <- function(x,
                                values = c(col_total_reads,col_mapped_reads) ) +
     ggplot2::coord_flip() +
     ggplot2::theme_bw() + ggplot2::theme(legend.title = ggplot2::element_blank()) +
-    ggplot2:: ylab("Number of reads") +
+    ggplot2:: ylab("Number of reads\n(Note that STAR counts a paired-end read as one read)") +
     ggplot2:: xlab("Samples")
 
   return(gp_align_summary)
@@ -912,7 +912,7 @@ get_diff_gene_count_barplot <- function(x,
                     value = "deg_count") %>%
     tidyr::unnest(cols = "deg_count") %>%
     dplyr::filter(regul != "other") %>%
-    dplyr::mutate(regul = forcats::fct_relevel(regul, c("Up","Down"))) %>%
+    dplyr::mutate(regul = forcats::fct_relevel(regul, c("Up","Down")))
     ggplot2::ggplot(ggplot2::aes(x = regul, y = n , fill = regul)) +
     ggplot2::facet_wrap(~comparison) +
     ggplot2::geom_bar(stat = "identity", position = "dodge") +
