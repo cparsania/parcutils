@@ -927,7 +927,7 @@ get_diff_gene_count_barplot <- function(x,
     tidyr::unnest(cols = "deg_count") %>%
     dplyr::filter(regul != "other") %>%
     dplyr::mutate(regul = forcats::fct_relevel(regul, c("Up","Down")))
-    ggplot2::ggplot(ggplot2::aes(x = regul, y = n , fill = regul)) +
+  ggplot2::ggplot(ggplot2::aes(x = regul, y = n , fill = regul)) +
     ggplot2::facet_wrap(~comparison) +
     ggplot2::geom_bar(stat = "identity", position = "dodge") +
     ggplot2::theme_bw() +
@@ -938,8 +938,157 @@ get_diff_gene_count_barplot <- function(x,
     ggplot2::ylab("Counts") +
     ggplot2::guides(fill =  ggplot2::guide_legend("Regulation"))
 
-return(gp)
+  return(gp)
 
 }
+
+
+#' Generate a correlation heat plot.
+#' @description For all (or selected) samples this function generate a correlation heat box type plot.
+#' @param x an object of class parcutils.
+#' @param samples a character vector denoting samples to plot in scatter plot, default \code{NULL}. If set to NULL all samples are accounted.
+#' @param genes a character vector denoting genes to consider in scatter plot, default \code{NULL}. If set to NULL all genes are accounted.
+#' @param corr_method a character string, default \code{"pearson"}, denoting a value for correlation method. Value can be one of these \code{"pearson", "kendall", "spearman"}.
+#' @param vis_method a character string, default \code{"full"}, denoting a value type of visualization. Value can be one of these \code{"square", "circle"}.
+#' @param plot_type a character string, default \code{"square"}, denoting value for plot type. Value can be one of these \code{"full", "lower", "upper"}.
+#' @param cluster_samples a logical, default \code{TRUE}, denoting weather to cluster samples or not.
+#' @param show_diagonal a logical, default \code{TRUE}, denoting weather to show diagonal values or not.
+#' @param show_corr_values a logical, default \code{TRUE}, denoting weather to show corr values or not.
+#' @param col_corr_values  a character string, default \code{"yellow"}, denoting a valid color string for corr values.
+#' @param size_corr_values a numeric, default \code{5}, denoting a size for corr values.
+#' @param scale_range a numeric vector of length two denoting minimum and maximum value for the color scale, default \code{NULL}.
+#'
+#' @return a corr plot.
+#' @export
+#' @import ggeasy scales ggcorrplot viridis
+#' @examples
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
+#'
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"),
+#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'
+#'get_corr_heatbox(res,samples = c("treatment1","control"),cluster_samples = FALSE,show_corr_values =T,
+#'size_corr_values = 4)
+get_corr_heatbox <- function(x,
+                             samples = NULL,
+                             genes = NULL,
+                             corr_method = "pearson" ,# "pearson", "kendall", "spearman"
+                             plot_type  = "full", # "full", "lower", "upper"
+                             vis_method = "square", # square or circle
+                             show_diagonal = TRUE,
+                             show_corr_values = FALSE,
+                             col_corr_values = "yellow",
+                             size_corr_values = 5,
+                             cluster_samples=FALSE,
+                             scale_range = NULL
+
+){
+
+  # validate x
+  parcutils:::validata_parcutils_obj(x)
+
+  # validate samples
+  stopifnot("'samples' must be a character vector or NULL." = is.character(samples) | is.null(samples))
+
+  # validate genes
+  stopifnot("'genes' must be a character vector or NULL." = is.character(genes) | is.null(genes))
+
+  # validate corr_method
+  match.arg(corr_method , c("pearson", "kendall", "spearman"))
+
+  # validate vis method
+  match.arg(vis_method , c("square","circle"))
+
+  # validate plot type
+
+  match.arg(plot_type , c("full","lower" ,"upper"))
+
+  # validate cluster_samples
+
+  stopifnot("'cluster_samples' must be a logical value. " = is.logical(cluster_samples))
+
+  # validate show_diagonal
+  stopifnot("'show_diagonal' must be a logical value." = is.logical(show_diagonal))
+
+  # validate show_corr_values
+  stopifnot("'show_corr_values' must be a logical value." = is.logical(show_corr_values) )
+
+  # validate col_corr_values
+  stopifnot("'col_corr_values must be a character string denoting a valid color name.'" =
+              is.character(col_corr_values) & length(col_corr_values)==1)
+
+  # validate size_corr_values
+  stopifnot("'size_corr_values' must be a numeric value." = is.numeric(size_corr_values) &
+              length(size_corr_values) == 1)
+
+  #  validate scale range
+  stopifnot("'scale_range' must be NULL or a numeric vector of length two."=
+              is.null(scale_range) | (is.numeric(scale_range) & length(scale_range) == 2))
+
+  # get expression values
+  norm_expr_mat <- parcutils::get_normalised_expression_matrix(x = x,
+                                                               samples = samples,
+                                                               genes = genes,
+                                                               summarise_replicates = F)
+
+  # convert log2
+  if(TRUE){
+    norm_expr_mat <- norm_expr_mat %>% dplyr::mutate_if(is.numeric, ~ log2(. + 1))
+  }
+
+  # convert numeric df
+  gene_id_column  <- colnames(norm_expr_mat)[1]
+  norm_expr_mat <- norm_expr_mat %>% tibble::column_to_rownames(gene_id_column)
+
+  corr_mat <- stats::cor(norm_expr_mat,method = corr_method)
+
+  chb <- ggcorrplot::ggcorrplot(corr =  corr_mat,
+                                method = vis_method ,
+                                type =  plot_type,
+                                hc.order = cluster_samples,
+                                show.diag =  show_diagonal,
+                                lab_col = col_corr_values ,
+                                lab_size = size_corr_values,
+                                lab = show_corr_values
+  )
+
+
+  # fix scale range if it is NULL
+  if(is.null(scale_range)){
+    scale_min = min(corr_mat)
+    scale_max = max(corr_mat)
+    scale_range = c(scale_min, scale_max)
+  }
+
+  # color plot
+  suppressMessages(
+    chb <- chb +
+      ggplot2::scale_fill_gradientn(colours = viridis::viridis(n = 10) %>% rev(),
+                                    limits = scale_range , oob=scales::squish
+
+      ) +
+      ggeasy::easy_add_legend_title("Corr")
+
+  )
+
+
+
+
+  return(chb)
+
+}
+
+
+
+
 
 
