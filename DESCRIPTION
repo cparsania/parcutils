@@ -36,7 +36,10 @@ Imports:
     plyranges,
     stringr,
     GGally,
-    fs
+    fs,
+    ggeasy,
+    ggcorrplot,
+    viridis
 Depends: 
     magrittr
 Remotes: 
