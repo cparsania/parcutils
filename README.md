@@ -59,8 +59,7 @@ count_data
 
 #### Group replicates by samples
 
-To run DESeq2 sample replicates replicates needs to be grouped by
-sample.
+To run DESeq2, replicates for each sample needs to be grouped.
 
 ``` r
 sample_info <- count_data %>% colnames() %>% .[-1]  %>%
@@ -81,6 +80,9 @@ sample_info
 #> 9 treat2_rep3  treatment2
 ```
 
+> NOTE: Samples which are present in the object ‘sample_info’ will be
+> considered for differential expressed analysis.
+
 #### Run `DESeq2` for multiple differential gene comparison.
 
 ``` r
@@ -90,8 +92,7 @@ res <- parcutils::run_deseq_analysis(counts = count_data ,
                          log2fc_cutoff = 0.6,
                          cutoff_pval = 0.05,
                          group_numerator = c("treatment1", "treatment2") ,
-                         group_denominator = c("control"),
-                         column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+                         group_denominator = c("control"))
 ```
 
 #### Let’s have a look in to `res`
@@ -299,12 +300,20 @@ parcutils::get_pairwise_corr_plot(res, samples =c("control" ,"treatment1"))
 #> $control
 ```
 
-<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
 
     #> 
     #> $treatment1
 
-<img src="man/figures/README-unnamed-chunk-12-2.png" width="100%" />
+![](man/figures/README-unnamed-chunk-12-2.png)<!-- -->
+
+### Visualize all sample correlation by heat box
+
+``` r
+parcutils::get_corr_heatbox(x = res, show_corr_values = T, cluster_samples = F)
+```
+
+![](man/figures/README-unnamed-chunk-13-1.png)<!-- -->
 
 ### Visualize samples by Principle Component Analysis (PCA)
 
@@ -313,7 +322,7 @@ parcutils::get_pca_plot(x = res,
                         samples  =c("control" ,"treatment1" ,"treatment2"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-14-1.png)<!-- -->
 
 ### Visualize differential expressed genes by volcano plot
 
@@ -335,7 +344,7 @@ parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control"
 #> Warning: Ignoring unknown parameters: xlim, ylim
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-15-1.png)<!-- -->
 
 ``` r
 # change cutoffs 
@@ -353,7 +362,7 @@ parcutils::get_volcano_plot(x = res,
 #> Warning: Ignoring unknown parameters: xlim, ylim
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-2.png" width="100%" />
+![](man/figures/README-unnamed-chunk-15-2.png)<!-- -->
 
 ### Visualize gene expression distribution using box plot
 
@@ -365,7 +374,7 @@ parcutils::get_gene_expression_box_plot(x = res,
                                         convert_log2 = T)
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-16-1.png)<!-- -->
 
 ``` r
 # summarise  replicates 
@@ -375,7 +384,7 @@ parcutils::get_gene_expression_box_plot(x = res,
                                         convert_log2 = T)
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-2.png" width="100%" />
+![](man/figures/README-unnamed-chunk-16-2.png)<!-- -->
 
 ### Visualize genes by heatmaps
 
@@ -394,13 +403,15 @@ hm1 <- parcutils::get_gene_expression_heatmap(x = res,
                                        convert_zscore = FALSE, 
                                        convert_log2 = T, 
                                        summarise_replicates = T,
-                                       name = "log2(value)" , 
+                                       name = "log2(value)" , color_default = F, 
+                                       col = 
+                                         circlize::colorRamp2(breaks = c(-5,0,15), colors = c("#16317d","white","#a40000")),
                                        cluster_columns = FALSE)
 
 ComplexHeatmap::draw(hm1)
 ```
 
-<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
 
 ``` r
 # Visualise  z-score and show all replicates.
@@ -408,7 +419,9 @@ ComplexHeatmap::draw(hm1)
 hm2 <- parcutils::get_gene_expression_heatmap(x = res, 
                                        samples = c("control","treatment1") , 
                                        name = "Z-score",
-                                       summarise_replicates = F, 
+                                       summarise_replicates = F,
+                                        col = 
+                                         circlize::colorRamp2(breaks = c(-2,0,2), colors = c("#16317d","white","#a40000")),color_default = F,
                                        genes = genes_for_hm , 
                                        convert_zscore = TRUE, 
                                        cluster_columns = FALSE)
@@ -420,19 +433,21 @@ hm2 <- parcutils::get_gene_expression_heatmap(x = res,
 ComplexHeatmap::draw(hm2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-16-2.png" width="100%" />
+![](man/figures/README-unnamed-chunk-17-2.png)<!-- -->
 
 ``` r
 # log2 FC heatamap
 hm3 <- parcutils::get_fold_change_heatmap(x = res, 
                                    sample_comparisons = res$comp, 
-                                   genes = genes_for_hm , 
+                                   genes = genes_for_hm , color_default = F, 
+                                     col = 
+                                         circlize::colorRamp2(breaks = c(-5,0,5), colors = c("#16317d","white","#a40000")),
                                    name= "Log2FC")
 
 ComplexHeatmap::draw(hm3)
 ```
 
-<img src="man/figures/README-unnamed-chunk-16-3.png" width="100%" />
+![](man/figures/README-unnamed-chunk-17-3.png)<!-- -->
 
 ### Visualize differential genes overlap between comparison
 
@@ -442,7 +457,7 @@ us_plot <- parcutils::plot_deg_upsets(x = res, sample_comparisons = res$comp)
 us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_plot %>% print()
 ```
 
-<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 # get list of intersecting genes. 
@@ -462,8 +477,6 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% pri
 
 ### Visualize genes by line plot
 
-#### 
-
 ``` r
 
 genes_for_lineplot = parcutils::get_genes_by_regulation(x = res,
@@ -473,11 +486,11 @@ genes_for_lineplot = parcutils::get_genes_by_regulation(x = res,
 #gene expression values
 parcutils::get_gene_expression_line_plot(x = res, 
                                    genes = genes_for_lineplot , 
-                                   samples = c("control","treatment1","treatment2"),summarise_replicates = T, show_average_line = T)
+                                   samples = c("control","treatment1","treatment2"),summarise_replicates = T, show_average_line = T) + ggplot2::theme(text = ggplot2::element_text(size = 15))
 #> Warning: Transformation introduced infinite values in continuous y-axis
 ```
 
-<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 
@@ -487,10 +500,10 @@ parcutils::get_fold_change_line_plot(x = res,
                                    genes = genes_for_lineplot , 
                                      sample_comparisons = c("treatment1_VS_control", "treatment2_VS_control"), 
                                    average_line_summary_method =  "mean",
-                                   show_average_line = T)
+                                   show_average_line = T) + ggplot2::theme(text = ggplot2::element_text(size = 15))
 ```
 
-<img src="man/figures/README-unnamed-chunk-18-2.png" width="100%" />
+![](man/figures/README-unnamed-chunk-19-2.png)<!-- -->
 
 #### 
 
@@ -536,6 +549,6 @@ parcutils::get_star_align_log_summary_plot(x = star_align_log_files,
                                 col_mapped_reads  = "blue") 
 ```
 
-<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
 
 ## 

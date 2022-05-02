@@ -955,7 +955,8 @@ get_diff_gene_count_barplot <- function(x,
 #'
 #' @return a corr plot.
 #' @export
-#' @import ggeasy scales ggcorrplot viridis
+#' @import ggeasy scales ggcorrplot
+#' @importFrom viridis viridis
 #' @examples
 #' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
 #' count_data <- readr::read_delim(count_file, delim = "\t")
