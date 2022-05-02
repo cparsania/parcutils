@@ -44,44 +44,44 @@ get_fold_change_heatmap(
 )
 }
 \arguments{
-\item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
+\item{x}{an abject of the class \code{parcutils}. This is can be created using the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
 
-\item{samples}{a character vector denoting sample names to show in the heatmap.}
+\item{samples}{a character vector denoting sample names to use in the heatmap.}
 
-\item{genes}{a character vector denoting genes to show in the heatmap.}
+\item{genes}{a character vector denoting genes to use in the heatmap.}
 
-\item{repair_genes}{logical, default FALSE, indicating whether to repair gene names or not. See details.}
+\item{repair_genes}{logical, default \code{FALSE}, indicating whether to repair gene names. See details.}
 
-\item{convert_log2}{logical, default FALSE, indicating whether to convert gene expression values in log2 or not.}
+\item{convert_log2}{logical, default \code{FALSE}, indicating whether to log2 transform gene expression values.}
 
-\item{color_default}{logical, default TRUE, indicating whether to use default heatmap colors.}
+\item{color_default}{logical, default \code{TRUE}, indicating whether to use default heatmap colors.}
 
 \item{col}{an output of \code{\link[circlize:colorRamp2]{circlize::colorRamp2()}}, default NULL.}
 
-\item{convert_zscore}{logical, default TRUE, indicating whether to convert gene expression values in to the z-score or not. see details.}
+\item{convert_zscore}{logical, default \code{TRUE}, indicating whether to convert gene expression values in to the z-score or not. see details.}
 
-\item{summarise_replicates}{logical, default TRUE, indicating whether to summarise values for each gene across replicates.}
+\item{summarise_replicates}{logical, default \code{TRUE}, indicating whether to summarise values for each gene across replicates.}
 
 \item{summarise_method}{a character string, either mean or median.}
 
-\item{show_row_names}{logical, default FALSE, indicating whether to show row names in the heatmap or not.
+\item{show_row_names}{logical, default \code{FALSE}, indicating whether to show row names in the heatmap or not.
 Internally this argument is passed to the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}.}
 
-\item{cluster_rows}{logical, default TRUE, indicating whether to cluster rows in the heatmap or not.
+\item{cluster_rows}{logical, default \code{TRUE}, indicating whether to cluster rows in the heatmap or not.
 Internally this argument is passed to the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}.}
 
-\item{show_row_dend}{logical, default TRUE, indicating whether to show dendrogram in the heatmap or not.
+\item{show_row_dend}{logical, default \code{TRUE}, indicating whether to show dendrogram in the heatmap or not.
 Internally this argument is passed to the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}.}
 
 \item{row_names_font_size}{a numeric value, default 10, indicating size of row names in the heatmap.}
 
-\item{show_column_names}{logical, default TRUE, indicating whether to show column names in the heatmap or not.
+\item{show_column_names}{logical, default \code{TRUE}, indicating whether to show column names in the heatmap or not.
 Internally this argument is passed to the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}.}
 
-\item{cluster_columns}{logical, default TRUE, indicating whether to cluster columns in the heatmap or not.
+\item{cluster_columns}{logical, default \code{TRUE}, indicating whether to cluster columns in the heatmap or not.
 Internally this argument is passed to the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}.}
 
-\item{show_heatmap_legend}{logical, default TRUE, indicating whether to show heatmap legend or not.}
+\item{show_heatmap_legend}{logical, default \code{TRUE}, indicating whether to show heatmap legend or not.}
 
 \item{...}{Other parameters to be passes to \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}.}
 
@@ -91,17 +91,18 @@ Internally this argument is passed to the function \code{\link[ComplexHeatmap:He
 an output of the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}.
 }
 \description{
-Heatmap is a common tool to show gene expression pattern across samples in RNA-seq experiment.
-While doing data exploration, it is a common practice to generate several heatmaps to identify interesting
-patterns of gene expression across sample. Most heatmap generating tools require data in a tabular form.
-However, to prepare such a tabular form requires significant data wrangling such as sub-setting
-genes (rows) and samples (columns) specifically when RNA-seq studies studies consisting of several samples and
-replicates.
-
-This function cut downs several steps of data wrangling to create a heatmap of gene expression, z-score or
-log2 fold-change . Given an object of 'parcutils', names of samples or sample comprisons, genes to show in heatmap
-and several other arguments it creates a heatmap.The output of the function is an output of the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}
-which then can be used for the other functions of the \href{https://jokergoo.github.io/ComplexHeatmap-reference/book/}{ComplexHeatmap} package.
+Heatmap is a common tool to show gene expression pattern across samples in RNA-seq experiments.
+During data exploration, it is a common practice to generate several heatmaps to identify interesting
+patterns of gene expression across samples. Most heatmap generating tools require data in a tabular format.
+However, to prepare such a data requires significant data wrangling such as sub-setting
+genes (rows) and samples (columns) from multiple R objects. Such data wrangling creates redundant, and less readable code
+which increases the chances of error. Furthermore, because of less readability using the same code for another analysis
+requires code cleaning and code rewriting making code less reusable.
+Situations complicates even more when RNA-seq studies consist of several samples and several comparisons.
+This function cut-downs several steps of data wrangling to create a heatmap of gene expression, z-score or
+log2 fold-change. Given an object of the class \code{parcutils}, sample names or sample comparisons, genes to show in the heatmap
+and several other arguments, the heatmap can be created quickly. The output heatmap is an output of the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}
+which then can be used with other functions of the \href{https://jokergoo.github.io/ComplexHeatmap-reference/book/}{ComplexHeatmap} package.
 }
 \details{
 The function \code{get_gene_expression_heatmap} is to create a heatmap either for normalised gene expression or z-score values
