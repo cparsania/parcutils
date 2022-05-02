@@ -13,7 +13,6 @@
 #' @param counts a character string of the path to a count file or an object of dataframe having raw counts for each gene.
 #' See details below to know more about format of the count file and count dataframe.
 #' @param column_geneid a character string denoting a column of geneid in \code{counts}
-#' @param column_samples a character vector denoting names of sample columns from \code{counts}
 #' @param sample_info a character string denoting a name of sample information file or a dataframe.
 #' A file or a dataframe both must have at least two columns without column names. First column denotes to samples names
 #' and second column denotes group name for each sample in first column. For e.g.
@@ -90,8 +89,7 @@
 #'                          sample_info = sample_info,
 #'                          column_geneid = "gene_id" ,
 #'                          group_numerator = c("treatment1", "treatment2") ,
-#'                          group_denominator = c("control"),
-#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'                          group_denominator = c("control"))
 #'
 #' res
 #'
@@ -119,7 +117,7 @@
 run_deseq_analysis <- function(
   counts,
   column_geneid,
-  column_samples,
+  #column_samples,
   sample_info,
   group_numerator,
   group_denominator,
@@ -143,7 +141,6 @@ run_deseq_analysis <- function(
   # counts %<>%  dplyr::mutate("Geneid" = stringi::stri_rand_strings(n = 100, length = 5))  %>% dplyr::relocate("Geneid")
   # sample_info <- tibble::tibble(samples = colnames(counts)[-1] , sample_groups = factor(rep(c("c","d"), each=5)))
   # column_geneid = "Geneid"
-  # column_samples = c("c1","c2","c3","c4" ,"c5" ,"d1" ,"d2","d3" ,"d4" ,"d5")
   # cutoff_pval = 0.05
   # cutoff_padj = 0.01
   # cutoff_lfc = 1.5
@@ -202,24 +199,10 @@ run_deseq_analysis <- function(
     stop("Value for an argument 'geneid_coulmn' must be a character string")
   }
 
-  # value for an argument columns_samples must be a character vector
-
-  if(!is.character(column_samples) && length(column_samples) > 1){
-    stop("Value for an argument 'sample_columns' must be a character vector of length > 1")
-  }
-
-  # check if columns specified in column_samples are present in count_data
-  count_data_col_names <-  colnames(count_data)
-
-  if(!all(column_samples %in% count_data_col_names)){
-    index_not_present <- which(!(column_samples %in% count_data_col_names))
-    value_not_present <- column_samples[index_not_present] %>% paste0(collapse = "','")
-    stop(glue::glue("Values '{value_not_present}' in 'column_samples' must present as column(s) in 'counts'."))
-  }
 
   # quote column names
   column_geneid_quo <- rlang::enquo(column_geneid)
-  column_samples_quo <- rlang::enquos(column_samples)
+  #column_samples_quo <- rlang::enquos(column_samples)
 
   ## prepare sample information
 
@@ -267,7 +250,7 @@ run_deseq_analysis <- function(
   colnames(sample_info_data) <- sample_info_colnames
 
   # check if all the samples provided in sample_info are present in count_data file
-
+  count_data_col_names <-  colnames(count_data)
   sample_info_samples <- sample_info_data %>% dplyr::pull(sample_info_colnames[1])
   sample_info_samples_quo <- rlang::enquos(sample_info_samples)
 

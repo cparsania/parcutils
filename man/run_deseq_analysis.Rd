@@ -8,7 +8,6 @@
 run_deseq_analysis(
   counts,
   column_geneid,
-  column_samples,
   sample_info,
   group_numerator,
   group_denominator,
@@ -28,8 +27,6 @@ run_deseq_analysis(
 See details below to know more about format of the count file and count dataframe.}
 
 \item{column_geneid}{a character string denoting a column of geneid in \code{counts}}
-
-\item{column_samples}{a character vector denoting names of sample columns from \code{counts}}
 
 \item{sample_info}{a character string denoting a name of sample information file or a dataframe.
 A file or a dataframe both must have at least two columns without column names. First column denotes to samples names
@@ -137,8 +134,7 @@ res <- run_deseq_analysis(counts = count_data ,
                          sample_info = sample_info,
                          column_geneid = "gene_id" ,
                          group_numerator = c("treatment1", "treatment2") ,
-                         group_denominator = c("control"),
-                         column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+                         group_denominator = c("control"))
 
 res
 

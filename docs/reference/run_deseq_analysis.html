@@ -69,7 +69,6 @@ the code readability. Besides that,  output of this function can subsequently us
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">run_deseq_analysis</span><span class="op">(</span>
   <span class="va">counts</span>,
   <span class="va">column_geneid</span>,
-  <span class="va">column_samples</span>,
   <span class="va">sample_info</span>,
   <span class="va">group_numerator</span>,
   <span class="va">group_denominator</span>,
@@ -92,8 +91,6 @@ the code readability. Besides that,  output of this function can subsequently us
 See details below to know more about format of the count file and count dataframe.</p></dd>
 <dt>column_geneid</dt>
 <dd><p>a character string denoting a column of geneid in <code>counts</code></p></dd>
-<dt>column_samples</dt>
-<dd><p>a character vector denoting names of sample columns from <code>counts</code></p></dd>
 <dt>sample_info</dt>
 <dd><p>a character string denoting a name of sample information file or a dataframe.
 A file or a dataframe both must have at least two columns without column names. First column denotes to samples names
@@ -190,8 +187,7 @@ comparison for each row.</p></li>
 <span class="r-in">                         sample_info <span class="op">=</span> <span class="va">sample_info</span>,</span>
 <span class="r-in">                         column_geneid <span class="op">=</span> <span class="st">"gene_id"</span> ,</span>
 <span class="r-in">                         group_numerator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment1"</span>, <span class="st">"treatment2"</span><span class="op">)</span> ,</span>
-<span class="r-in">                         group_denominator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span><span class="op">)</span>,</span>
-<span class="r-in">                         column_samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control_rep1"</span>, <span class="st">"treat1_rep1"</span>, <span class="st">"treat2_rep1"</span>, <span class="st">"control_rep2"</span>, <span class="st">"treat1_rep2"</span>, <span class="st">"treat2_rep2"</span>, <span class="st">"control_rep3"</span>, <span class="st">"treat1_rep3"</span>, <span class="st">"treat2_rep3"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in">                         group_denominator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Running DESeq2 ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> converting counts to integer mode</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>some variables in design formula are characters, converting to factors</span>
@@ -206,12 +202,20 @@ comparison for each row.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Done.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">res</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   comp     numerator  denominator norm_counts  dsr    dsr_tibble  dsr_tibble_deg</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;named list&gt;</span> <span style="color: #949494; font-style: italic;">&lt;name&gt;</span> <span style="color: #949494; font-style: italic;">&lt;named lis&gt;</span> <span style="color: #949494; font-style: italic;">&lt;named list&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> treatme… treatment1 control     <span style="color: #949494;">&lt;named list</span>… <span style="color: #949494;">&lt;DESq</span>… <span style="color: #949494;">&lt;tibble [4</span>… <span style="color: #949494;">&lt;tibble [4,03</span>…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> treatme… treatment2 control     <span style="color: #949494;">&lt;named list</span>… <span style="color: #949494;">&lt;DESq</span>… <span style="color: #949494;">&lt;tibble [4</span>… <span style="color: #949494;">&lt;tibble [4,03</span>…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 1 more variable: deg_summmary &lt;named list&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total number of genes used for DEG analysis are 4034. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total number of comparisons are 2. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of DEGs in each comparison:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">treatment1_VS_control</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #BB0000;">number of up genes   : 13.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #00BB00;">number of down genes : 28.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ──────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">treatment2_VS_control</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #BB0000;">number of up genes   : 333.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #00BB00;">number of down genes : 502.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ──────────────────────────────</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## all comparisons</span></span>
 <span class="r-in"></span>
