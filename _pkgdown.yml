@@ -29,6 +29,8 @@ reference:
       - plot_regions_relative_to_reference
       - get_star_align_log_summary_plot
       - get_diff_gene_count_barplot
+      - get_gene_expression_line_plot
+      - get_fold_change_line_plot
 
   - title: "Others"
     contents:

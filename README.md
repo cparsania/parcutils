@@ -98,12 +98,20 @@ res <- parcutils::run_deseq_analysis(counts = count_data ,
 
 ``` r
 res
-#> # A tibble: 2 × 8
-#>   comp     numerator  denominator norm_counts  dsr    dsr_tibble  dsr_tibble_deg
-#>   <chr>    <chr>      <chr>       <named list> <name> <named lis> <named list>  
-#> 1 treatme… treatment1 control     <named list… <DESq… <tibble [4… <tibble [4,03…
-#> 2 treatme… treatment2 control     <named list… <DESq… <tibble [4… <tibble [4,03…
-#> # … with 1 more variable: deg_summmary <named list>
+#> 
+#> Total number of genes used for DEG analysis are 4034. 
+#> Total number of comparisons are 2. 
+#> 
+#> Number of DEGs in each comparison:
+#> 
+#> treatment1_VS_control 
+#> • number of up genes   : 13.
+#> • number of down genes : 28.
+#> ──────────────────────────────
+#> treatment2_VS_control 
+#> • number of up genes   : 333.
+#> • number of down genes : 502.
+#> ──────────────────────────────
 ```
 
 `res` is an object of improved `dataframe` - `tibble`. Each row in the
@@ -327,7 +335,7 @@ parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control"
 #> Warning: Ignoring unknown parameters: xlim, ylim
 ```
 
-<img src="man/figures/README-fig.width==4-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
 
 ``` r
 # change cutoffs 
@@ -345,7 +353,7 @@ parcutils::get_volcano_plot(x = res,
 #> Warning: Ignoring unknown parameters: xlim, ylim
 ```
 
-<img src="man/figures/README-fig.width==4-2.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-14-2.png" width="100%" />
 
 ### Visualize gene expression distribution using box plot
 
@@ -357,7 +365,7 @@ parcutils::get_gene_expression_box_plot(x = res,
                                         convert_log2 = T)
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
 
 ``` r
 # summarise  replicates 
@@ -367,7 +375,7 @@ parcutils::get_gene_expression_box_plot(x = res,
                                         convert_log2 = T)
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-2.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-15-2.png" width="100%" />
 
 ### Visualize genes by heatmaps
 
@@ -392,7 +400,7 @@ hm1 <- parcutils::get_gene_expression_heatmap(x = res,
 ComplexHeatmap::draw(hm1)
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
 
 ``` r
 # Visualise  z-score and show all replicates.
@@ -412,7 +420,7 @@ hm2 <- parcutils::get_gene_expression_heatmap(x = res,
 ComplexHeatmap::draw(hm2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-2.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-16-2.png" width="100%" />
 
 ``` r
 # log2 FC heatamap
@@ -424,7 +432,7 @@ hm3 <- parcutils::get_fold_change_heatmap(x = res,
 ComplexHeatmap::draw(hm3)
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-3.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-16-3.png" width="100%" />
 
 ### Visualize differential genes overlap between comparison
 
@@ -434,7 +442,7 @@ us_plot <- parcutils::plot_deg_upsets(x = res, sample_comparisons = res$comp)
 us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_plot %>% print()
 ```
 
-<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
 
 ``` r
 # get list of intersecting genes. 
@@ -451,6 +459,40 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% pri
 #> 6 treatment1_VS_control_down                            <chr [13]> 
 #> 7 treatment2_VS_control_down                            <chr [495]>
 ```
+
+### Visualize genes by line plot
+
+#### 
+
+``` r
+
+genes_for_lineplot = parcutils::get_genes_by_regulation(x = res,
+                                                  sample_comparison = res$comp[[2]], 
+                                                  regulation = "both")
+
+#gene expression values
+parcutils::get_gene_expression_line_plot(x = res, 
+                                   genes = genes_for_lineplot , 
+                                   samples = c("control","treatment1","treatment2"),summarise_replicates = T, show_average_line = T)
+#> Warning: Transformation introduced infinite values in continuous y-axis
+```
+
+<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
+
+``` r
+
+# Fold change values 
+
+parcutils::get_fold_change_line_plot(x = res, 
+                                   genes = genes_for_lineplot , 
+                                     sample_comparisons = c("treatment1_VS_control", "treatment2_VS_control"), 
+                                   average_line_summary_method =  "mean",
+                                   show_average_line = T)
+```
+
+<img src="man/figures/README-unnamed-chunk-18-2.png" width="100%" />
+
+#### 
 
 ## Other functions
 
@@ -494,6 +536,6 @@ parcutils::get_star_align_log_summary_plot(x = star_align_log_files,
                                 col_mapped_reads  = "blue") 
 ```
 
-<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
 
 ## 

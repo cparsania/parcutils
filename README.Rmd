@@ -185,7 +185,7 @@ parcutils::get_pca_plot(x = res,
 
 ### Visualize differential expressed genes by volcano plot
 
-```{r, fig.width==4, fig.height=7}
+```{r, fig.width=4, fig.height=5}
 
 
 parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control",
@@ -281,6 +281,36 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_plot %>% print()
 
 us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% print()
 ```
+
+### Visualize genes by line plot 
+
+#### 
+
+```{r, fig.width=3, fig.height=3}
+
+
+genes_for_lineplot = parcutils::get_genes_by_regulation(x = res,
+                                                  sample_comparison = res$comp[[2]], 
+                                                  regulation = "both")
+
+#gene expression values
+parcutils::get_gene_expression_line_plot(x = res, 
+                                   genes = genes_for_lineplot , 
+                                   samples = c("control","treatment1","treatment2"),summarise_replicates = T, show_average_line = T)
+
+
+# Fold change values 
+
+parcutils::get_fold_change_line_plot(x = res, 
+                                   genes = genes_for_lineplot , 
+                                     sample_comparisons = c("treatment1_VS_control", "treatment2_VS_control"), 
+                                   average_line_summary_method =  "mean",
+                                   show_average_line = T)
+
+
+```
+
+#### 
 
 ## Other functions
 

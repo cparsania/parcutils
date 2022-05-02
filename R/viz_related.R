@@ -1216,6 +1216,7 @@ get_gene_expression_line_plot <- function(x,
 
 
 #' @rdname get_gene_expression_line_plot
+#' @export
 get_fold_change_line_plot <- function(x,
                                       sample_comparisons,
                                       genes,
