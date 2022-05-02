@@ -117,7 +117,6 @@
 run_deseq_analysis <- function(
   counts,
   column_geneid,
-  #column_samples,
   sample_info,
   group_numerator,
   group_denominator,
@@ -202,7 +201,6 @@ run_deseq_analysis <- function(
 
   # quote column names
   column_geneid_quo <- rlang::enquo(column_geneid)
-  #column_samples_quo <- rlang::enquos(column_samples)
 
   ## prepare sample information
 
@@ -683,8 +681,7 @@ categorize_diff_genes <-  function(dsr_tibble,
 #'                          sample_info = sample_info,
 #'                          column_geneid = "gene_id" ,
 #'                          group_numerator = c("treatment1", "treatment2") ,
-#'                          group_denominator = c("control"),
-#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'                          group_denominator = c("control"))
 #'
 #' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control")
 #'
@@ -763,8 +760,7 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #'                          sample_info = sample_info,
 #'                          column_geneid = "gene_id" ,
 #'                          group_numerator = c("treatment1", "treatment2") ,
-#'                          group_denominator = c("control"),
-#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'                          group_denominator = c("control"))
 #'
 #'
 #' get_normalised_expression_matrix(x = res) %>% print()
@@ -882,8 +878,7 @@ get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, s
 #'                          sample_info = sample_info,
 #'                          column_geneid = "gene_id" ,
 #'                          group_numerator = c("treatment1", "treatment2") ,
-#'                          group_denominator = c("control"),
-#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'                          group_denominator = c("control"))
 #'
 #' # get both up and down regulated genes
 #' get_genes_by_regulation(x = res, sample_comparisons = c("treatment1_VS_control")) %>% head()
@@ -1012,8 +1007,7 @@ get_genesets_by_regulation <- function(x, sample_comparisons, regulation = "both
 #'                          sample_info = sample_info,
 #'                          column_geneid = "gene_id" ,
 #'                          group_numerator = c("treatment1", "treatment2") ,
-#'                          group_denominator = c("control"),
-#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'                          group_denominator = c("control"))
 #'
 #' yy <- plot_deg_upsets(x= res, sample_comparisons = c("treatment1_VS_control","treatment2_VS_control"))
 #'
@@ -1197,8 +1191,7 @@ piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_do
 #'                          sample_info = sample_info,
 #'                          column_geneid = "gene_id" ,
 #'                          group_numerator = c("treatment1", "treatment2") ,
-#'                          group_denominator = c("control"),
-#'                          column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+#'                          group_denominator = c("control"))
 #'
 #' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both")
 #' get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"), genes = genes)

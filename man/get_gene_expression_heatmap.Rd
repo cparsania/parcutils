@@ -127,8 +127,7 @@ res <- run_deseq_analysis(counts = count_data ,
                          sample_info = sample_info,
                          column_geneid = "gene_id" ,
                          group_numerator = c("treatment1", "treatment2") ,
-                         group_denominator = c("control"),
-                         column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+                         group_denominator = c("control"))
 
 genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both")
 get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"), genes = genes)

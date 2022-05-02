@@ -32,15 +32,15 @@ get_corr_heatbox(
 
 \item{vis_method}{a character string, default \code{"full"}, denoting a value type of visualization. Value can be one of these \code{"square", "circle"}.}
 
-\item{show_diagonal}{a logical, default \code{TRUE}, denoting weather to show diagonal values or not.}
+\item{show_diagonal}{a logical, default \code{TRUE}, denoting whether to show diagonal values or not.}
 
-\item{show_corr_values}{a logical, default \code{TRUE}, denoting weather to show corr values or not.}
+\item{show_corr_values}{a logical, default \code{TRUE}, denoting whether to show corr values or not.}
 
 \item{col_corr_values}{a character string, default \code{"yellow"}, denoting a valid color string for corr values.}
 
 \item{size_corr_values}{a numeric, default \code{5}, denoting a size for corr values.}
 
-\item{cluster_samples}{a logical, default \code{TRUE}, denoting weather to cluster samples or not.}
+\item{cluster_samples}{a logical, default \code{TRUE}, denoting whether to cluster samples or not.}
 
 \item{scale_range}{a numeric vector of length two denoting minimum and maximum value for the color scale, default \code{NULL}.}
 }
@@ -62,8 +62,7 @@ res <- run_deseq_analysis(counts = count_data ,
                          sample_info = sample_info,
                          column_geneid = "gene_id" ,
                          group_numerator = c("treatment1", "treatment2") ,
-                         group_denominator = c("control"),
-                         column_samples = c("control_rep1", "treat1_rep1", "treat2_rep1", "control_rep2", "treat1_rep2", "treat2_rep2", "control_rep3", "treat1_rep3", "treat2_rep3"))
+                         group_denominator = c("control"))
 
 get_corr_heatbox(res,samples = c("treatment1","control"),cluster_samples = FALSE,show_corr_values =T,
 size_corr_values = 4)
