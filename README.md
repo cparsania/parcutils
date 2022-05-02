@@ -294,9 +294,6 @@ parcutils::group_replicates_by_sample(res)
 
 ``` r
 parcutils::get_pairwise_corr_plot(res, samples =c("control" ,"treatment1"))
-#> Registered S3 method overwritten by 'GGally':
-#>   method from   
-#>   +.gg   ggplot2
 #> $control
 ```
 
@@ -332,16 +329,6 @@ parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control"
                             col_up = "#a40000",
                             col_down = "#007e2f", 
                             col_other = "grey")
-#> Registered S3 methods overwritten by 'ggalt':
-#>   method                  from   
-#>   grid.draw.absoluteGrob  ggplot2
-#>   grobHeight.absoluteGrob ggplot2
-#>   grobWidth.absoluteGrob  ggplot2
-#>   grobX.absoluteGrob      ggplot2
-#>   grobY.absoluteGrob      ggplot2
-#> Warning: One or more p-values is 0. Converting to 10^-1 * current lowest non-
-#> zero p-value...
-#> Warning: Ignoring unknown parameters: xlim, ylim
 ```
 
 ![](man/figures/README-unnamed-chunk-15-1.png)<!-- -->
@@ -356,10 +343,6 @@ parcutils::get_volcano_plot(x = res,
                             col_up = "#a40000",
                             col_down = "#007e2f",
                             col_other = "grey")
-#> Warning: One or more p-values is 0. Converting to 10^-1 * current lowest non-
-#> zero p-value...
-
-#> Warning: Ignoring unknown parameters: xlim, ylim
 ```
 
 ![](man/figures/README-unnamed-chunk-15-2.png)<!-- -->
@@ -425,9 +408,6 @@ hm2 <- parcutils::get_gene_expression_heatmap(x = res,
                                        genes = genes_for_hm , 
                                        convert_zscore = TRUE, 
                                        cluster_columns = FALSE)
-#> Warning in parcutils::get_gene_expression_heatmap(x =
-#> res, samples = c("control", : Genes having value NA -
-#> ENSG00000170820:FSHR,ENSG00000129862:VCY1B are removed from heatmap.
 
 
 ComplexHeatmap::draw(hm2)
@@ -475,7 +455,7 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% pri
 #> 7 treatment2_VS_control_down                            <chr [495]>
 ```
 
-### Visualize genes by line plot
+### Visualize genes by line plot te
 
 ``` r
 
@@ -487,7 +467,6 @@ genes_for_lineplot = parcutils::get_genes_by_regulation(x = res,
 parcutils::get_gene_expression_line_plot(x = res, 
                                    genes = genes_for_lineplot , 
                                    samples = c("control","treatment1","treatment2"),summarise_replicates = T, show_average_line = T) + ggplot2::theme(text = ggplot2::element_text(size = 15))
-#> Warning: Transformation introduced infinite values in continuous y-axis
 ```
 
 ![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->

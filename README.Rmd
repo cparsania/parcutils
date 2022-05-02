@@ -8,7 +8,9 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-"
+  fig.path = "man/figures/README-",
+  warning = FALSE,
+  message = FALSE
 )
 ```
 
@@ -295,7 +297,7 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_plot %>% print()
 us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% print()
 ```
 
-### Visualize genes by line plot 
+### Visualize genes by line plot te
 
 ```{r, fig.width=5, fig.height=4}
 
