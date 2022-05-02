@@ -16,6 +16,7 @@ reference:
   - title: "Visualization related"
     contents:
       - get_pairwise_corr_plot
+      - get_corr_heatbox
       - get_gene_expression_box_plot
       - get_gene_expression_heatmap
       - get_fold_change_heatmap
