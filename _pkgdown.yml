@@ -12,6 +12,8 @@ reference:
       - get_normalised_expression_matrix
       - get_genes_by_regulation
       - group_replicates_by_sample
+      - get_go_emap_plot
+      - save_go_results
 
   - title: "Visualization related"
     contents:

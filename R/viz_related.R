@@ -1290,3 +1290,235 @@ get_fold_change_line_plot <- function(x,
 }
 
 
+
+
+
+#' Perform gene ontology analysis and visualization for DE genesets in one go.
+#'
+#' @param x an object of class 'parcutils'.
+#' @param org_db an object of the class class OrgDB, default \code{org.Hs.eg.db}
+#' @param ont_type a character string, default \code{"BP"}, denoting ontology type. Values can be one of the \code{"BP", "MF" , "CC"}
+#' @param p_adj_method a character string, default \code{"BH"}, denoting a method for p-adjustment. Values can be one of the  \code{"holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"}
+#' @param pval_cutoff a numeric, default \code{0.05} denoting p-value cutoff.
+#' @param qval_cutoff a numeric, default \code{0.05} denoting q-value cutoff.
+#' @param min_geneset_size a numeric, default \code{10}, denoting minimal size of genes annotated by ontology term for testing.
+#' @param max_geneset_size a numeric, default \code{500}, denoting maximal size of genes annotated by ontology term for testing.
+#' @param go_similarity_cutoff a numeric value, default \code{0.8}, denoting gene ontology similarity cutoff.
+#' @param show_n_terms a numeric, default \code{30}, denoting number of gene ontology terms to show in the plot.
+#' @param color_terms_by a character string, default \code{"p.adjust"}, denoting a variable to color gene ontology terms.
+#' @importFrom writexl write_xlsx
+#' @return
+#' @export
+#'
+#' @examples
+#'
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
+#'
+#' sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'   tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#' res <- parcutils::run_deseq_analysis(counts = count_data ,
+#'                                      sample_info = sample_info,
+#'                                      column_geneid = "gene_id" ,
+#'                                      group_numerator = c("treatment1", "treatment2") ,
+#'                                      group_denominator = c("control"))
+#'
+#' go_out <- get_go_emap_plot(res)
+#'
+#' # display plot
+#' go_out$go_emap_plots
+#'
+#' # display table
+#'  go_out$go_enrichment_output %>% tibble::as_tibble()
+get_go_emap_plot <- function(x,
+                             org_db = org.Hs.eg.db::org.Hs.eg.db,
+                             ont_type = "BP",
+                             p_adj_method = "BH",
+                             pval_cutoff = 0.05,
+                             qval_cutoff = 0.05,
+                             min_geneset_size = 10,
+                             max_geneset_size = 500,
+                             go_similarity_cutoff = 0.8,
+                             show_n_terms = 30,
+                             color_terms_by = "p.adjust"){
+
+  # validate arguments
+
+  validata_parcutils_obj(x)
+
+  # validate orgdb
+
+  stopifnot("'org_db' must be an object of class 'OrgDB'" = inherits(org_db, "OrgDb"))
+
+  # all gene sets
+  deg_genes <- parcutils::get_genesets_by_regulation(x =  x, sample_comparisons = x$comp)
+
+  match.arg(ont_type , choices = c("BP","MF","CC"))
+
+  match.arg(p_adj_method , choices = c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"))
+
+  # validate numeric
+  stopifnot("'pval_cutoff' must be a numeric value." = is.numeric(pval_cutoff))
+  stopifnot("'qval_cutoff' must be a numeric value." = is.numeric(qval_cutoff))
+  stopifnot("'min_geneset_size' must be a numeric value." = is.numeric(min_geneset_size))
+  stopifnot("'max_geneset_size' must be a numeric value." = is.numeric(max_geneset_size))
+  stopifnot("'go_similarity_cutoff' must be a numeric value." = is.numeric(go_similarity_cutoff))
+  stopifnot("'show_n_terms' must be a numeric value." = is.numeric(show_n_terms))
+
+  # format gene_id to remove suffix gene_name
+  deg_genes <- deg_genes %>%
+    purrr::map(~ ..1 %>% stringr::str_replace(":.*",""))
+
+  # prepare background genes. They are the genes which used for DE analysis.
+  universe <- .get_all_expressed_genes(x)
+
+  # format universe to remove suffix gene_name
+  universe <- universe %>% stringr::str_replace(":.*","")
+
+  # for each gene set in the list perform GO enrichment
+
+  progress_len <- length(deg_genes)
+  pb <- progress::progress_bar$new(total = progress_len)
+
+  # validate keytype
+
+  key_type = 'ENSEMBL'
+  stopifnot("org_db must have 'ENSEMBL' kyetypes." = key_type %in% AnnotationDbi::keytypes(org_db))
+
+  go_enrichment_result <- purrr::map(deg_genes , function(x){
+    pb$tick()
+    clusterProfiler::enrichGO(
+      gene = x,
+      universe = universe,
+      OrgDb = org_db ,
+      keyType    = key_type,
+      ont        = ont_type,
+      minGSSize = min_geneset_size,
+      maxGSSize = max_geneset_size,
+      readable = T,
+      pAdjustMethod = p_adj_method,
+      pvalueCutoff  = pval_cutoff,
+      qvalueCutoff  = qval_cutoff)
+  })
+
+  # remove sets if no enriched terms found
+  go_enrichment_result_only_enriched <- .keep_only_enriched_go(go_enrichment_result)
+
+  # simplify go
+  go_enrichment_result_simplified =  .simplify_go( x = go_enrichment_result_only_enriched,similarity_cutoff = go_similarity_cutoff)
+
+  # generate plot
+  go_emap_plots <- .generate_go_emap_plot(go_enrichment_result_simplified, n_terms = show_n_terms , color_terms_by = color_terms_by )
+
+  # prepare return object
+  go_output_tbl <- go_enrichment_result_simplified  %>%
+  purrr::map( ~ ..1 %>% tibble::as_tibble())
+
+  out <- list(go_enrichment_output = go_output_tbl , go_emap_plots = go_emap_plots)
+
+  class(out) <- c(class(out) , "parcutils_go_results")
+  return(out)
+
+}
+
+#' Save GO results in a excel file.
+#' @description For each geneset, enrich GO terms and related data will be saved in an individual tab within a single excel file.
+#'
+#' @param x an object of class 'parcutils_go_results' which can be generated using the function [parcutils::get_go_emap_plot()]
+#' @param output_dir a character string, default "./", denoting a path to output file.
+#' @param output_file_name a character string, default "go_output", denoting an output file name.
+#'
+#' @return a list with two elements - 1) go results and 2) go emap plots.
+#' @export
+save_go_results <- function(x , output_dir = ".", output_file_name = "go_outout"  ){
+  stopifnot("x must be the object of class 'parcutils_go_results'." = inherits(x, "parcutils_go_results"))
+
+  go_file_path <- glue::glue("{output_dir}/{output_file_name}.xlsx")
+
+  writexl::write_xlsx(x$go_enrichment_output,
+                      path =  go_file_path)
+
+}
+
+#' @keywords internal
+.get_all_expressed_genes <- function(x){
+  parcutils:::validata_parcutils_obj(x)
+
+  all_genes <- parcutils::get_genes_by_regulation(x = x,
+                                                  regulation = "all",
+                                                  sample_comparisons = x$comp[1])
+
+  return(all_genes)
+}
+
+
+#' @keywords internal
+.keep_only_enriched_go <- function(x){
+
+  safely_enrich <- purrr::safely(enrichplot::pairwise_termsim , otherwise = NULL)
+
+  ## remove those which has no enriched term
+
+  go_enrichment_result_only_enriched <- x %>%
+    purrr::map( ~ safely_enrich(..1)) %>%
+    purrr::transpose() %>%
+    purrr::simplify_all()
+
+  go_enrichment_result_only_enriched <-
+    go_enrichment_result_only_enriched$result %>%
+    purrr::discard(is.null)
+
+}
+
+
+## remove highly similar GO terms
+#' @keywords internal
+.simplify_go <- function(x, similarity_cutoff = 0.9){
+
+  go_enrichment_result_only_enriched <-
+    x %>%
+    purrr::map(~ clusterProfiler::simplify(..1, cutoff = similarity_cutoff))
+
+  return(go_enrichment_result_only_enriched)
+}
+
+# visualize go
+#' @keywords internal
+.generate_go_emap_plot <- function(x, n_terms = 30 , color_terms_by = "p.adjust"){
+
+  safely_plot <- purrr::safely( .f = function(x, y,...){
+    ep <- enrichplot::emapplot(x,...)
+    ep <-   ep + ggplot2::ggtitle(y)
+    return(ep)
+  } , otherwise = NULL)
+
+  go_plots <- purrr::map(names(x) , ~
+                           safely_plot(x = x[[..1]],
+                                       y = ..1,
+                                       showCategory = n_terms,
+                                       color = color_terms_by,
+                                       layout = "kk"))
+
+  # simplify list
+  go_plots <- go_plots %>%
+    purrr::transpose() %>%
+    purrr::simplify_all()
+
+  # keep result
+  go_plots <- go_plots$result
+
+  # assign names
+  names(go_plots) <- names(x)
+
+  # remove element if NULL
+  go_plots <- go_plots %>%
+    purrr::discard(is.null)
+
+  go_plots
+
+}
+
+
+

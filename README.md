@@ -484,7 +484,41 @@ parcutils::get_fold_change_line_plot(x = res,
 
 ![](man/figures/README-unnamed-chunk-19-2.png)<!-- -->
 
-#### 
+## Perform gene ontology analysis and visualization of all UP/DOWN genes from all comparisons in one go.
+
+``` r
+go_results <- parcutils::get_go_emap_plot(x = res)
+
+# GO results as a table 
+
+go_results$go_enrichment_output
+#> $treatment1_VS_control_down
+#> # A tibble: 15 × 9
+#>    ID     Description   GeneRatio BgRatio  pvalue p.adjust  qvalue geneID  Count
+#>    <chr>  <chr>         <chr>     <chr>     <dbl>    <dbl>   <dbl> <chr>   <int>
+#>  1 GO:00… regulation o… 4/25      31/3462 5.84e-5  0.00974 0.00897 YWHAQ/…     4
+#>  2 GO:00… protein inse… 3/25      13/3462 9.08e-5  0.00974 0.00897 YWHAQ/…     3
+#>  3 GO:00… positive reg… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3
+#>  4 GO:00… establishmen… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3
+#>  5 GO:00… mitochondria… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3
+#>  6 GO:19… regulation o… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3
+#>  7 GO:19… positive reg… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3
+#>  8 GO:00… positive reg… 3/25      15/3462 1.43e-4  0.00974 0.00897 YWHAQ/…     3
+#>  9 GO:19… mitochondria… 3/25      15/3462 1.43e-4  0.00974 0.00897 YWHAQ/…     3
+#> 10 GO:19… positive reg… 3/25      15/3462 1.43e-4  0.00974 0.00897 YWHAQ/…     3
+#> 11 GO:00… protein inse… 3/25      19/3462 2.99e-4  0.0157  0.0144  YWHAQ/…     3
+#> 12 GO:00… apoptotic mi… 3/25      20/3462 3.50e-4  0.0170  0.0157  YWHAQ/…     3
+#> 13 GO:00… mitochondrio… 5/25      110/34… 9.45e-4  0.0429  0.0395  YWHAQ/…     5
+#> 14 GO:00… intracellula… 7/25      238/34… 1.09e-3  0.0465  0.0429  YWHAQ/…     7
+#> 15 GO:00… mitochondria… 3/25      30/3462 1.19e-3  0.0476  0.0438  YWHAQ/…     3
+
+# GO results as an emap plot 
+
+go_results$go_emap_plots
+#> $treatment1_VS_control_down
+```
+
+![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
 
 ## Other functions
 
@@ -528,6 +562,6 @@ parcutils::get_star_align_log_summary_plot(x = star_align_log_files,
                                 col_mapped_reads  = "blue") 
 ```
 
-![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
 
 ## 

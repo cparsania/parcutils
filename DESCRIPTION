@@ -39,7 +39,9 @@ Imports:
     fs,
     ggeasy,
     ggcorrplot,
-    viridis
+    viridis,
+    writexl,
+    progress
 Depends: 
     magrittr
 Remotes: 

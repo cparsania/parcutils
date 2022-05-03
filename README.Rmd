@@ -323,7 +323,19 @@ parcutils::get_fold_change_line_plot(x = res,
 
 ```
 
-#### 
+## Perform gene ontology analysis and visualization of all UP/DOWN genes from all comparisons in one go.
+
+```{r, fig.height=7, fig.width=7}
+go_results <- parcutils::get_go_emap_plot(x = res)
+
+# GO results as a table 
+
+go_results$go_enrichment_output
+
+# GO results as an emap plot 
+
+go_results$go_emap_plots
+```
 
 ## Other functions
 

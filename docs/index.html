@@ -501,10 +501,42 @@
                                    average_line_summary_method <span class="op">=</span>  <span class="st">"mean"</span>,
                                    show_average_line <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>text <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">15</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-19-2.png"><!-- --></p>
-<div class="section level4">
-<h4 id="section"></h4>
 </div>
 </div>
+<div class="section level2">
+<h2 id="perform-gene-ontology-analysis-and-visualization-of-all-updown-genes-from-all-comparisons-in-one-go">Perform gene ontology analysis and visualization of all UP/DOWN genes from all comparisons in one go.<a class="anchor" aria-label="anchor" href="#perform-gene-ontology-analysis-and-visualization-of-all-updown-genes-from-all-comparisons-in-one-go"></a>
+</h2>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">go_results</span> <span class="op">&lt;-</span> <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_go_emap_plot.html">get_go_emap_plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span><span class="op">)</span>
+
+<span class="co"># GO results as a table </span>
+
+<span class="va">go_results</span><span class="op">$</span><span class="va">go_enrichment_output</span>
+<span class="co">#&gt; $treatment1_VS_control_down</span>
+<span class="co">#&gt; # A tibble: 15 × 9</span>
+<span class="co">#&gt;    ID     Description   GeneRatio BgRatio  pvalue p.adjust  qvalue geneID  Count</span>
+<span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;         &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;int&gt;</span>
+<span class="co">#&gt;  1 GO:00… regulation o… 4/25      31/3462 5.84e-5  0.00974 0.00897 YWHAQ/…     4</span>
+<span class="co">#&gt;  2 GO:00… protein inse… 3/25      13/3462 9.08e-5  0.00974 0.00897 YWHAQ/…     3</span>
+<span class="co">#&gt;  3 GO:00… positive reg… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3</span>
+<span class="co">#&gt;  4 GO:00… establishmen… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3</span>
+<span class="co">#&gt;  5 GO:00… mitochondria… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3</span>
+<span class="co">#&gt;  6 GO:19… regulation o… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3</span>
+<span class="co">#&gt;  7 GO:19… positive reg… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3</span>
+<span class="co">#&gt;  8 GO:00… positive reg… 3/25      15/3462 1.43e-4  0.00974 0.00897 YWHAQ/…     3</span>
+<span class="co">#&gt;  9 GO:19… mitochondria… 3/25      15/3462 1.43e-4  0.00974 0.00897 YWHAQ/…     3</span>
+<span class="co">#&gt; 10 GO:19… positive reg… 3/25      15/3462 1.43e-4  0.00974 0.00897 YWHAQ/…     3</span>
+<span class="co">#&gt; 11 GO:00… protein inse… 3/25      19/3462 2.99e-4  0.0157  0.0144  YWHAQ/…     3</span>
+<span class="co">#&gt; 12 GO:00… apoptotic mi… 3/25      20/3462 3.50e-4  0.0170  0.0157  YWHAQ/…     3</span>
+<span class="co">#&gt; 13 GO:00… mitochondrio… 5/25      110/34… 9.45e-4  0.0429  0.0395  YWHAQ/…     5</span>
+<span class="co">#&gt; 14 GO:00… intracellula… 7/25      238/34… 1.09e-3  0.0465  0.0429  YWHAQ/…     7</span>
+<span class="co">#&gt; 15 GO:00… mitochondria… 3/25      30/3462 1.19e-3  0.0476  0.0438  YWHAQ/…     3</span>
+
+<span class="co"># GO results as an emap plot </span>
+
+<span class="va">go_results</span><span class="op">$</span><span class="va">go_emap_plots</span>
+<span class="co">#&gt; $treatment1_VS_control_down</span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-20-1.png"><!-- --></p>
 </div>
 <div class="section level2">
 <h2 id="other-functions">Other functions<a class="anchor" aria-label="anchor" href="#other-functions"></a>
@@ -512,7 +544,7 @@
 <div class="section level3">
 <h3 id="alignment-summary">Alignment summary<a class="anchor" aria-label="anchor" href="#alignment-summary"></a>
 </h3>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">star_align_log_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span> , <span class="st">"a_Log.final.out"</span> , package <span class="op">=</span> <span class="st">"parcutils"</span><span class="op">)</span>
 
 <span class="va">x</span> <span class="op">=</span>  <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_star_align_log_summary.html">get_star_align_log_summary</a></span><span class="op">(</span>log_file <span class="op">=</span> <span class="va">star_align_log_file</span><span class="op">)</span>
@@ -548,11 +580,11 @@
 <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_star_align_log_summary_plot.html">get_star_align_log_summary_plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">star_align_log_files</span>,
                                 col_total_reads <span class="op">=</span> <span class="st">"red"</span>, 
                                 col_mapped_reads  <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span> </code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-20-1.png"><!-- --></p>
+<p><img src="reference/figures/README-unnamed-chunk-21-1.png"><!-- --></p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="section-1"></h2>
+<h2 id="section"></h2>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
