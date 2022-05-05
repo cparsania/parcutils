@@ -659,7 +659,7 @@ get_replicates_by_sample_list <- function(x){
 #' Generate a volcano plot.
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
-#' @param sample_comparison a character string denoting a valid differatnial gene comparison. Possible comparisons can be found from x$comp.
+#' @param sample_comparison a character string denoting a valid differential gene comparison. Possible comparisons can be found from x$comp.
 #' @param log2fc_cutoff a numeric value, default 1.
 #' @param pval_cutoff a numeric value, default 0.05.
 #' @param genes_to_display a character vector of the genes to display in volcano plot, default NULL, displays non overlapping genes.
@@ -667,8 +667,13 @@ get_replicates_by_sample_list <- function(x){
 #' @param point_size a numeric value, default 1, denoting size of the points
 #' @param col_up a character string, default "a40000", denoting valid color code for up regulated genes.
 #' @param col_down a character string, default "007e2f", denoting valid color code for down regulated genes.
+#' @param repair_genes logical, default \code{TRUE}, indicating whether to repair gene names. See details.
 #' @param col_other a character string, default "grey", denoting valid color code for other than up and down regulated genes.
 #' @param ... other parameters to be passed to [EnhancedVolcano::EnhancedVolcano()]
+#' @details
+#' + \code{repair_genes} :  Internally gene names are stored as a "gene_id:gene_symbol" format. For example, "ENSG00000187634:SAMD11".
+#' When \code{repair_genes} is set to \code{TRUE} the string corresponding to gene_id followed by ":" will be removed. This is useful when gene names
+#' to be revealed in the volcano plot.
 #'
 #' @return ggplot
 #' @export
@@ -692,6 +697,8 @@ get_replicates_by_sample_list <- function(x){
 #'
 #' get_volcano_plot(res,  sample_comparison = res$comp[2]) %>% print()
 #'
+#' get_volcano_plot(res,  sample_comparison = res$comp[2] , genes_to_display = c("THEG","FBXL2","LAMC2","SHF","TSKU"), lab_size = 5) %>% print()
+#'
 get_volcano_plot <- function(x,
                              sample_comparison,
                              log2fc_cutoff = 1,
@@ -699,6 +706,7 @@ get_volcano_plot <- function(x,
                              genes_to_display = NULL,
                              lab_size = 3,
                              point_size = 1,
+                             repair_genes = TRUE,
                              col_up = "#a40000",
                              col_down =  "#007e2f",
                              col_other = "grey",...){
@@ -723,19 +731,14 @@ get_volcano_plot <- function(x,
 
   # # fix gene name
 
-  # if(repair_genes){
-  #   volcano_data <- volcano_data %>%
-  #     purrr::map( function(x){
-  #     gn <- rownames(x)
-  #     gsym <- stringr::str_replace(gn, pattern = ".*:", replacement = "")
-  #     gid <- stringr::str_replace(gn, pattern = ":.*", replacement = "")
-  #     gn_new <- dplyr::if_else(duplicated(gsym) , gid ,
-  #                              gsym)
-  #     rownames(x) <- gn_new
-  #     return(x)
-  #   })
-  # }
-  #
+  if(repair_genes){
+      gn <- rownames(volcano_data)
+      gsym <- stringr::str_replace(gn, pattern = ".*:", replacement = "")
+      gid <- stringr::str_replace(gn, pattern = ":.*", replacement = "")
+      gn_new <- dplyr::if_else(duplicated(gsym) , gid , gsym)
+      rownames(volcano_data) <- gn_new
+  }
+
 
   # generate plot
 
@@ -1423,7 +1426,7 @@ get_go_emap_plot <- function(x,
 
 }
 
-#' Save GO results in a excel file.
+#' Save GO data in a excel file.
 #' @description For each geneset, enrich GO terms and related data will be saved in an individual tab within a single excel file.
 #'
 #' @param x an object of class 'parcutils_go_results' which can be generated using the function [parcutils::get_go_emap_plot()]
@@ -1432,15 +1435,47 @@ get_go_emap_plot <- function(x,
 #'
 #' @return a list with two elements - 1) go results and 2) go emap plots.
 #' @export
-save_go_results <- function(x , output_dir = ".", output_file_name = "go_outout"  ){
+save_go_data <- function(x , output_dir = ".", output_file_name = "go_outout"  ){
   stopifnot("x must be the object of class 'parcutils_go_results'." = inherits(x, "parcutils_go_results"))
 
-  go_file_path <- glue::glue("{output_dir}/{output_file_name}.xlsx")
+  go_data_file_path <- glue::glue("{output_dir}/{output_file_name}.xlsx")
 
   writexl::write_xlsx(x$go_enrichment_output,
-                      path =  go_file_path)
+                      path =  go_data_file_path)
 
 }
+
+
+#' Save GO plot(s) in .pdf files.
+#'
+#' @param x x an object of class 'parcutils_go_results' which can be generated using the function [parcutils::get_go_emap_plot()]
+#' @param output_dir a character string, default "./", denoting a path to output file.
+#' @param output_file_suffix a character string, default "go_plot", denoting a suffix for go plot pdf files.
+#' If default used, the name of output file will be <name_of_DE_comparison>_<up/down>_go_plot.pdf.
+#' For e.g.  for \code{up} regulated genes from the comparison treatment_VS_control the file name will be
+#' @param height plot height in inch, default 10.
+#' @param width plot width in inch, default 10.
+#' \code{treatment_VS_control_up_go_plot.pdf}
+#' @return
+#' @export
+#'
+#' @examples
+save_go_plots <- function(x , output_dir = ".",
+                          output_file_suffix = "go_plot",
+                          height = 10, width = 10  ){
+  stopifnot("x must be the object of class 'parcutils_go_results'." = inherits(x, "parcutils_go_results"))
+
+  x$go_emap_plots %>%
+    purrr::imap(.f = ~{
+      go_plot_file_path <- fs::file_create(output_dir,glue::glue("{.y}_{output_file_suffix}.pdf"))
+      ggplot2::ggsave(filename = go_plot_file_path,
+                      width = width,
+                      height = height ,
+                      plot = .x)
+    })
+
+}
+
 
 #' @keywords internal
 .get_all_expressed_genes <- function(x){

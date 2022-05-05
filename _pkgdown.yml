@@ -13,7 +13,8 @@ reference:
       - get_genes_by_regulation
       - group_replicates_by_sample
       - get_go_emap_plot
-      - save_go_results
+      - save_go_data
+      - save_go_plots
 
   - title: "Visualization related"
     contents:

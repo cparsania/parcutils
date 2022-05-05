@@ -12,6 +12,7 @@ get_volcano_plot(
   genes_to_display = NULL,
   lab_size = 3,
   point_size = 1,
+  repair_genes = TRUE,
   col_up = "#a40000",
   col_down = "#007e2f",
   col_other = "grey",
@@ -21,7 +22,7 @@ get_volcano_plot(
 \arguments{
 \item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
 
-\item{sample_comparison}{a character string denoting a valid differatnial gene comparison. Possible comparisons can be found from x$comp.}
+\item{sample_comparison}{a character string denoting a valid differential gene comparison. Possible comparisons can be found from x$comp.}
 
 \item{log2fc_cutoff}{a numeric value, default 1.}
 
@@ -32,6 +33,8 @@ get_volcano_plot(
 \item{lab_size}{a numeric value, default 3, denoting size of the lables.}
 
 \item{point_size}{a numeric value, default 1, denoting size of the points}
+
+\item{repair_genes}{logical, default \code{TRUE}, indicating whether to repair gene names. See details.}
 
 \item{col_up}{a character string, default "a40000", denoting valid color code for up regulated genes.}
 
@@ -46,6 +49,13 @@ ggplot
 }
 \description{
 Generate a volcano plot.
+}
+\details{
+\itemize{
+\item \code{repair_genes} :  Internally gene names are stored as a "gene_id:gene_symbol" format. For example, "ENSG00000187634:SAMD11".
+When \code{repair_genes} is set to \code{TRUE} the string corresponding to gene_id followed by ":" will be removed. This is useful when gene names
+to be revealed in the volcano plot.
+}
 }
 \examples{
 count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
@@ -65,5 +75,7 @@ res <- run_deseq_analysis(counts = count_data ,
 get_volcano_plot(res,  sample_comparison = res$comp[1]) \%>\% print()
 
 get_volcano_plot(res,  sample_comparison = res$comp[2]) \%>\% print()
+
+get_volcano_plot(res,  sample_comparison = res$comp[2] , genes_to_display = c("THEG","FBXL2","LAMC2","SHF","TSKU"), lab_size = 5) \%>\% print()
 
 }

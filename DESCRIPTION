@@ -13,7 +13,6 @@ Imports:
     cli (>= 3.0.1),
     DESeq2 (>= 1.30.0),
     dplyr (>= 0.8.5),
-    EnhancedVolcano,
     GenomicRanges (>= 1.38.0),
     glue,
     magrittr (>= 1.5),
@@ -33,7 +32,6 @@ Imports:
     circlize (>= 0.4.13),
     forcats,
     ggplot2,
-    plyranges,
     stringr,
     GGally,
     fs,
@@ -41,7 +39,9 @@ Imports:
     ggcorrplot,
     viridis,
     writexl,
-    progress
+    progress,
+    plyranges,
+    EnhancedVolcano
 Depends: 
     magrittr
 Remotes: 
