@@ -1458,8 +1458,6 @@ save_go_data <- function(x , output_dir = ".", output_file_name = "go_outout"  )
 #' \code{treatment_VS_control_up_go_plot.pdf}
 #' @return
 #' @export
-#'
-#' @examples
 save_go_plots <- function(x , output_dir = ".",
                           output_file_suffix = "go_plot",
                           height = 10, width = 10  ){
