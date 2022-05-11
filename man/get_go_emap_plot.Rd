@@ -19,7 +19,7 @@ get_go_emap_plot(
 )
 }
 \arguments{
-\item{x}{an object of class 'parcutils'.}
+\item{x}{an object of class 'parcutils' or 'parcutils_ir'.}
 
 \item{org_db}{an object of the class class OrgDB, default \code{org.Hs.eg.db}}
 

@@ -1298,7 +1298,7 @@ get_fold_change_line_plot <- function(x,
 
 #' Perform gene ontology analysis and visualization for DE genesets in one go.
 #'
-#' @param x an object of class 'parcutils'.
+#' @param x an object of class 'parcutils' or 'parcutils_ir'.
 #' @param org_db an object of the class class OrgDB, default \code{org.Hs.eg.db}
 #' @param ont_type a character string, default \code{"BP"}, denoting ontology type. Values can be one of the \code{"BP", "MF" , "CC"}
 #' @param p_adj_method a character string, default \code{"BH"}, denoting a method for p-adjustment. Values can be one of the  \code{"holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"}
@@ -1356,7 +1356,8 @@ get_go_emap_plot <- function(x,
   stopifnot("'org_db' must be an object of class 'OrgDB'" = inherits(org_db, "OrgDb"))
 
   # all gene sets
-  deg_genes <- parcutils::get_genesets_by_regulation(x =  x, sample_comparisons = x$comp)
+  deg_genes <- parcutils::get_genesets_by_regulation(x =  x,
+                                                     sample_comparisons = x$comp)
 
   match.arg(ont_type , choices = c("BP","MF","CC"))
 
@@ -1380,15 +1381,35 @@ get_go_emap_plot <- function(x,
   # format universe to remove suffix gene_name
   universe <- universe %>% stringr::str_replace(":.*","")
 
-  # for each gene set in the list perform GO enrichment
 
-  progress_len <- length(deg_genes)
-  pb <- progress::progress_bar$new(total = progress_len)
+
+  # convert IDs for IR GO analysis.
+  if(inherits(x , "parcutils_ir")){
+
+    deg_genes <- purrr::map(deg_genes, ~{
+      parcutils::annotate_retained_introns(x = x,
+                                           query_introns = ..1,
+                                           add_meta_data = F) %>%
+        dplyr::pull("gene_id") %>%
+        unique()
+    })
+
+    universe <- parcutils::annotate_retained_introns(x = x,
+                                                     query_introns = universe,
+                                                     add_meta_data = F) %>%
+      dplyr::pull("gene_id")
+  }
 
   # validate keytype
 
   key_type = 'ENSEMBL'
   stopifnot("org_db must have 'ENSEMBL' kyetypes." = key_type %in% AnnotationDbi::keytypes(org_db))
+
+  # for each gene set in the list perform GO enrichment
+
+  progress_len <- length(deg_genes)
+  pb <- progress::progress_bar$new(total = progress_len)
+
 
   go_enrichment_result <- purrr::map(deg_genes , function(x){
     pb$tick()
