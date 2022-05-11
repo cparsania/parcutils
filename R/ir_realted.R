@@ -729,9 +729,6 @@ annotate_retained_introns <- function(x,
                          dplyr::select(intron_id, seq, GC,length), by = "intron_id")
   }
 
-
-
-
   # check how many queried retained introns (intron_id) not present in the all_retained
 
   all_retained <- intron_annotations %>%
@@ -805,7 +802,7 @@ annotate_retained_introns <- function(x,
 .prepare_parcutils_ir <-  function(x){
   validata_parcutils_obj(x)
   y <- x %>% tibble::tibble()
-  id_column <- colnames(y)[1]
+  id_column <- y$norm_counts[[1]][[1]] %>% colnames() %>% .[1]
   # fix 1st column names
 
   y <- y %>%
