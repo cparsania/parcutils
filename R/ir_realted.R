@@ -721,13 +721,15 @@ annotate_retained_introns <- function(x,
     stopifnot("'bs_genome_object' cannot be NULL when 'add_meta_data' is TRUE")
     ir_meta_data <- .map_granges_metadata(x = intron_annotations_gr,
                                           bs_genome_object = bs_genome_object)
+
+    # join meta-data
+
+    intron_annotations <- intron_annotations %>%
+      dplyr::left_join(ir_meta_data  %>% tibble::as_tibble() %>%
+                         dplyr::select(intron_id, seq, GC,length), by = "intron_id")
   }
 
-  # join meta-data
 
-  intron_annotations <- intron_annotations %>%
-    dplyr::left_join(ir_meta_data  %>% tibble::as_tibble() %>%
-                       dplyr::select(intron_id, seq, GC,length), by = "intron_id")
 
 
   # check how many queried retained introns (intron_id) not present in the all_retained
