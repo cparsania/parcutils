@@ -114,12 +114,32 @@ Same value will be passed to argument <code>min_replicates</code> in <code><a hr
 <span class="r-in"><span class="va">example_files</span> <span class="op">&lt;-</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/dir_ls.html" class="external-link">dir_ls</a></span><span class="op">(</span><span class="va">example_dir</span>, glob <span class="op">=</span> <span class="st">"*-IR-nondir*.txt"</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">example_files</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace</a></span><span class="op">(</span><span class="va">example_files</span> , pattern <span class="op">=</span> <span class="st">".*/"</span>, replacement <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span class="r-in"><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html" class="external-link">str_replace</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"-IR-nondir.txt"</span>, replacement <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_irfinderS_output.html">read_irfinderS_output</a></span><span class="op">(</span>files <span class="op">=</span> <span class="va">example_files</span>,  add_prefix_chr <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_irfinderS_output.html">read_irfinderS_output</a></span><span class="op">(</span>files <span class="op">=</span> <span class="va">example_files</span>,  add_prefix_chr <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">ir_sample_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">example_files</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span class="r-in"><span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>samples <span class="op">=</span> <span class="va">.</span> , groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span>, <span class="st">"treatment"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">)</span></span>
 <span class="r-in"><span class="fu">run_deseq_analysis_ir</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, sample_info <span class="op">=</span> <span class="va">ir_sample_info</span>,</span>
 <span class="r-in">min_intron_depth <span class="op">=</span> <span class="fl">2</span>, regul_based_upon <span class="op">=</span><span class="fl">1</span>, cutoff_pval <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in is.data.frame(y):</span> object 'ir_sample_info' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Running DESeq2 ...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> converting counts to integer mode</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> estimating size factors</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> estimating dispersions</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> gene-wise dispersion estimates</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> mean-dispersion relationship</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> final dispersion estimates</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> fitting model and testing</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Summarizing DEG ...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total number of RI used for DE analysis are 31861. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total number of comparisons are 1. </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of DE RI in each comparison:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">treatment_VS_control</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #BB0000;">number of up RI   : 251.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #00BB00;">number of down RI : 304.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ──────────────────────────────</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

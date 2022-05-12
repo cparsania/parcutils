@@ -11,9 +11,7 @@ read_irfinderS_output(files, add_prefix_chr = TRUE, remove_prefix_chr = FALSE)
 
 \item{add_prefix_chr}{logical, whether to add prefix 'chr' in the column seq names}
 
-\item{remove_prefix_chr}{logical, whether to remove prefix 'chr' from the column seq names}
-
-\item{select_columns}{logical, whether to subset columns. If TRUE below columns will be subsetted
+\item{remove_prefix_chr}{logical, whether to remove prefix 'chr' from the column seq names
 \itemize{
 \item chr
 \item start
@@ -41,5 +39,5 @@ example_dir <- system.file("extdata" ,"ir_data" , package="parcutils")
 example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") \%>\%
 stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-read_irfinderS_output(files = example_files,  add_prefix_chr = F)
+read_irfinderS_output(files = example_files,  add_prefix_chr = FALSE)
 }

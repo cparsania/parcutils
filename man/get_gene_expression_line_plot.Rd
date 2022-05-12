@@ -57,6 +57,9 @@ get_fold_change_line_plot(
 \item{average_line_size}{a numeric, default 1, denoting size for average line.}
 
 \item{average_line_summary_method}{a character string, default median, denoting a summary method used to generate an average line. Values can be one of the mean or median.}
+
+\item{sample_comparisons}{a character vector denoting sample comparisons.
+possible values can be found from \code{x$comp}.}
 }
 \value{
 ggplot2.

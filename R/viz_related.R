@@ -291,11 +291,12 @@ plot_regions_relative_to_reference <- function(query , reference){
 
 
 #' Generate a PCA plot.
+#'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param samples a character vector denoting samples to plot in PCA plot, default \code{NULL}. If set to NULL all samples are accounted.
 #' @param genes a character vector denoting genes to consider for PCA plot, default \code{NULL}. If set to NULL all genes are accounted.
+#' @param label_replicates logical, default FALSE, denoting whether to label each replicate in the plot.
 #' @param circle_size a numeric value,  default  10, denoting size of the circles in PCA plot.
-#' @param show_replicates a logical, degfault FALSE, denoting whether to label replicates in the PCA plot.
 #'
 #' @return an object of ggplot2.
 #' @export
@@ -321,10 +322,11 @@ plot_regions_relative_to_reference <- function(query , reference){
 #'
 #' get_pca_plot(x = res, label_replicates =  T)
 #'
-get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10, label_replicates = FALSE){
+get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10,
+                         label_replicates = FALSE){
 
   # validate x
-  parcutils:::validata_parcutils_obj(x)
+  .validate_parcutils_obj(x)
 
   # validate samples
   stopifnot("'samples' must be a character vector or NULL." = is.character(samples) | is.null(samples))
@@ -332,7 +334,7 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10, labe
   # validate genes
   stopifnot("'genes' must be a character vector or NULL." = is.character(genes) | is.null(genes))
 
-  # validate show_replicates
+  # validate label_replicates
   stopifnot("'label_replicates' must be a logical." = is.logical(label_replicates))
 
   # get gene expression matrix
@@ -384,7 +386,7 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10, labe
 
   # prepare sample_info from x
 
-  sample_info <- group_replicates_by_sample(x = x)
+  sample_info <- .group_replicates_by_sample(x = x)
 
   # add sample info
 
@@ -454,7 +456,7 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10, labe
 #'
 #' get_gene_expression_box_plot(x = res ) %>% print()
 #'
-#' get_gene_expression_box_plot(x = res , group_replicates = T ) %>% print()
+#' get_gene_expression_box_plot(x = res , group_replicates = TRUE ) %>% print()
 #'
 get_gene_expression_box_plot <- function(x, samples = NULL, genes = NULL,
                                          group_replicates = F,
@@ -462,7 +464,7 @@ get_gene_expression_box_plot <- function(x, samples = NULL, genes = NULL,
 
 
   # validate x
-  parcutils:::validata_parcutils_obj(x)
+  .validate_parcutils_obj(x)
 
   # validate samples
   stopifnot("'samples' must be a character vector or NULL." = is.character(samples) | is.null(samples))
@@ -497,7 +499,7 @@ get_gene_expression_box_plot <- function(x, samples = NULL, genes = NULL,
 
   # group replicates by samples
 
-  rep_grps <- parcutils::group_replicates_by_sample(x)
+  rep_grps <- .group_replicates_by_sample(x)
 
   # add groups
 
@@ -587,7 +589,7 @@ get_gene_expression_box_plot <- function(x, samples = NULL, genes = NULL,
 get_pairwise_corr_plot  <- function(x , samples = NULL, genes = NULL){
 
   # validate x
-  parcutils:::validata_parcutils_obj(x)
+  .validate_parcutils_obj(x)
 
   # validate samples
   stopifnot("'samples' must be a character vector or NULL." = is.character(samples) | is.null(samples))
@@ -604,7 +606,7 @@ get_pairwise_corr_plot  <- function(x , samples = NULL, genes = NULL){
   }
 
   # replicate groups
-  rep_grps <- get_replicates_by_sample_list(x)
+  rep_grps <- .get_replicates_by_sample_list(x)
 
   # filter by user supplied samples
   if(!is.null(samples)){
@@ -621,37 +623,6 @@ get_pairwise_corr_plot  <- function(x , samples = NULL, genes = NULL){
 
 }
 
-
-#' Group replicates by sample - returns list
-#' @rdname get_replicates_by_sample
-#'
-#' @keywords internal
-#' @export
-#' @examples
-#' \dontrun{
-#' // TO DO
-#' }
-get_replicates_by_sample_list <- function(x){
-
-  # validate x
-  parcutils:::validata_parcutils_obj(x)
-
-  y <- parcutils::group_replicates_by_sample(x)
-
-  y_grpd <-
-    y %>%
-    dplyr::group_by(groups) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(data = purrr::map(data, ~ ..1 %>% dplyr::pull(1)))
-
-  y <-
-    y_grpd %>%
-    dplyr::pull(2)
-
-  names(y) <- y_grpd %>% dplyr::pull(1)
-
-  return(y)
-}
 
 
 
@@ -712,7 +683,7 @@ get_volcano_plot <- function(x,
                              col_other = "grey",...){
 
   # validate x
-  parcutils:::validata_parcutils_obj(x)
+  .validate_parcutils_obj(x)
 
   # validate sample_comparison
 
@@ -761,34 +732,6 @@ get_volcano_plot <- function(x,
 
 
 }
-
-
-
-
-#' Group replicates by samples.
-#'
-#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
-#'
-#' @return a tbl.
-#' @export
-#' @keywords internal.
-#' @examples
-#' \dontrun{
-#' // TO DO
-#' }
-group_replicates_by_sample <- function(x){
-
-  parcutils:::validata_parcutils_obj(x)
-
-  sample_info <- purrr::map(parcutils:::get_all_named_expression_matrix(x), ~ ..1 %>% colnames() %>% .[-1]) %>%
-    tibble::tibble(groups = names(.) , samples = .) %>%
-    tidyr::unnest(cols = "samples")
-
-  return(sample_info)
-}
-
-
-
 
 
 #' Visualise alignment stats in a bar plot
@@ -917,7 +860,7 @@ get_diff_gene_count_barplot <- function(x,
                                         col_down="#16317d",
                                         font_size = 12){
 
-  validata_parcutils_obj(x)
+  .validate_parcutils_obj(x)
 
   gp <- x$deg_summmary %>%
     tibble::enframe(name = "comparison" ,
@@ -974,7 +917,7 @@ get_diff_gene_count_barplot <- function(x,
 #'                          group_numerator = c("treatment1", "treatment2") ,
 #'                          group_denominator = c("control"))
 #'
-#'get_corr_heatbox(res,samples = c("treatment1","control"),cluster_samples = FALSE,show_corr_values =T,
+#'get_corr_heatbox(res,samples = c("treatment1","control"),cluster_samples = FALSE,show_corr_values =TRUE,
 #'size_corr_values = 4)
 get_corr_heatbox <- function(x,
                              samples = NULL,
@@ -992,7 +935,7 @@ get_corr_heatbox <- function(x,
 ){
 
   # validate x
-  parcutils:::validata_parcutils_obj(x)
+  .validate_parcutils_obj(x)
 
   # validate samples
   stopifnot("'samples' must be a character vector or NULL." = is.character(samples) | is.null(samples))
@@ -1094,6 +1037,8 @@ get_corr_heatbox <- function(x,
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param samples a character vector denoting sample names to show in the heatmap.
+#' @param sample_comparisons a character vector denoting sample comparisons.
+#' possible values can be found from \code{x$comp}.
 #' @param genes a character vector denoting genes to show in the heatmap.
 #' @param summarise_replicates logical, default TRUE, indicating whether to summarise values for each gene across replicates.
 #' @param summarise_method a character string, default median, denoting a summary method to average gene expression values across replicates. Values can be either mean or median.
@@ -1104,7 +1049,6 @@ get_corr_heatbox <- function(x,
 #' @param average_line_color a character string, default "black", denoting a color for average line.
 #' @param average_line_size a numeric, default 1, denoting size for average line.
 #' @param average_line_summary_method a character string, default median, denoting a summary method used to generate an average line. Values can be one of the mean or median.
-#'
 #' @return ggplot2.
 #' @export
 #'
@@ -1143,7 +1087,7 @@ get_gene_expression_line_plot <- function(x,
 
   # validate x
 
-  parcutils:::validata_parcutils_obj(x)
+  .validate_parcutils_obj(x)
 
   # validate samples
 
@@ -1234,7 +1178,7 @@ get_fold_change_line_plot <- function(x,
 
   # validate x
 
-  parcutils:::validata_parcutils_obj(x)
+  .validate_parcutils_obj(x)
 
   # validate samples
 
@@ -1349,7 +1293,7 @@ get_go_emap_plot <- function(x,
 
   # validate arguments
 
-  validata_parcutils_obj(x)
+  .validate_parcutils_obj(x)
 
   # validate orgdb
 
@@ -1492,85 +1436,6 @@ save_go_plots <- function(x , output_dir = ".",
                       height = height ,
                       plot = .x)
     })
-
-}
-
-
-#' @keywords internal
-.get_all_expressed_genes <- function(x){
-  parcutils:::validata_parcutils_obj(x)
-
-  all_genes <- parcutils::get_genes_by_regulation(x = x,
-                                                  regulation = "all",
-                                                  sample_comparisons = x$comp[1])
-
-  return(all_genes)
-}
-
-
-#' @keywords internal
-.keep_only_enriched_go <- function(x){
-
-  safely_enrich <- purrr::safely(enrichplot::pairwise_termsim , otherwise = NULL)
-
-  ## remove those which has no enriched term
-
-  go_enrichment_result_only_enriched <- x %>%
-    purrr::map( ~ safely_enrich(..1)) %>%
-    purrr::transpose() %>%
-    purrr::simplify_all()
-
-  go_enrichment_result_only_enriched <-
-    go_enrichment_result_only_enriched$result %>%
-    purrr::discard(is.null)
-
-}
-
-
-## remove highly similar GO terms
-#' @keywords internal
-.simplify_go <- function(x, similarity_cutoff = 0.9){
-
-  go_enrichment_result_only_enriched <-
-    x %>%
-    purrr::map(~ clusterProfiler::simplify(..1, cutoff = similarity_cutoff))
-
-  return(go_enrichment_result_only_enriched)
-}
-
-# visualize go
-#' @keywords internal
-.generate_go_emap_plot <- function(x, n_terms = 30 , color_terms_by = "p.adjust"){
-
-  safely_plot <- purrr::safely( .f = function(x, y,...){
-    ep <- enrichplot::emapplot(x,...)
-    ep <-   ep + ggplot2::ggtitle(y)
-    return(ep)
-  } , otherwise = NULL)
-
-  go_plots <- purrr::map(names(x) , ~
-                           safely_plot(x = x[[..1]],
-                                       y = ..1,
-                                       showCategory = n_terms,
-                                       color = color_terms_by,
-                                       layout = "kk"))
-
-  # simplify list
-  go_plots <- go_plots %>%
-    purrr::transpose() %>%
-    purrr::simplify_all()
-
-  # keep result
-  go_plots <- go_plots$result
-
-  # assign names
-  names(go_plots) <- names(x)
-
-  # remove element if NULL
-  go_plots <- go_plots %>%
-    purrr::discard(is.null)
-
-  go_plots
 
 }
 

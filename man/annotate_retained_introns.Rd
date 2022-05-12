@@ -38,12 +38,12 @@ example_dir <- system.file("extdata" ,"ir_data" , package="parcutils")
 example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") \%>\%
 stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-x <- read_irfinderS_output(files = example_files,  add_prefix_chr = F)
+x <- read_irfinderS_output(files = example_files,  add_prefix_chr = FALSE)
 ir_sample_info <- names(example_files) \%>\%
 tibble::tibble(samples = . , groups = rep(c("control", "treatment"), each = 2) )
-run_deseq_analysis_ir(x = x, sample_info = ir_sample_info,
+y = run_deseq_analysis_ir(x = x, sample_info = ir_sample_info,
 min_intron_depth = 2, regul_based_upon =1, cutoff_pval = 0.01)
 
 q_intron_id = c("intron_223342","intron_223728","intron_225394","intron_228167","intron_228226")
-annotate_retained_introns(x, query_introns = q_intron_id)
+annotate_retained_introns(y, query_introns = q_intron_id)
 }

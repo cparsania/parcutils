@@ -21,7 +21,7 @@ get_pca_plot(
 
 \item{circle_size}{a numeric value,  default  10, denoting size of the circles in PCA plot.}
 
-\item{show_replicates}{a logical, degfault FALSE, denoting whether to label replicates in the PCA plot.}
+\item{label_replicates}{logical, default FALSE, denoting whether to label each replicate in the plot.}
 }
 \value{
 an object of ggplot2.

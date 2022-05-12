@@ -61,7 +61,7 @@ example_dir <- system.file("extdata" ,"ir_data" , package="parcutils")
 example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") \%>\%
 stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-x <- read_irfinderS_output(files = example_files,  add_prefix_chr = F)
+x <- read_irfinderS_output(files = example_files,  add_prefix_chr = FALSE)
 ir_sample_info <- names(example_files) \%>\%
 tibble::tibble(samples = . , groups = rep(c("control", "treatment"), each = 2) )
 run_deseq_analysis_ir(x = x, sample_info = ir_sample_info,

@@ -1,5 +1,4 @@
 # IR analysis functions
-
 retained_introns_files  <-
   list.files(path  = "000_data_files/ir_finder_s_output/",
              pattern =  "*nondir_SRR*", full.names = T,recursive = T)
@@ -14,7 +13,6 @@ names(retained_introns_files) <- stringr::str_extract(retained_introns_files,
 #' @param files a character vector denoting irfinderS output file(s) ending with suffix "IR-nondir".
 #' @param add_prefix_chr logical, whether to add prefix 'chr' in the column seq names
 #' @param remove_prefix_chr logical, whether to remove prefix 'chr' from the column seq names
-#' @param select_columns logical, whether to subset columns. If TRUE below columns will be subsetted
 #'  + chr
 #'  + start
 #'  + end
@@ -36,7 +34,7 @@ names(retained_introns_files) <- stringr::str_extract(retained_introns_files,
 #' example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 #' names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") %>%
 #' stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-#' read_irfinderS_output(files = example_files,  add_prefix_chr = F)
+#' read_irfinderS_output(files = example_files,  add_prefix_chr = FALSE)
 read_irfinderS_output <- function(files,
                                   add_prefix_chr = TRUE,
                                   remove_prefix_chr = FALSE){
@@ -106,7 +104,7 @@ read_irfinderS_output <- function(files,
 #' example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 #' names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") %>%
 #' stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = F)
+#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = FALSE)
 #' select_cols_irfinderS_output(x)
 select_cols_irfinderS_output <- function(x, keep_columns = c("chr",
                                                              "start",
@@ -149,10 +147,10 @@ select_cols_irfinderS_output <- function(x, keep_columns = c("chr",
 #' example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 #' get_intron_master_list(f = example_files[1],add_prefix_chr = TRUE,bs_genome_object = BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38)
 get_intron_master_list <- function(f,
-                                  add_meta_data = T,
-                                  add_prefix_chr = FALSE,
-                                  remove_prefix_chr = FALSE,
-                                  bs_genome_object = NULL){
+                                   add_meta_data = T,
+                                   add_prefix_chr = FALSE,
+                                   remove_prefix_chr = FALSE,
+                                   bs_genome_object = NULL){
 
 
   stopifnot("'add_meta_data' must be logical." = is.logical(add_meta_data))
@@ -210,7 +208,7 @@ get_intron_master_list <- function(f,
 #' example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 #' names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") %>%
 #' stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-#' x <- read_irfinderS_output(files = example_files[1],  add_prefix_chr = T)
+#' x <- read_irfinderS_output(files = example_files[1],  add_prefix_chr = TRUE)
 #' map_intron_meta_data(x = x,  bs_genome_object = BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38)
 map_intron_meta_data <- function(x , bs_genome_object = BSgenome.Hsapiens.UCSC.hg38){
   .validate_irfinders_object(x)
@@ -241,32 +239,6 @@ map_intron_meta_data <- function(x , bs_genome_object = BSgenome.Hsapiens.UCSC.h
   return(x)
 }
 
-#' map metadata (GC, length and seq) to the GRanges object
-#'
-#' @param x an object of class GRanges
-#' @param bs_genome_object an object of class BSgenome
-#'
-#' @return
-#' @export
-#'
-#' @keywords internal
-.map_granges_metadata <- function(x, bs_genome_object = BSgenome.Hsapiens.UCSC.hg38){
-
-  stopifnot("x must be the object of class GRanges" = is(x, "GRanges"))
-  stopifnot("bs_genome_object must be an object of class BSgenome" = is(bs_genome_object, "BSgenome"))
-
-  x <- x %>%
-    # add sequence for each intron
-    dplyr::mutate(seq =  BSgenome::getSeq(bs_genome_object,x)) %>%
-
-    # add GC for each intron
-    dplyr::mutate(GC =  BSgenome::letterFrequency(seq, letters = "GC", as.prob = T) %>%  as.numeric()) %>%
-
-    # add length for each intron
-    dplyr::mutate(length =  BSgenome::width(seq))
-
-  return(x)
-}
 
 #' Filter IR results
 #' @description Based on filters applied, this function will checks whether each intron is retained or not.
@@ -285,7 +257,7 @@ map_intron_meta_data <- function(x , bs_genome_object = BSgenome.Hsapiens.UCSC.h
 #' example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 #' names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") %>%
 #' stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = T)
+#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = TRUE)
 #' mark_ir_status_by_filters(x)
 #'
 mark_ir_status_by_filters <- function(x ,
@@ -295,9 +267,6 @@ mark_ir_status_by_filters <- function(x ,
                                       min_irratio = 0.0001){
   .validate_irfinders_object(x)
 
-  # assign intron id
-
-  x <- .parcutils_assign_intron_identifier(x)
 
   apply_intron_coverage_cutoff = T
 
@@ -350,117 +319,15 @@ mark_ir_status_by_filters <- function(x ,
 
 
 
-#' For each intron in the object irFinderSdata assign unique intron id
-#'
-#' @param x an object of class irFinderSdata
-#'
-#' @return an object of class irFinderSdata
-#' @export
-#' @keywords internal
-#' @examples
-#'
-#' example_dir <- system.file("extdata" ,"ir_data" , package="parcutils")
-#' example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
-#' names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") %>%
-#' stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = F)
-#' .parcutils_assign_intron_identifier(x)
-.parcutils_assign_intron_identifier  <- function(x){
-  # assign intron id to each element in the x
-
-  .validate_irfinders_object(x)
-  x <- purrr::map(x  , ~ ..1 %>% dplyr::mutate(intron_id = stringr::str_c("intron", 1:dplyr::n(), sep = "_")))
-  x <- .assign_class_irFinderSdata(x)
-  return(x)
-}
 
 
-#' Check if the object belongs to class irFinderSdata.
-#'
-#' @param x
-#'
-#' @return
-#' @export
-#'
-#' @keywords internal
-.validate_irfinders_object <- function(x){
-
-  stopifnot("x must be an object of class irFinderSdata" = is(x, "irFinderSdata") )
-}
 
 
-#' Assign class irFinderSdata
-#' @description This function does all mandatory checks before it assigns class irFinderSdata
-#' @param x a list or dataframe to which class irFinderSdata to assign.
-#'
-#' @return an object of class irFinderSdata
-#' @export
-#' @keywords internal
-.assign_class_irFinderSdata <- function(x){
-
-  # x can be a dataframe or list of dataframes
-  # if dataframe it must have mandatory columns
-  # if a list it must have mandatory columns in each dataframe and same number of rows in each dataframe
-
-  if(is(x , "data.frame")){
-    .check_mendate_columns_for_irFinderSdata(x)
-    x <- list(x)
-    class(x) <- c("irFinderSdata", class(x))
-  }
-
-  if(is(x , "list")){
-    purrr::walk(x, ~ .check_mendate_columns_for_irFinderSdata(..1))
-
-    # all elems of the list have same number of rows
-    x_nrows <- purrr::map_int(x, ~..1 %>% nrow())
-
-    if(!all(x_nrows==x_nrows[1])){
-      stop("All elements in x must have same number of rows.")
-    }
-
-    class(x) <- c("irFinderSdata", class(x))
-  }
-
-  return(x)
-
-}
 
 
-#' Check mandatory columns in a dataframe
-#' @description This function helps to create mandatory column in a dataframe
-#' @param x dataframe
-#' @param mandat_columns a character vector denoting mandatory columns in x.
-#'
-#' @return TRUE or ERROR
-#' @export
-#' @keywords internal
-.check_mendate_columns_for_irFinderSdata <- function(x,
-                                                     mandat_columns = c("chr",
-                                                                        "start",
-                                                                        "end",
-                                                                        "name",
-                                                                        "null",
-                                                                        "strand",
-                                                                        "coverage",
-                                                                        "introndepth",
-                                                                        "spliceleft",
-                                                                        "spliceright",
-                                                                        "spliceexact",
-                                                                        "irratio",
-                                                                        "warnings")){
 
-  stopifnot("x must be a dataframe" = is(x , "data.frame"))
 
-  x_cols <- colnames(x)
 
-  col_not_found <- mandat_columns[is.na(match(mandat_columns, x_cols))]
-  if(length(col_not_found) > 0){
-    stop(cli::format_error(c("x" ="Column{?s} {col_not_found} not found")))
-  }
-
-  return(TRUE)
-
-}
 
 
 #' Prepare a intron reads count matrix.
@@ -476,7 +343,7 @@ mark_ir_status_by_filters <- function(x ,
 #' example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 #' names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") %>%
 #' stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = F)
+#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = FALSE)
 #' get_ir_counts(x)
 #'
 #'
@@ -485,7 +352,7 @@ get_ir_counts <- function(x){
   .validate_irfinders_object(x)
 
   y <- x %>%
-    .assign_intron_identifier() %>%
+    .parcutils_assign_intron_identifier() %>%
     purrr::map(~ ..1 %>% dplyr::select(intron_id, "introndepth")) %>%
     tibble::enframe() %>% tidyr::unnest(cols = c(value)) %>%
     tidyr::pivot_wider(names_from = "name", values_from = "introndepth")
@@ -495,22 +362,6 @@ get_ir_counts <- function(x){
 }
 
 
-#' Assign unique identifier to each intron.
-#'
-#' @param x
-#'
-#' @return
-#' @export
-#' @keywords internal
-.assign_intron_identifier <- function (x)
-{
-
-  .validate_irfinders_object(x)
-  x <- purrr::map(x, ~..1 %>% dplyr::mutate(intron_id = stringr::str_c("intron",
-                                                                       1:dplyr::n(), sep = "_")))
-  x <- .assign_class_irFinderSdata(x)
-  return(x)
-}
 
 
 
@@ -543,7 +394,7 @@ get_ir_counts <- function(x){
 #' example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 #' names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") %>%
 #' stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = F)
+#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = FALSE)
 #' ir_sample_info <- names(example_files) %>%
 #' tibble::tibble(samples = . , groups = rep(c("control", "treatment"), each = 2) )
 #' run_deseq_analysis_ir(x = x, sample_info = ir_sample_info,
@@ -560,7 +411,7 @@ run_deseq_analysis_ir <- function(x,
                                   cutoff_pval = 0.05,
                                   cutoff_padj = 0.01,
                                   regul_based_upon = 1
-                                  ){
+){
   # x = x
   # min_intron_cov = 0.7
   # min_intron_depth = 2
@@ -597,7 +448,7 @@ run_deseq_analysis_ir <- function(x,
     dplyr::filter(n >= minimum_replicates_with_ri) %>%
     dplyr::pull(intron_id) %>% unique()
 
-    if(length(retained_introns_id) == 0 ){
+  if(length(retained_introns_id) == 0 ){
     stop("Cannot process furhter. Number of retained introns are 0.")
   }
 
@@ -631,8 +482,12 @@ run_deseq_analysis_ir <- function(x,
   # add intron annotations to object de_output
   intron_annot <- .get_intron_annotations(x = x, intron_ids = retained_introns_id)
 
+  # add to list column of intron_annot to final output
   de_output <- de_output %>%
     dplyr::mutate(intron_annot = list(intron_annot))
+
+  # to have consistency across columns assign names to each elem of intron_annot
+  names(de_output$intron_annot) <- de_output$comp
 
   return(de_output)
 
@@ -657,21 +512,21 @@ run_deseq_analysis_ir <- function(x,
 #' example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 #' names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") %>%
 #' stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = F)
+#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = FALSE)
 #' ir_sample_info <- names(example_files) %>%
 #' tibble::tibble(samples = . , groups = rep(c("control", "treatment"), each = 2) )
-#' run_deseq_analysis_ir(x = x, sample_info = ir_sample_info,
+#' y = run_deseq_analysis_ir(x = x, sample_info = ir_sample_info,
 #' min_intron_depth = 2, regul_based_upon =1, cutoff_pval = 0.01)
 #'
 #' q_intron_id = c("intron_223342","intron_223728","intron_225394","intron_228167","intron_228226")
-#' annotate_retained_introns(x, query_introns = q_intron_id)
+#' annotate_retained_introns(y, query_introns = q_intron_id)
 annotate_retained_introns <- function(x,
                                       query_introns,
                                       add_meta_data = FALSE,
                                       bs_genome_object = NULL,
                                       add_prefix_chr = TRUE,
                                       remove_prefix_chr = FALSE
-                                      ){
+){
 
   # x = oo
   # query_introns = parcutils::get_genes_by_regulation(x = oo, sample_comparisons = "treatment_VS_control")
@@ -698,7 +553,7 @@ annotate_retained_introns <- function(x,
   intron_annotations <- x$intron_annot[[1]]
 
 
-# get intron meta-data seq, GC and length
+  # get intron meta-data seq, GC and length
   if(add_meta_data){
 
     intron_annotations_mod <- intron_annotations %>%
@@ -755,80 +610,46 @@ annotate_retained_introns <- function(x,
 
 
 
-#' Get intron annotations
+
+#' Save differential expression results in an excel file.
+#' @description All DE comparison from the \code{x} will be saved in an excel file.
+#' Each tab within the excel file denotes an individual DE comparison.
+#' @param x an object of class parcutils.
+#' @param file a character string denoting a file name WITHOUT file extension. (e.g. "out_file" or "path/to/save/data/out_file")
 #'
-#' @param x an object of class irFinderSdata
-#' @param intron_ids a character vector of intron ids for which
-#' annotations to be retrieved.
-#'
-#' @return a dataframe with columns \code{chr, start, end, intron_id,
-#' null, strand, gene_id, gene_symbol}
+#' @return an absolute file path denoting a file in which data saved.
 #' @export
-#' @keywords internal
 #' @examples
 #' example_dir <- system.file("extdata" ,"ir_data" , package="parcutils")
 #' example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 #' names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") %>%
 #' stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = F)
-#' .get_intron_annotations(x, intron_ids = paste("intron", sample(1:100, 10),sep ="_"))
-.get_intron_annotations <- function(x, intron_ids){
+#' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = FALSE)
+#' ir_sample_info <- names(example_files) %>%
+#' tibble::tibble(samples = . , groups = rep(c("control", "treatment"), each = 2) )
+#' out <- run_deseq_analysis_ir(x = x, sample_info = ir_sample_info,
+#' min_intron_depth = 2, regul_based_upon =1, cutoff_pval = 0.01)
+#' save_de_results(out, file = fs::file_temp())
+save_de_results <- function(x, file){
 
-  .validate_irfinders_object(x)
+  file <- fs::path(file,ext = "xlsx")
+  file <- fs::path_abs(file)
+  file <- fs::file_create(path = file)
 
-  stopifnot("'intron_ids' must be a character vector." = is.character(intron_ids))
+  .validate_parcutils_obj(x)
 
-  # first six columns of irfinders output
-  dd <- x[[1]]  %>%
-    dplyr::select(1:6 , intron_id)  %>%
-    dplyr::filter( intron_id %in% intron_ids) %>%
-    dplyr::mutate(gene_id = stringr::str_replace(name, pattern = "(.*)/(.*)/(.*)",replacement = "\\2")) %>%
-    dplyr::mutate(gene_symbol = stringr::str_replace(name, pattern = "(.*)/(.*)/(.*)",replacement = "\\1")) %>%
-    dplyr::mutate(name = intron_id) %>%
-    dplyr::select(-intron_id) %>%
-    dplyr::rename(intron_id = name) %>%
-    dplyr::distinct()
+  if(inherits(x = x, what = "parcutils_ir")){
+    .save_de_ir_results(x, file)
+  } else{
+    .save_deg_results(x, file)
+  }
 
-  return(dd)
-}
 
-#' Prepare object of parcutils_ir from the object of parcutils
-#'
-#' @param x an object of class 'parcutils'.
-#'
-#' @return
-#' @export
-#' @keywords internal
-.prepare_parcutils_ir <-  function(x){
-  validata_parcutils_obj(x)
-  y <- x %>% tibble::tibble()
-  id_column <- y$norm_counts[[1]][[1]] %>% colnames() %>% .[1]
-  # fix 1st column names
-
-  y <- y %>%
-    dplyr::mutate(norm_counts = purrr::map(norm_counts, function(.x){
-      purrr::map(.x, ~ ..1 %>% dplyr::rename( !!id_column := 1))})) %>%
-    dplyr::mutate(dsr_tibble = purrr::map(dsr_tibble, function(.x){
-      .x %>% dplyr::rename(!!id_column := 1)}))  %>%
-    dplyr::mutate(dsr_tibble_deg = purrr::map(dsr_tibble_deg, function(.x){
-      .x %>% dplyr::rename(!!id_column := 1)
-    }))
-
-  class(y) <- c("parcutils_ir",class(x))
-  return(y)
 }
 
 
-#' Validate parcutils_ir object
-#'
-#' @param x
-#'
-#' @return
-#' @export
-#' @keywords internal
-.validate_parcutils_ir_object <- function(x) {
-  stopifnot("x must be an object of class 'parcutils_ir'.
-           Usually x is derived by parcutils::run_deseq_analysis_ir()." = is(x, "parcutils_ir"))
-}
+
+
+
 
 

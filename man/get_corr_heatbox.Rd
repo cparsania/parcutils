@@ -64,6 +64,6 @@ res <- run_deseq_analysis(counts = count_data ,
                          group_numerator = c("treatment1", "treatment2") ,
                          group_denominator = c("control"))
 
-get_corr_heatbox(res,samples = c("treatment1","control"),cluster_samples = FALSE,show_corr_values =T,
+get_corr_heatbox(res,samples = c("treatment1","control"),cluster_samples = FALSE,show_corr_values =TRUE,
 size_corr_values = 4)
 }

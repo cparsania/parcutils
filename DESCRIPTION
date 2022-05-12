@@ -41,7 +41,13 @@ Imports:
     writexl,
     progress,
     plyranges,
-    EnhancedVolcano
+    EnhancedVolcano,
+    scales,
+    AnnotationDbi,
+    BSgenome,
+    clusterProfiler,
+    enrichplot,
+    ggrepel
 Depends: 
     magrittr
 Remotes: 

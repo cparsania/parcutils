@@ -45,6 +45,6 @@ res <- run_deseq_analysis(counts = count_data ,
 
 get_gene_expression_box_plot(x = res ) \%>\% print()
 
-get_gene_expression_box_plot(x = res , group_replicates = T ) \%>\% print()
+get_gene_expression_box_plot(x = res , group_replicates = TRUE ) \%>\% print()
 
 }

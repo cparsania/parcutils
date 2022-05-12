@@ -22,6 +22,6 @@ example_dir <- system.file("extdata" ,"ir_data" , package="parcutils")
 example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") \%>\%
 stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
-x <- read_irfinderS_output(files = example_files[1],  add_prefix_chr = T)
+x <- read_irfinderS_output(files = example_files[1],  add_prefix_chr = TRUE)
 map_intron_meta_data(x = x,  bs_genome_object = BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38)
 }
