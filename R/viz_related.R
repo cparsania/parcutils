@@ -1244,6 +1244,8 @@ get_fold_change_line_plot <- function(x,
 #'
 #' @param x an object of class 'parcutils' or 'parcutils_ir'.
 #' @param org_db an object of the class class OrgDB, default \code{org.Hs.eg.db}
+#' @param universe a character vector of genes, default NULL,  to be used as background genes for GO enrichment analysis. Currently supports only ENSEMBL gene id - e.g. ENSMUSG00000030787.
+#' When set to NULL all genes from x will be used as background genes.
 #' @param ont_type a character string, default \code{"BP"}, denoting ontology type. Values can be one of the \code{"BP", "MF" , "CC"}
 #' @param p_adj_method a character string, default \code{"BH"}, denoting a method for p-adjustment. Values can be one of the  \code{"holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"}
 #' @param pval_cutoff a numeric, default \code{0.05} denoting p-value cutoff.
@@ -1253,6 +1255,7 @@ get_fold_change_line_plot <- function(x,
 #' @param go_similarity_cutoff a numeric value, default \code{0.8}, denoting gene ontology similarity cutoff.
 #' @param show_n_terms a numeric, default \code{30}, denoting number of gene ontology terms to show in the plot.
 #' @param color_terms_by a character string, default \code{"p.adjust"}, denoting a variable to color gene ontology terms.
+#'
 #' @importFrom writexl write_xlsx
 #' @return
 #' @export
@@ -1260,7 +1263,7 @@ get_fold_change_line_plot <- function(x,
 #' @examples
 #'
 #' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
-#' count_data <- readr::read_delim(count_file, delim = "\t")
+#' count_data <- readr::read_delim(count_file, delim = "\t", show_col_types = FALSE)
 #'
 #' sample_info <- count_data %>% colnames() %>% .[-1]  %>%
 #'   tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
@@ -1272,7 +1275,7 @@ get_fold_change_line_plot <- function(x,
 #'                                      group_numerator = c("treatment1", "treatment2") ,
 #'                                      group_denominator = c("control"))
 #'
-#' go_out <- get_go_emap_plot(res)
+#' go_out <- get_go_emap_plot(res, universe = .get_all_expressed_genes(res)[1:100])
 #'
 #' # display plot
 #' go_out$go_emap_plots
@@ -1281,6 +1284,7 @@ get_fold_change_line_plot <- function(x,
 #'  go_out$go_enrichment_output %>% tibble::as_tibble()
 get_go_emap_plot <- function(x,
                              org_db = org.Hs.eg.db::org.Hs.eg.db,
+                             universe = NULL,
                              ont_type = "BP",
                              p_adj_method = "BH",
                              pval_cutoff = 0.05,
@@ -1319,15 +1323,19 @@ get_go_emap_plot <- function(x,
   deg_genes <- deg_genes %>%
     purrr::map(~ ..1 %>% stringr::str_replace(":.*",""))
 
-  # prepare background genes. They are the genes which used for DE analysis.
-  universe <- .get_all_expressed_genes(x)
+  if(is.null(universe)){
+    cli::cli_alert_info(text = "Argument 'universe' is set to NULL. Default all expressed genes from x will be used as background genes.")
+
+    # prepare background genes. They are the genes which used for DE analysis.
+    universe <- .get_all_expressed_genes(x)
+
+  }
 
   # format universe to remove suffix gene_name
   universe <- universe %>% stringr::str_replace(":.*","")
 
-
-
-  # convert IDs for IR GO analysis.
+  # When GO for IR data.
+  # convert intron IDs to gene ID for IR GO analysis.
   if(inherits(x , "parcutils_ir")){
 
     deg_genes <- purrr::map(deg_genes, ~{
@@ -1338,10 +1346,13 @@ get_go_emap_plot <- function(x,
         unique()
     })
 
-    universe <- parcutils::annotate_retained_introns(x = x,
-                                                     query_introns = universe,
-                                                     add_meta_data = F) %>%
-      dplyr::pull("gene_id")
+    # when GO enrichment is performed for IR, default universe is all genes which retained introns.
+    if(is.null(universe)){
+      universe <- parcutils::annotate_retained_introns(x = x,
+                                                       query_introns = universe,
+                                                       add_meta_data = F) %>%
+        dplyr::pull("gene_id")
+    }
   }
 
   # validate keytype

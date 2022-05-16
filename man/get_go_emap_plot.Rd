@@ -7,6 +7,7 @@
 get_go_emap_plot(
   x,
   org_db = org.Hs.eg.db::org.Hs.eg.db,
+  universe = NULL,
   ont_type = "BP",
   p_adj_method = "BH",
   pval_cutoff = 0.05,
@@ -22,6 +23,9 @@ get_go_emap_plot(
 \item{x}{an object of class 'parcutils' or 'parcutils_ir'.}
 
 \item{org_db}{an object of the class class OrgDB, default \code{org.Hs.eg.db}}
+
+\item{universe}{a character vector of genes, default NULL,  to be used as background genes for GO enrichment analysis. Currently supports only ENSEMBL gene id - e.g. ENSMUSG00000030787.
+When set to NULL all genes from x will be used as background genes.}
 
 \item{ont_type}{a character string, default \code{"BP"}, denoting ontology type. Values can be one of the \code{"BP", "MF" , "CC"}}
 
@@ -50,7 +54,7 @@ Perform gene ontology analysis and visualization for DE genesets in one go.
 \examples{
 
 count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
-count_data <- readr::read_delim(count_file, delim = "\t")
+count_data <- readr::read_delim(count_file, delim = "\t", show_col_types = FALSE)
 
 sample_info <- count_data \%>\% colnames() \%>\% .[-1]  \%>\%
   tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
@@ -62,7 +66,7 @@ res <- parcutils::run_deseq_analysis(counts = count_data ,
                                      group_numerator = c("treatment1", "treatment2") ,
                                      group_denominator = c("control"))
 
-go_out <- get_go_emap_plot(res)
+go_out <- get_go_emap_plot(res, universe = .get_all_expressed_genes(res)[1:100])
 
 # display plot
 go_out$go_emap_plots
