@@ -251,7 +251,7 @@ map_intron_meta_data <- function(x , bs_genome_object = BSgenome.Hsapiens.UCSC.h
 #'
 #' @return an object of class irFinderSdata
 #' @export
-#'
+#' @keywords internal
 #' @examples
 #' example_dir <- system.file("extdata" ,"ir_data" , package="parcutils")
 #' example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
@@ -260,15 +260,15 @@ map_intron_meta_data <- function(x , bs_genome_object = BSgenome.Hsapiens.UCSC.h
 #' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = TRUE)
 #' mark_ir_status_by_filters(x)
 #'
-mark_ir_status_by_filters <- function(x ,
+.mark_ir_status_by_filters <- function(x ,
                                       min_intron_cov = 0.95,
                                       min_intron_depth = 5,
                                       minimum_splice_exact = 5,
-                                      min_irratio = 0.0001){
+                                      min_irratio = 0){
   .validate_irfinders_object(x)
 
 
-  apply_intron_coverage_cutoff = T
+  apply_intron_coverage_cutoff = TRUE
 
   # filter by coverage
   if(apply_intron_coverage_cutoff) {
@@ -430,7 +430,7 @@ run_deseq_analysis_ir <- function(x,
   .validate_irfinders_object(x)
 
   # mark retained introns based on filters
-  x_ir_marked <- mark_ir_status_by_filters(x,
+  x_ir_marked <- .mark_ir_status_by_filters(x,
                                            min_intron_cov = min_intron_cov,
                                            min_intron_depth = min_intron_depth,
                                            minimum_splice_exact = minimum_splice_exact)

@@ -151,17 +151,17 @@ genes = genes, convert_zscore = TRUE, summarise_replicates = FALSE)
 # show gene names
 
 get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"),
-genes = genes[1:10], convert_zscore = TRUE, summarise_replicates = FALSE , show_row_names = T)
+genes = genes[1:10], convert_zscore = TRUE, summarise_replicates = FALSE , show_row_names = TRUE)
 
 # repair gene names
 
 get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"),
-genes = genes[1:10], convert_zscore = TRUE, summarise_replicates = FALSE, show_row_names = T, repair_genes = T)
+genes = genes[1:10], convert_zscore = TRUE, summarise_replicates = FALSE, show_row_names = TRUE, repair_genes = TRUE)
 
 # fold change heatmap
 
 get_fold_change_heatmap(x = res , sample_comparisons = c("treatment2_VS_control" ,"treatment1_VS_control") ,
-genes = genes , cluster_columns = F , name = "Log2FC")
+genes = genes , cluster_columns = FALSE , name = "Log2FC")
 
 
 }

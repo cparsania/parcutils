@@ -40,7 +40,6 @@ reference:
       - annotate_retained_introns
       - get_ir_counts
       - map_intron_meta_data
-      - mark_ir_status_by_filters
       - get_intron_master_list
       - select_cols_irfinderS_output
       - save_de_results
