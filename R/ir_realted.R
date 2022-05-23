@@ -352,7 +352,6 @@ get_ir_counts <- function(x){
   .validate_irfinders_object(x)
 
   y <- x %>%
-    .parcutils_assign_intron_identifier() %>%
     purrr::map(~ ..1 %>% dplyr::select(intron_id, "introndepth")) %>%
     tibble::enframe() %>% tidyr::unnest(cols = c(value)) %>%
     tidyr::pivot_wider(names_from = "name", values_from = "introndepth")
