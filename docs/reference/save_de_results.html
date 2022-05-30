@@ -77,19 +77,9 @@ Each tab within the excel file denotes an individual DE comparison.</p>
 <span class="r-in"><span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>samples <span class="op">=</span> <span class="va">.</span> , groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span>, <span class="st">"treatment"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">)</span></span>
 <span class="r-in"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="run_deseq_analysis_ir.html">run_deseq_analysis_ir</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, sample_info <span class="op">=</span> <span class="va">ir_sample_info</span>,</span>
 <span class="r-in">min_intron_depth <span class="op">=</span> <span class="fl">2</span>, regul_based_upon <span class="op">=</span><span class="fl">1</span>, cutoff_pval <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Running DESeq2 ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> converting counts to integer mode</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> estimating size factors</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> estimating dispersions</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> gene-wise dispersion estimates</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> mean-dispersion relationship</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> final dispersion estimates</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> fitting model and testing</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Summarizing DEG ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Done.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in is.data.frame(y):</span> object 'ir_sample_info' not found</span>
 <span class="r-in"><span class="fu">save_de_results</span><span class="op">(</span><span class="va">out</span>, file <span class="op">=</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/file_temp.html" class="external-link">file_temp</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/private/var/folders/xy/6ybn2drx76lblc_fqhfwt8qw0000gr/T/RtmpRWw3Lo/file176401063a748.xlsx"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in is(x, "parcutils"):</span> object 'out' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

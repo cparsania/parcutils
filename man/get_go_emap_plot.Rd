@@ -60,13 +60,13 @@ sample_info <- count_data \%>\% colnames() \%>\% .[-1]  \%>\%
   tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
 
 
-res <- parcutils::run_deseq_analysis(counts = count_data ,
+res <- parcutils::run_deseq_analysis(counts = count_data \%>\% dplyr::mutate(gene_id = stringr::str_replace(gene_id, ":.*","")),
                                      sample_info = sample_info,
                                      column_geneid = "gene_id" ,
                                      group_numerator = c("treatment1", "treatment2") ,
                                      group_denominator = c("control"))
 
-go_out <- get_go_emap_plot(res, universe = .get_all_expressed_genes(res)[1:100])
+go_out <- get_go_emap_plot(res)
 
 # display plot
 go_out$go_emap_plots

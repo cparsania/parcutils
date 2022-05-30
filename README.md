@@ -89,7 +89,7 @@ sample_info
 res <- parcutils::run_deseq_analysis(counts = count_data ,
                          sample_info = sample_info,
                          column_geneid = "gene_id" ,
-                         log2fc_cutoff = 0.6,
+                         cutoff_lfc = 1,
                          cutoff_pval = 0.05,
                          group_numerator = c("treatment1", "treatment2") ,
                          group_denominator = c("control"))
@@ -99,16 +99,19 @@ res <- parcutils::run_deseq_analysis(counts = count_data ,
 
 ``` r
 res
+#> ┌────────────────────────────┐
+#> │                            │
+#> │   Summary of DE analysis   │
+#> │                            │
+#> └────────────────────────────┘
 #> 
-#> Total number of genes used for DEG analysis are 4034. 
-#> Total number of comparisons are 2. 
 #> 
-#> Number of DEGs in each comparison:
 #> 
 #> treatment1_VS_control 
 #> • number of up genes   : 13.
 #> • number of down genes : 28.
 #> ──────────────────────────────
+#> 
 #> treatment2_VS_control 
 #> • number of up genes   : 333.
 #> • number of down genes : 502.
@@ -120,7 +123,7 @@ res
 from the column `comp`.
 
 ``` r
-res$comp
+res$de_comparisons
 #> [1] "treatment1_VS_control" "treatment2_VS_control"
 ```
 
@@ -204,7 +207,8 @@ parcutils::get_normalised_expression_matrix(x = res,
 
 q_genes = c("ENSG00000196415:PRTN3", "ENSG00000221988:PPT2", "ENSG00000163138:PACRGL", "ENSG00000183840:GPR39", "ENSG00000146700:SSC4D", "ENSG00000163746:PLSCR2", "ENSG00000155918:RAET1L", "ENSG00000151458:ANKRD50", "ENSG00000167074:TEF", "ENSG00000130159:ECSIT")
 
-parcutils::get_fold_change_matrix(x = res, sample_comparisons = res$comp, 
+parcutils::get_fold_change_matrix(x = res, 
+                                  sample_comparisons = res$de_comparisons, 
                                   genes = q_genes)
 #> # A tibble: 10 × 3
 #>    gene_id                 treatment1_VS_control treatment2_VS_control
@@ -228,52 +232,53 @@ parcutils::get_genes_by_regulation(x = res,
                                   sample_comparison = "treatment1_VS_control", 
                                   regulation = "both" # can be one of the "up" , "down" , "both", "other", "all"
                                   )
-#>                           up                           up 
-#>       "ENSG00000187193:MT1X" "ENSG00000269533:AC003002.3" 
-#>                           up                           up 
-#>      "ENSG00000065427:KARS1"       "ENSG00000007171:NOS2" 
-#>                           up                           up 
-#>     "ENSG00000285447:ZNF883"      "ENSG00000111275:ALDH2" 
-#>                           up                           up 
-#>     "ENSG00000279111:OR10X1"   "ENSG00000167617:CDC42EP5" 
-#>                           up                           up 
-#>    "ENSG00000186566:GPATCH8"    "ENSG00000232423:PRAMEF6" 
-#>                           up                           up 
-#>    "ENSG00000182103:FAM181B"       "ENSG00000172500:FIBP" 
-#>                           up                         down 
-#>      "ENSG00000151033:LYZL2"     "ENSG00000250305:TRMT9B" 
-#>                         down                         down 
-#>      "ENSG00000134308:YWHAQ"    "ENSG00000123575:FAM199X" 
-#>                         down                         down 
-#>   "ENSG00000148482:SLC39A12"      "ENSG00000175264:CHST1" 
-#>                         down                         down 
-#>      "ENSG00000141933:TPGS1"      "ENSG00000165621:OXGR1" 
-#>                         down                         down 
-#>        "ENSG00000104081:BMF"       "ENSG00000278023:RDM1" 
-#>                         down                         down 
-#>    "ENSG00000172264:MACROD2"       "ENSG00000162971:TYW5" 
-#>                         down                         down 
-#>     "ENSG00000198682:PAPSS2"      "ENSG00000125445:MRPS7" 
-#>                         down                         down 
-#>   "ENSG00000138670:RASGEF1B"      "ENSG00000124839:RAB17" 
-#>                         down                         down 
-#>      "ENSG00000069869:NEDD4"      "ENSG00000174576:NPAS4" 
-#>                         down                         down 
-#>    "ENSG00000143514:TP53BP2"     "ENSG00000181009:OR52N5" 
-#>                         down                         down 
-#>      "ENSG00000257315:ZBED6"      "ENSG00000141748:ARL5C" 
-#>                         down                         down 
-#>     "ENSG00000198886:MT-ND4"      "ENSG00000157045:NTAN1" 
-#>                         down                         down 
-#>     "ENSG00000165131:LLCFC1"   "ENSG00000277611:Z98752.3" 
-#>                         down                         down 
-#>    "ENSG00000158089:GALNT14"      "ENSG00000124784:RIOK1" 
-#>                         down 
-#>       "ENSG00000103197:TSC2"
+#>     ENSG00000250305:TRMT9B      ENSG00000134308:YWHAQ 
+#>                       down                       down 
+#>    ENSG00000123575:FAM199X   ENSG00000148482:SLC39A12 
+#>                       down                       down 
+#>      ENSG00000175264:CHST1      ENSG00000141933:TPGS1 
+#>                       down                       down 
+#>      ENSG00000165621:OXGR1        ENSG00000104081:BMF 
+#>                       down                       down 
+#>       ENSG00000278023:RDM1    ENSG00000172264:MACROD2 
+#>                       down                       down 
+#>       ENSG00000162971:TYW5     ENSG00000198682:PAPSS2 
+#>                       down                       down 
+#>      ENSG00000125445:MRPS7   ENSG00000138670:RASGEF1B 
+#>                       down                       down 
+#>      ENSG00000124839:RAB17      ENSG00000069869:NEDD4 
+#>                       down                       down 
+#>      ENSG00000174576:NPAS4    ENSG00000143514:TP53BP2 
+#>                       down                       down 
+#>     ENSG00000181009:OR52N5      ENSG00000257315:ZBED6 
+#>                       down                       down 
+#>      ENSG00000141748:ARL5C     ENSG00000198886:MT-ND4 
+#>                       down                       down 
+#>      ENSG00000157045:NTAN1     ENSG00000165131:LLCFC1 
+#>                       down                       down 
+#>   ENSG00000277611:Z98752.3    ENSG00000158089:GALNT14 
+#>                       down                       down 
+#>      ENSG00000124784:RIOK1       ENSG00000103197:TSC2 
+#>                       down                       down 
+#>       ENSG00000187193:MT1X ENSG00000269533:AC003002.3 
+#>                         up                         up 
+#>      ENSG00000065427:KARS1       ENSG00000007171:NOS2 
+#>                         up                         up 
+#>     ENSG00000285447:ZNF883      ENSG00000111275:ALDH2 
+#>                         up                         up 
+#>     ENSG00000279111:OR10X1   ENSG00000167617:CDC42EP5 
+#>                         up                         up 
+#>    ENSG00000186566:GPATCH8    ENSG00000232423:PRAMEF6 
+#>                         up                         up 
+#>    ENSG00000182103:FAM181B       ENSG00000172500:FIBP 
+#>                         up                         up 
+#>      ENSG00000151033:LYZL2 
+#>                         up 
+#> Levels: up down other
 
 # get replicates group data 
 
-parcutils::group_replicates_by_sample(res)
+parcutils::.group_replicates_by_sample(res)
 #> # A tibble: 9 × 2
 #>   groups     samples     
 #>   <chr>      <chr>       
@@ -327,7 +332,8 @@ parcutils::get_pca_plot(x = res,
 
 parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control",
                             col_up = "#a40000",
-                            col_down = "#007e2f", 
+                            col_down = "#16317d", 
+                            repair_genes = T,
                             col_other = "grey")
 ```
 
@@ -336,12 +342,12 @@ parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control"
 ``` r
 # change cutoffs 
 
-parcutils::get_volcano_plot(x = res, 
+parcutils::get_volcano_plot(x = res, repair_genes = T,
                             sample_comparison = "treatment2_VS_control",
                             pval_cutoff = 0.01,
                             log2fc_cutoff = 0.6, 
                             col_up = "#a40000",
-                            col_down = "#007e2f",
+                            col_down = "#16317d",
                             col_other = "grey")
 ```
 
@@ -375,14 +381,14 @@ parcutils::get_gene_expression_box_plot(x = res,
 
 
 genes_for_hm = parcutils::get_genes_by_regulation(x = res,
-                                                  sample_comparison = res$comp[[2]], 
+                                                  sample_comparison = res$de_comparisons[[2]], 
                                                   regulation = "both")
 
 # heatmap of normalised gene expression values across samples 
 
 hm1 <- parcutils::get_gene_expression_heatmap(x = res, 
                                        samples = c("control","treatment1" , "treatment2") , 
-                                       genes = genes_for_hm , 
+                                       genes = genes_for_hm %>% names() , 
                                        convert_zscore = FALSE, 
                                        convert_log2 = T, 
                                        summarise_replicates = T,
@@ -405,7 +411,7 @@ hm2 <- parcutils::get_gene_expression_heatmap(x = res,
                                        summarise_replicates = F,
                                         col = 
                                          circlize::colorRamp2(breaks = c(-2,0,2), colors = c("#16317d","white","#a40000")),color_default = F,
-                                       genes = genes_for_hm , 
+                                       genes = genes_for_hm %>% names() , 
                                        convert_zscore = TRUE, 
                                        cluster_columns = FALSE)
 
@@ -418,8 +424,9 @@ ComplexHeatmap::draw(hm2)
 ``` r
 # log2 FC heatamap
 hm3 <- parcutils::get_fold_change_heatmap(x = res, 
-                                   sample_comparisons = res$comp, 
-                                   genes = genes_for_hm , color_default = F, 
+                                   sample_comparisons = res$de_comparisons, 
+                                   genes = genes_for_hm %>% names() , 
+                                   color_default = F, 
                                      col = 
                                          circlize::colorRamp2(breaks = c(-5,0,5), colors = c("#16317d","white","#a40000")),
                                    name= "Log2FC")
@@ -432,7 +439,8 @@ ComplexHeatmap::draw(hm3)
 ### Visualize differential genes overlap between comparison
 
 ``` r
-us_plot <- parcutils::plot_deg_upsets(x = res, sample_comparisons = res$comp)
+us_plot <- parcutils::plot_deg_upsets(x = res, 
+                                      sample_comparisons = res$de_comparisons)
 
 us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_plot %>% print()
 ```
@@ -455,18 +463,19 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% pri
 #> 7 treatment2_VS_control_down                            <chr [495]>
 ```
 
-### Visualize genes by line plot te
+### Visualize genes by line plot
 
 ``` r
 
 genes_for_lineplot = parcutils::get_genes_by_regulation(x = res,
-                                                  sample_comparison = res$comp[[2]], 
-                                                  regulation = "both")
+                                                  sample_comparison = res$de_comparisons[[2]], 
+                                                  regulation = "both") %>% names()
 
 #gene expression values
 parcutils::get_gene_expression_line_plot(x = res, 
                                    genes = genes_for_lineplot , 
-                                   samples = c("control","treatment1","treatment2"),summarise_replicates = T, show_average_line = T) + ggplot2::theme(text = ggplot2::element_text(size = 15))
+                                   samples = c("control","treatment1","treatment2"),summarise_replicates = T, show_average_line = T) + 
+  ggplot2::theme(text = ggplot2::element_text(size = 15))
 ```
 
 ![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->

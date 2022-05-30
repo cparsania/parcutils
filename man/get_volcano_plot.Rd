@@ -22,7 +22,7 @@ get_volcano_plot(
 \arguments{
 \item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
 
-\item{sample_comparison}{a character string denoting a valid differential gene comparison. Possible comparisons can be found from x$comp.}
+\item{sample_comparison}{a character string denoting a valid differential gene comparison. Possible comparisons can be found from x$de_comparisons.}
 
 \item{log2fc_cutoff}{a numeric value, default 1.}
 
@@ -72,10 +72,10 @@ res <- run_deseq_analysis(counts = count_data ,
                          group_denominator = c("control"))
 
 
-get_volcano_plot(res,  sample_comparison = res$comp[1]) \%>\% print()
+get_volcano_plot(res,  sample_comparison = res$de_comparisons[1]) \%>\% print()
 
-get_volcano_plot(res,  sample_comparison = res$comp[2]) \%>\% print()
+get_volcano_plot(res,  sample_comparison = res$de_comparisons[2]) \%>\% print()
 
-get_volcano_plot(res,  sample_comparison = res$comp[2] , genes_to_display = c("THEG","FBXL2","LAMC2","SHF","TSKU"), lab_size = 5) \%>\% print()
+get_volcano_plot(res,  sample_comparison = res$de_comparisons[2] , genes_to_display = c("THEG","FBXL2","LAMC2","SHF","TSKU"), lab_size = 5) \%>\% print()
 
 }

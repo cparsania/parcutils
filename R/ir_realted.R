@@ -258,7 +258,7 @@ map_intron_meta_data <- function(x , bs_genome_object = BSgenome.Hsapiens.UCSC.h
 #' names(example_files) <- stringr::str_replace(example_files , pattern = ".*/", replacement = "") %>%
 #' stringr::str_replace(pattern = "-IR-nondir.txt", replacement = "")
 #' x <- read_irfinderS_output(files = example_files,  add_prefix_chr = TRUE)
-#' mark_ir_status_by_filters(x)
+#' .mark_ir_status_by_filters(x)
 #'
 .mark_ir_status_by_filters <- function(x ,
                                       min_intron_cov = 0.95,
@@ -352,6 +352,7 @@ get_ir_counts <- function(x){
   .validate_irfinders_object(x)
 
   y <- x %>%
+    .parcutils_assign_intron_identifier() %>%
     purrr::map(~ ..1 %>% dplyr::select(intron_id, "introndepth")) %>%
     tibble::enframe() %>% tidyr::unnest(cols = c(value)) %>%
     tidyr::pivot_wider(names_from = "name", values_from = "introndepth")
@@ -486,7 +487,7 @@ run_deseq_analysis_ir <- function(x,
     dplyr::mutate(intron_annot = list(intron_annot))
 
   # to have consistency across columns assign names to each elem of intron_annot
-  names(de_output$intron_annot) <- de_output$comp
+  names(de_output$intron_annot) <- de_output$de_comparisons
 
   return(de_output)
 

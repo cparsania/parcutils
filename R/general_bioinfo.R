@@ -59,7 +59,8 @@ get_intergenic_signals <- function(bw_file , gff_file){
 #' @details implemntaion of RPKM and TPM can be seen in functions [parcutils::get_tpm()] and [parcutils::get_rpkm()] respectively.
 #'
 #' @param x A dataframe of raw counts along with mandatory columns which are \code{GeneID, Chr, Start, End, Strand, Length}.
-#' @param .vars A character vector containing columns from \code{x}. Normalization will be performed on these columns.
+#' @param .vars A character vector containing columns from \code{x}. Normalization will be performed only on these columns. If NULL (default) all columns normlaisation will be
+#' performed on all columns.
 #' @param method A character string, default TPM. Choices are one of TPM, RPKM.
 #'
 #' @return A dataframe with all mandatory columns along with columns mentioned in \code{.vars}. Remaining columns from \code{x} will be dropped.
@@ -73,21 +74,19 @@ get_intergenic_signals <- function(bw_file , gff_file){
 #'                      start = sample(1:100, 5),
 #'                      end = sample(100:200,5),
 #'                      strand = sample(c("+" ,"-"), 5, replace = T),
-#'                      length = (End - Start )+ 1 )
+#'                      length = (end - start )+ 1 )
 #'
 #' tt %<>% dplyr::mutate(sample_1 = sample(c(1:100),5)*10 ,
 #'                       sample_2 = sample(c(1:100),5)*10 ,
 #'                       sample_3 = sample(c(1:100),5)*100,
 #'                       sample_4 = sample(c(1:100),5)*100 )
 #'
-#'
+#' normalise_counts(x = tt ,method = "RPKM")
 #' normalise_counts(x = tt, .vars = c("sample_1","sample_2") ,method = "TPM")
 #' normalise_counts(x = tt, .vars = c("sample_1","sample_2") ,method = "RPKM")
-#'
-normalise_counts <- function(x, .vars ,method = "TPM"){
+normalise_counts <- function(x, .vars = NULL ,method = "TPM"){
 
   x_colnames <- colnames(x)
-  .vars_quot = rlang::enquo(.vars)
 
   # validate arguments
   # x must be an object of class data.frame
@@ -97,31 +96,36 @@ normalise_counts <- function(x, .vars ,method = "TPM"){
   base::match.arg(arg = method,choices = c("TPM","RPKM"))
 
   # .vars must be a character vector
-  base::stopifnot(is.character(.vars))
+  if(!(is.null(.vars) | is.character(.vars))){
+    cli::cli_text("{.arg .vars} must be a {.cls NULL} or a {.cls character} vector.")
+  }
 
   # check presence of mandatory columns in x
-  mandatory_cols <- c("GeneID", "Chr", "Start", "End", "Strand", "Length")
+  mandatory_cols <- c("Gene_ID", "Chr", "Start", "End", "Strand", "Length") %>% tolower()
 
   if(!all(mandatory_cols %in% x_colnames)){
     i <- which(mandatory_cols %in% x_colnames == F)
     cols_not_present <- mandatory_cols %>% .[i] %>% stringr::str_flatten(collapse = ",")
-    stop(glue::glue("Columns {cols_not_present} are not present in the x"))
+    cli::cli_abort("Column{?s}  {.emph {cli::col_red({cols_not_present})}} {?is/are} not present in the x.")
   }
 
+  # select cols other than mandatory colums
+  if(is.null(.vars)){
+    .vars = x %>% dplyr::select(-!!mandatory_cols) %>% colnames()
+  }
+  .vars_quot = rlang::enquo(.vars)
   # check presence of .vars in x
   if(!all(.vars %in% x_colnames)){
     i <- which(.vars %in% x_colnames == F)
     cols_not_present <- .vars %>% .[i] %>% stringr::str_flatten(collapse = ",")
-    stop(glue::glue("Columns {cols_not_present} are not present in the x"))
+    cli::cli_abort("Column{?s}  {.emph {cli::col_red({cols_not_present})}} {?is/are} not present in the x.")
   }
 
   # do normalization
   if(method == "TPM"){
-    x %<>% dplyr::mutate_at(.vars = dplyr::vars(!!.vars_quot) ,.funs = get_tpm ,length = .$Length)
+    x %<>% dplyr::mutate_at(.vars = dplyr::vars(!!.vars_quot) ,.funs = get_tpm ,length = .$length)
   } else if(method == "RPKM") {
-    x %<>% dplyr::mutate_at(.vars = dplyr::vars(!!.vars_quot) ,.funs = get_rpkm ,length = .$Length)
-  } else{
-    stop("arg should be one  either TPM or RPKM.")
+    x %<>% dplyr::mutate_at(.vars = dplyr::vars(!!.vars_quot) ,.funs = get_rpkm ,length = .$length)
   }
 
   x %<>% dplyr::select(tidyselect::all_of(mandatory_cols), !!.vars_quot)

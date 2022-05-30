@@ -630,7 +630,7 @@ get_pairwise_corr_plot  <- function(x , samples = NULL, genes = NULL){
 #' Generate a volcano plot.
 #'
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
-#' @param sample_comparison a character string denoting a valid differential gene comparison. Possible comparisons can be found from x$comp.
+#' @param sample_comparison a character string denoting a valid differential gene comparison. Possible comparisons can be found from x$de_comparisons.
 #' @param log2fc_cutoff a numeric value, default 1.
 #' @param pval_cutoff a numeric value, default 0.05.
 #' @param genes_to_display a character vector of the genes to display in volcano plot, default NULL, displays non overlapping genes.
@@ -664,11 +664,11 @@ get_pairwise_corr_plot  <- function(x , samples = NULL, genes = NULL){
 #'                          group_denominator = c("control"))
 #'
 #'
-#' get_volcano_plot(res,  sample_comparison = res$comp[1]) %>% print()
+#' get_volcano_plot(res,  sample_comparison = res$de_comparisons[1]) %>% print()
 #'
-#' get_volcano_plot(res,  sample_comparison = res$comp[2]) %>% print()
+#' get_volcano_plot(res,  sample_comparison = res$de_comparisons[2]) %>% print()
 #'
-#' get_volcano_plot(res,  sample_comparison = res$comp[2] , genes_to_display = c("THEG","FBXL2","LAMC2","SHF","TSKU"), lab_size = 5) %>% print()
+#' get_volcano_plot(res,  sample_comparison = res$de_comparisons[2] , genes_to_display = c("THEG","FBXL2","LAMC2","SHF","TSKU"), lab_size = 5) %>% print()
 #'
 get_volcano_plot <- function(x,
                              sample_comparison,
@@ -1038,7 +1038,7 @@ get_corr_heatbox <- function(x,
 #' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
 #' @param samples a character vector denoting sample names to show in the heatmap.
 #' @param sample_comparisons a character vector denoting sample comparisons.
-#' possible values can be found from \code{x$comp}.
+#' possible values can be found from \code{x$de_comparisons}.
 #' @param genes a character vector denoting genes to show in the heatmap.
 #' @param summarise_replicates logical, default TRUE, indicating whether to summarise values for each gene across replicates.
 #' @param summarise_method a character string, default median, denoting a summary method to average gene expression values across replicates. Values can be either mean or median.
@@ -1067,7 +1067,7 @@ get_corr_heatbox <- function(x,
 #'                                      group_numerator = c("treatment1", "treatment2") ,
 #'                                      group_denominator = c("control"))
 #'
-#' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both")
+#' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both") %>% names()
 #' get_gene_expression_line_plot(x = res, samples = c("control", "treatment1" ,"treatment2"), genes = genes, line_transparancy = 0.1, average_line_color = "red", summarise_method = "mean")
 #'
 #'get_fold_change_line_plot(x = res, sample_comparisons = c("treatment1_VS_control", "treatment2_VS_control"), genes = genes,average_line_summary_method =  "mean")
@@ -1269,13 +1269,13 @@ get_fold_change_line_plot <- function(x,
 #'   tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
 #'
 #'
-#' res <- parcutils::run_deseq_analysis(counts = count_data ,
+#' res <- parcutils::run_deseq_analysis(counts = count_data %>% dplyr::mutate(gene_id = stringr::str_replace(gene_id, ":.*","")),
 #'                                      sample_info = sample_info,
 #'                                      column_geneid = "gene_id" ,
 #'                                      group_numerator = c("treatment1", "treatment2") ,
 #'                                      group_denominator = c("control"))
 #'
-#' go_out <- get_go_emap_plot(res, universe = .get_all_expressed_genes(res)[1:100])
+#' go_out <- get_go_emap_plot(res)
 #'
 #' # display plot
 #' go_out$go_emap_plots
@@ -1305,13 +1305,13 @@ get_go_emap_plot <- function(x,
 
   # all gene sets
   deg_genes <- parcutils::get_genesets_by_regulation(x =  x,
-                                                     sample_comparisons = x$comp)
+                                                     sample_comparisons = x$de_comparisons)
 
   match.arg(ont_type , choices = c("BP","MF","CC"))
 
   match.arg(p_adj_method , choices = c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"))
 
-  # validate numeric
+  # validate numericparcutils_assign_intron_identifier
   stopifnot("'pval_cutoff' must be a numeric value." = is.numeric(pval_cutoff))
   stopifnot("'qval_cutoff' must be a numeric value." = is.numeric(qval_cutoff))
   stopifnot("'min_geneset_size' must be a numeric value." = is.numeric(min_geneset_size))
@@ -1324,10 +1324,10 @@ get_go_emap_plot <- function(x,
     purrr::map(~ ..1 %>% stringr::str_replace(":.*",""))
 
   if(is.null(universe)){
-    cli::cli_alert_info(text = "Argument 'universe' is set to NULL. Default all expressed genes from x will be used as background genes.")
+    cli::cli_alert_info(text = "{.arg universe} is set to  {.cls NULL} Default all expressed genes from {.arg x} will be used as background genes.")
 
     # prepare background genes. They are the genes which used for DE analysis.
-    universe <- .get_all_expressed_genes(x)
+    universe <- .get_all_expressed_genes(x) %>% names()
 
   }
 

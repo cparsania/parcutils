@@ -80,7 +80,7 @@ the code readability. Besides that,  output of this function can subsequently us
   cutoff_pval <span class="op">=</span> <span class="fl">0.05</span>,
   cutoff_padj <span class="op">=</span> <span class="fl">0.01</span>,
   regul_based_upon <span class="op">=</span> <span class="fl">1</span>,
-  <span class="va">...</span>
+  print_rows_all_zero <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -93,7 +93,7 @@ See details below to know more about format of the count file and count datafram
 <dd><p>a character string denoting a column of geneid in <code>counts</code></p></dd>
 <dt>sample_info</dt>
 <dd><p>a character string denoting a name of sample information file or a dataframe.
-A file or a dataframe both must have at least two columns without column names. First column denotes to samples names
+A file or a dataframe both must have at least two columns <em>WITHOUT</em> column names. First column denotes to samples names
 and second column denotes group name for each sample in first column. For e.g.</p><table class="table table"><tr><td></td><td></td></tr><tr><td>control_rep_1</td><td>Control</td></tr><tr><td>control_rep_2</td><td>Control</td></tr><tr><td>control_rep_3</td><td>Control</td></tr><tr><td>treat_1_rep_1</td><td>Treatment_1</td></tr><tr><td>treat_1_rep_2</td><td>Treatment_1</td></tr><tr><td>treat_1_rep_3</td><td>Treatment_1</td></tr><tr><td>treat_2_rep_1</td><td>Treatment_2</td></tr><tr><td>treat_2_rep_2</td><td>Treatment_2</td></tr><tr><td>treat_2_rep_3</td><td>Treatment_2</td></tr></table></dd>
 <dt>group_numerator</dt>
 <dd><p>a character vector denoting sample groups to use in numerator to calculate fold change.</p></dd>
@@ -111,9 +111,14 @@ gene for differential expression analysis.</p></dd>
 Value provided must not be higher than number of samples in each group.
 For example for given values <code>min_replicates = 2</code> and  <code>minimum_counts = 10</code>
 the genes which have minimum counts 10 in at least 2 samples within a groups will be accounted for DEG. Rest will be filtered out prior to run DESeq.</p></dd>
-<dt>cutoff_lfc, cutoff_pval, cutoff_padj</dt>
-<dd><p>a numeric value, default <code>(cutoff_lfc = 1, cutoff_pval =  0.05, cutoff_padj = 0.01)</code>denoting cutoffs to categorize
-genes in to either <code>Up</code>, <code>Down</code> or <code>Other</code> category.</p></dd>
+<dt>cutoff_lfc</dt>
+<dd><p>minimal threshold for log2fold change, default 1 (2 fold).</p></dd>
+<dt>cutoff_pval</dt>
+<dd><p>minimal threshold for pvalue, default 0.05. P-value threshold will be applied only when
+<code>regul_based_upon</code> is either 1 or 3.</p></dd>
+<dt>cutoff_padj</dt>
+<dd><p>minimal threshold for Padj, default 0.01. Padj threshold will be applied only when
+<code>regul_based_upon</code> is either 2 or 3.</p></dd>
 <dt>regul_based_upon</dt>
 <dd><p>one of the numeric choices  1, 2, or 3.</p><div class="section">
 <h3 id="if-">if 1 ...<a class="anchor" aria-label="anchor" href="#if-"></a></h3>
@@ -138,12 +143,12 @@ genes in to either <code>Up</code>, <code>Down</code> or <code>Other</code> cate
 <li><p>Down : log2fc  &lt;= (-1) * log2fc_cutoff pvalue &lt;= pvalue_cutoff &amp; padj &lt;= padj_cutoff</p></li>
 <li><p>Other : remaining genes</p></li>
 </ul></div></dd>
-<dt>...</dt>
-<dd><p>for future use.</p></dd>
+<dt>print_rows_all_zero</dt>
+<dd><p>logical, default FALSE, denoting whether to print genes with value 0 in all columns.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Return object is a dataframe (tibble) having each row denoting a unique differential comparison. There are total 8 columns as explained below.</p><ul><li><p><code>comp</code> : It stores the name of differential comparison for each row.</p></li>
+    <p>Return object is a dataframe (tibble) having each row denoting a unique differential comparison. There are total 8 columns as explained below.</p><ul><li><p><code>de_comparisons</code> : It stores the name of differential comparison for each row.</p></li>
 <li><p><code>numerator</code> : It stores name of samples which were used as numerator for the differential comparison in each row.</p></li>
 <li><p><code>denominator</code> : It stores name of samples which were used as denominator for the differential comparison in each row.</p></li>
 <li><p><code>norm_counts</code> : This is a <code>named-list</code> column. Each row in this column is a list of two containing normalised
@@ -156,28 +161,26 @@ differential comparison in each row.</p></li>
 differential comparison in each row.</p></li>
 <li><p><code>dsr_tibble_deg</code>: The data in this column is same as in the column <code>dsr_tibble</code> except it contains two extra columns <code>signif</code> and <code>regul</code>.
 Values in the <code>signif</code> specifies statistical and fold change significance of the gene while values in the <code>regul</code> denotes whether the gene is <code>up</code> or <code>down</code>
-regulated or not.</p></li>
+regulated.</p></li>
 <li><p><code>deg_summmary</code> : This is a <code>named-list</code> column. Each element of the list is a dataframe summarizing number of differential expressed gene for the differential
 comparison for each row.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>// TO DO : Explain formats of count file and count dataframe.</p>
-    </div>
+    <p>: For the argument <code>count</code> user can either provide a character string denoting a file or an object of dataframe.
+In each case required format is explained below.</p><ul><li><p><code>Count file</code>: Count file is a table of row read counts usually derived from .bam file for different genomic features
+(e.g. genes, transcripts etc.). Data in the count file must be in a tabular format with a valid column deliminator
+(e.g., tab, comma etc.). First row and first column will be considered as column names and row names respectively.
+Values for column names and row names are usually character string or combination of character, numbers and
+special characters such as <code>_</code>, or  <code>.</code>. Both row names and column names must have unique values.</p></li>
+<li><p><code>Count dataframe</code>: Count data in a dataframe format having same requirement of row names and column names explained for <code>count file</code>.</p></li>
+</ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="va">count_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,<span class="st">"toy_counts.txt"</span> , package <span class="op">=</span> <span class="st">"parcutils"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">count_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_delim</a></span><span class="op">(</span><span class="va">count_file</span>, delim <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">5000</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">10</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Delimiter:</span> "\t"</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">chr</span> (1): gene_id</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">dbl</span> (9): control_rep1, control_rep2, control_rep3, treat1_rep1, treat1_rep2,...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use <span style="color: #C6C6C6; background-color: #262626;">`spec()`</span> to retrieve the full column specification for this data.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Specify the column types or set <span style="color: #C6C6C6; background-color: #262626;">`show_col_types = FALSE`</span> to quiet this message.</span>
+<span class="r-in"><span class="va">count_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_delim</a></span><span class="op">(</span><span class="va">count_file</span>, delim <span class="op">=</span> <span class="st">"\t"</span>,show_col_types <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">sample_info</span> <span class="op">&lt;-</span> <span class="va">count_data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="va">.</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>  <span class="op">%&gt;%</span></span>
 <span class="r-in"> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>samples <span class="op">=</span> <span class="va">.</span> , groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">)</span></span>
@@ -186,6 +189,8 @@ comparison for each row.</p></li>
 <span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">run_deseq_analysis</span><span class="op">(</span>counts <span class="op">=</span> <span class="va">count_data</span> ,</span>
 <span class="r-in">                         sample_info <span class="op">=</span> <span class="va">sample_info</span>,</span>
 <span class="r-in">                         column_geneid <span class="op">=</span> <span class="st">"gene_id"</span> ,</span>
+<span class="r-in">                         cutoff_lfc <span class="op">=</span> <span class="fl">1</span> ,</span>
+<span class="r-in">                         cutoff_pval <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span class="r-in">                         group_numerator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment1"</span>, <span class="st">"treatment2"</span><span class="op">)</span> ,</span>
 <span class="r-in">                         group_denominator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Running DESeq2 ...</span>
@@ -199,27 +204,34 @@ comparison for each row.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> fitting model and testing</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Summarizing DEG ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Done.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">res</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ┌────────────────────────────┐</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> │                            │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> │   <span style="font-weight: bold;">Summary of DE analysis</span>   │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> │                            │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> └────────────────────────────┘</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Total number of genes used for DEG analysis are 4034. </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Total number of comparisons are 2. </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total number of comparisons: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total number of genes used for DE analysis: 4034</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of DEGs in each comparison:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #55FFFF; font-weight: bold;">DE gene counts by comparison...</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">treatment1_VS_control</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">treatment1_VS_control</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #BB0000;">number of up genes   : 13.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #00BB00;">number of down genes : 28.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ──────────────────────────────</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">treatment2_VS_control</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">treatment2_VS_control</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #BB0000;">number of up genes   : 333.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #00BB00;">number of down genes : 502.</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ──────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## all comparisons</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">comp</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "treatment1_VS_control" "treatment2_VS_control"</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## DESEq result object(s)</span></span>
@@ -379,8 +391,6 @@ comparison for each row.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Up      333</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> other  <span style="text-decoration: underline;">3</span>199</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

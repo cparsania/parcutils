@@ -120,7 +120,7 @@
 
   yy <- purrr::map(sample_comparison %>%
                      purrr::set_names(sample_comparison), ~parcutils::get_genes_by_regulation(x = x, sample_comparison = ..1,regulation = "both") ) %>%
-    purrr::map(~split(..1, names(..1)))
+    purrr::map(~split(names(..1), ..1))
 
   input_list_for_upset <- purrr::map(names(yy), ~ purrr::set_names(yy[[..1]], glue::glue("{..1}_{yy[[..1]] %>% names %>% tolower}"))) %>% purrr::flatten()
 
@@ -374,7 +374,7 @@
 
   all_genes <- parcutils::get_genes_by_regulation(x = x,
                                                   regulation = "all",
-                                                  sample_comparisons = x$comp[1])
+                                                  sample_comparisons = x$de_comparisons[1])
 
   return(all_genes)
 }
@@ -733,7 +733,7 @@
 
   .validate_parcutils_ir_object(x)
 
-  oo <- purrr::map(x$comp , ~{
+  oo <- purrr::map(x$de_comparisons , ~{
     de_table <- x$dsr_tibble_deg[[.x]]
     intron_annot_table <-  x$intron_annot[[.x]]
 
@@ -743,7 +743,7 @@
       # add IGV search text
       dplyr::mutate(igv_search_text = stringr::str_c(chr, ":", start, "-",end))
   })
-  names(oo) <- x$comp
+  names(oo) <- x$de_comparisons
   ret <- writexl::write_xlsx(oo,path =  file)
   return(ret)
 }
@@ -760,3 +760,170 @@
            Usually x is derived by parcutils::run_deseq_analysis_ir()." = is(x, "parcutils_ir"))
 }
 
+
+#' Prepare count data for the function [parcutils::run_deseq_analysis()]
+#'
+#' @param counts a character sting or dataframe.
+#'
+#' @return a dataframe.
+#' @export
+#' @keywords internal
+.get_count_data  <- function(counts){
+  if(!inherits(counts , what = c("character","tbl_df","tbl" ,"data.frame"))){
+    cli::cli_abort("{.arg counts} must be an object of class {.cls character} or {.cls data.frame}")
+  }
+
+  if(inherits(counts , what = c("character"))){
+    cli::cli_alert_info(" Reading count file ...")
+    count_data <- readr::read_delim(counts,
+                                    delim = delim,
+                                    comment = comment_char,
+                                    trim_ws = TRUE,
+                                    col_names = TRUE,
+                                    show_col_types = F ,
+                                    progress = T)
+    cli::cli_alert_success("Done.")
+  } else {
+    count_data <- counts
+  }
+  # remove duplicate rows if any
+  count_data %<>% dplyr::distinct()
+
+  return(count_data)
+}
+
+
+#' Prepare sample information for the function [parcutils::run_deseq_analysis()]
+#'
+#' @param sample_info a character string or data frame.
+#'
+#' @return a data frame
+#' @export
+#'
+#' @keywords internal
+.get_sample_information <- function(sample_info){
+
+  # value for sample_info either from a class character, tbl_df, tbl or data.frame
+
+  if(!inherits(sample_info, what = c("character","tbl_df","tbl" ,"data.frame"))){
+    cli::cli_abort("{.arg sample_info} must be an object of class {.cls character} or {.cls data.frame}")
+
+  }
+
+  # if sample_info is a character string then read data from file.
+
+  if(inherits(sample_info , what = c("character"))){
+    cli::cli_alert_info(" Reading sample_info file ...")
+    sample_info_data <- readr::read_delim(sample_info ,
+                                          delim = "\t",
+                                          trim_ws = TRUE,
+                                          col_names = FALSE,
+                                          col_types = c("cc"), # both column will be considered as character
+                                          show_col_types = FALSE,
+                                          progress = TRUE)
+
+    cli::cli_alert_success("Done.")
+  } else{
+    sample_info_data <- sample_info
+  }
+  # if more than 2 columns present in sample_info keep only 2 and show warning.
+  if(ncol(sample_info_data) != 2 ){
+    if(ncol(sample_info_data) > 2 ){
+      cli::cli_alert_warning("'sample_info' contains more than 2 columns. Only first 2 will be considered.")
+      sample_info_data %<>%
+        dplyr::select(1:2)
+    } else if(ncol(sample_info_data) < 2 ) {
+      cli::cli_abort("{.arg sample_info} must contains two columns deliminated by '\\t'")
+    }
+  } else{
+    sample_info_data = sample_info_data
+  }
+
+  # remove duplicates
+  sample_info_data %<>% dplyr::distinct()
+
+  return(sample_info_data)
+
+}
+
+
+
+#' Convert NA to 0 from into count data for the function [parcutils::run_deseq_analysis()]
+#'
+#' @param count_data a dataframe
+#'
+#' @return a dataframe
+#' @export
+#'
+#' @keywords internal
+.count_data_convert_NA_to_0 <- function(count_data){
+  count_data_select_NA <- count_data %>%
+    TidyWrappers::tbl_keep_rows_NA_any()
+
+  if(nrow(count_data_select_NA) >= 1) {
+    cli::cli_alert_warning("Following gene(s) contains NA in one or more samples. Either remove them or Default NA will be converted to 0.")
+    genes_NA <- count_data_select_NA %>%
+      dplyr::pull(!!column_geneid_quo)
+    cli::cli_alert(genes_NA)
+    # replace NA with 0
+    count_data %<>% dplyr::mutate_if(is.numeric , ~ ..1 %>% tidyr::replace_na(0))
+  }
+  return(count_data)
+}
+
+
+
+#' Filter count data using user thresholds for the function [parcutils::run_deseq_analysis()]
+#'
+#' @param count_data a data frame
+#' @param column_geneid a character string
+#' @param sample_info a data frame
+#' @param min_counts a numeric value
+#' @param min_replicates a numeric value
+#'
+#' @return
+#' @export
+#'
+#' @keywords internal
+.filter_rows_from_count_data <- function(count_data, column_geneid, sample_info,
+                                         min_counts,min_replicates){
+
+  # For DESeq analysis genes having non zero count in at least one sample will be used.
+  # In addition genes will be filtered based on user defined cutoffs -
+  # 1. minimum counts to each gene
+  # 2. minimum number of replicates with minimum counts
+
+  # quote column names
+  column_geneid_quo <- rlang::enquo(column_geneid)
+
+  sample_info_colnames <- colnames(sample_info)
+
+  genes_to_keep <- count_data %>%
+
+    # convert data wide to long format.
+    tidyr::gather(-!!column_geneid_quo, key = "sample", value = "counts") %>%
+
+    # join sampleinfo table
+    dplyr::left_join(sample_info, by = c("sample" = sample_info_colnames[1])) %>%
+
+    # to identify genes which has counts more than cutoff across replicates group by sample groups followed by gene id.
+    # total groups will be number of unique genes * number of sample groups.
+    dplyr::group_by(!!rlang::sym(sample_info_colnames[2]), !!rlang::sym(column_geneid)) %>%
+
+    dplyr::arrange(!!rlang::sym(column_geneid), !!rlang::sym(sample_info_colnames[2])) %>%
+
+    # add column (count_above_threshold) containing counts of replicates having min counts >= min_counts
+    dplyr::mutate(count_above_threshold = sum(counts >= min_counts)) %>%
+
+    # filter genes count_above_thresholds >= min_replicates (e.g. 2);
+    # meaning that for a given gene at least two replicates have count >= threshold (e.g., 10)
+    dplyr::filter(count_above_threshold >= min_replicates) %>%
+    dplyr::ungroup() %>%
+    dplyr::pull(!!rlang::sym(column_geneid)) %>%
+    unique()
+
+  count_data_filter <- count_data %>%
+    dplyr::filter(!!rlang::sym(column_geneid) %in% genes_to_keep)
+
+  return(count_data_filter)
+}

@@ -93,8 +93,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">chr</span> (1): gene_id</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">dbl</span> (9): control_rep1, control_rep2, control_rep3, treat1_rep1, treat1_rep2,...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use <span style="color: #262626; background-color: #DADADA;">`spec()`</span> to retrieve the full column specification for this data.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Specify the column types or set <span style="color: #262626; background-color: #DADADA;">`show_col_types = FALSE`</span> to quiet this message.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use <span style="color: #C6C6C6; background-color: #262626;">`spec()`</span> to retrieve the full column specification for this data.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Specify the column types or set <span style="color: #C6C6C6; background-color: #262626;">`show_col_types = FALSE`</span> to quiet this message.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">sample_info</span> <span class="op">&lt;-</span> <span class="va">count_data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="va">.</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>  <span class="op">%&gt;%</span></span>
 <span class="r-in"> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>samples <span class="op">=</span> <span class="va">.</span> , groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">)</span></span>
@@ -116,48 +116,48 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> fitting model and testing</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Summarizing DEG ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Done.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># get both up and down regulated genes</span></span>
 <span class="r-in"><span class="fu">get_genes_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment1_VS_control"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           up                           up </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000187193:MT1X" "ENSG00000269533:AC003002.3" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           up                           up </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000065427:KARS1"       "ENSG00000007171:NOS2" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           up                           up </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000285447:ZNF883"      "ENSG00000111275:ALDH2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000250305:TRMT9B    ENSG00000134308:YWHAQ  ENSG00000123575:FAM199X </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     down                     down                     down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000148482:SLC39A12    ENSG00000175264:CHST1    ENSG00000141933:TPGS1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     down                     down                     down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># get up genes only</span></span>
 <span class="r-in"><span class="fu">get_genes_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment1_VS_control"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"up"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           up                           up </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       "ENSG00000187193:MT1X" "ENSG00000269533:AC003002.3" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           up                           up </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      "ENSG00000065427:KARS1"       "ENSG00000007171:NOS2" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           up                           up </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     "ENSG00000285447:ZNF883"      "ENSG00000111275:ALDH2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       ENSG00000187193:MT1X ENSG00000269533:AC003002.3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         up                         up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      ENSG00000065427:KARS1       ENSG00000007171:NOS2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         up                         up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ENSG00000285447:ZNF883      ENSG00000111275:ALDH2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         up                         up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># get down genes only</span></span>
 <span class="r-in"><span class="fu">get_genes_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment1_VS_control"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"down"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       down                       down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   "ENSG00000250305:TRMT9B"    "ENSG00000134308:YWHAQ" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       down                       down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000123575:FAM199X" "ENSG00000148482:SLC39A12" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       down                       down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    "ENSG00000175264:CHST1"    "ENSG00000141933:TPGS1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ENSG00000250305:TRMT9B    ENSG00000134308:YWHAQ  ENSG00000123575:FAM199X </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     down                     down                     down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000148482:SLC39A12    ENSG00000175264:CHST1    ENSG00000141933:TPGS1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     down                     down                     down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># get genes other than up and down</span></span>
 <span class="r-in"><span class="fu">get_genes_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment1_VS_control"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"other"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   other                   other                   other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "ENSG00000154342:WNT3A" "ENSG00000196415:PRTN3"  "ENSG00000173020:GRK2" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   other                   other                   other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  "ENSG00000140598:EFL1" "ENSG00000139263:LRIG3" "ENSG00000165898:ISCA2" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ENSG00000154342:WNT3A ENSG00000196415:PRTN3  ENSG00000173020:GRK2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 other                 other                 other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ENSG00000140598:EFL1 ENSG00000139263:LRIG3 ENSG00000165898:ISCA2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 other                 other                 other </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Simplify output for multiple sample comparisons</span></span>
-<span class="r-in"><span class="fu">get_genes_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">comp</span>, simplify <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">get_genes_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span>, simplify <span class="op">=</span> <span class="cn">T</span>, regul<span class="op">=</span> <span class="st">"up"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $treatment1_VS_control</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 41 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 13 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    sample_comparisons    genes                      regul</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> treatment1_VS_control ENSG00000187193:MT1X       up   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> treatment1_VS_control ENSG00000269533:AC003002.3 up   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> treatment1_VS_control ENSG00000065427:KARS1      up   </span>
@@ -168,12 +168,14 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> treatment1_VS_control ENSG00000167617:CDC42EP5   up   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> treatment1_VS_control ENSG00000186566:GPATCH8    up   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> treatment1_VS_control ENSG00000232423:PRAMEF6    up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 31 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> treatment1_VS_control ENSG00000182103:FAM181B    up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> treatment1_VS_control ENSG00000172500:FIBP       up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> treatment1_VS_control ENSG00000151033:LYZL2      up   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $treatment2_VS_control</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 835 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 333 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    sample_comparisons    genes                   regul</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> treatment2_VS_control ENSG00000155918:RAET1L  up   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> treatment2_VS_control ENSG00000151458:ANKRD50 up   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> treatment2_VS_control ENSG00000110876:SELPLG  up   </span>
@@ -184,22 +186,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> treatment2_VS_control ENSG00000157240:FZD1    up   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> treatment2_VS_control ENSG00000103154:NECAB2  up   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> treatment2_VS_control ENSG00000112379:ARFGEF3 up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 825 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 323 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># get genesets by regulation. It uses sample comparison and regulation to name each output geneset.</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu">get_genesets_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="st">"treatment1_VS_control"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment1_VS_control_up</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "ENSG00000187193:MT1X"       "ENSG00000269533:AC003002.3"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "ENSG00000065427:KARS1"      "ENSG00000007171:NOS2"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "ENSG00000285447:ZNF883"     "ENSG00000111275:ALDH2"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "ENSG00000279111:OR10X1"     "ENSG00000167617:CDC42EP5"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "ENSG00000186566:GPATCH8"    "ENSG00000232423:PRAMEF6"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "ENSG00000182103:FAM181B"    "ENSG00000172500:FIBP"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "ENSG00000151033:LYZL2"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span class="fu">get_genesets_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="st">"treatment1_VS_control"</span>, regul <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $treatment1_VS_control_down</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "ENSG00000250305:TRMT9B"   "ENSG00000134308:YWHAQ"   </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "ENSG00000123575:FAM199X"  "ENSG00000148482:SLC39A12"</span>
@@ -215,6 +208,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [23] "ENSG00000157045:NTAN1"    "ENSG00000165131:LLCFC1"  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [25] "ENSG00000277611:Z98752.3" "ENSG00000158089:GALNT14" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [27] "ENSG00000124784:RIOK1"    "ENSG00000103197:TSC2"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment1_VS_control_up</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "ENSG00000187193:MT1X"       "ENSG00000269533:AC003002.3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "ENSG00000065427:KARS1"      "ENSG00000007171:NOS2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "ENSG00000285447:ZNF883"     "ENSG00000111275:ALDH2"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "ENSG00000279111:OR10X1"     "ENSG00000167617:CDC42EP5"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "ENSG00000186566:GPATCH8"    "ENSG00000232423:PRAMEF6"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "ENSG00000182103:FAM181B"    "ENSG00000172500:FIBP"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "ENSG00000151033:LYZL2"     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 </code></pre></div>

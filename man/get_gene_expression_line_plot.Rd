@@ -59,7 +59,7 @@ get_fold_change_line_plot(
 \item{average_line_summary_method}{a character string, default median, denoting a summary method used to generate an average line. Values can be one of the mean or median.}
 
 \item{sample_comparisons}{a character vector denoting sample comparisons.
-possible values can be found from \code{x$comp}.}
+possible values can be found from \code{x$de_comparisons}.}
 }
 \value{
 ggplot2.
@@ -82,7 +82,7 @@ res <- parcutils::run_deseq_analysis(counts = count_data ,
                                      group_numerator = c("treatment1", "treatment2") ,
                                      group_denominator = c("control"))
 
-genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both")
+genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both") \%>\% names()
 get_gene_expression_line_plot(x = res, samples = c("control", "treatment1" ,"treatment2"), genes = genes, line_transparancy = 0.1, average_line_color = "red", summarise_method = "mean")
 
 get_fold_change_line_plot(x = res, sample_comparisons = c("treatment1_VS_control", "treatment2_VS_control"), genes = genes,average_line_summary_method =  "mean")

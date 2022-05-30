@@ -66,11 +66,11 @@ get_genes_by_regulation(x = res, sample_comparisons = c("treatment1_VS_control")
 get_genes_by_regulation(x = res, sample_comparisons = c("treatment1_VS_control") , regul = "other") \%>\% head()
 
 # Simplify output for multiple sample comparisons
-get_genes_by_regulation(x = res, sample_comparisons = res$comp, simplify = T)
+get_genes_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify = T, regul= "up")
 
 
 # get genesets by regulation. It uses sample comparison and regulation to name each output geneset.
 
-get_genesets_by_regulation(x = res, sample_comparisons = "treatment1_VS_control")
+get_genesets_by_regulation(x = res, sample_comparisons = "treatment1_VS_control", regul = "both")
 
 }

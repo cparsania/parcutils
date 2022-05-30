@@ -34,7 +34,7 @@ res <- run_deseq_analysis(counts = count_data ,
                          group_numerator = c("treatment1", "treatment2") ,
                          group_denominator = c("control"))
 
-genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control")
+genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control") \%>\% names()
 
 fc_df <- get_fold_change_matrix(x = res, sample_comparison = c("treatment2_VS_control" , "treatment1_VS_control"), genes = genes)
 

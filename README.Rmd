@@ -87,7 +87,7 @@ sample_info
 res <- parcutils::run_deseq_analysis(counts = count_data ,
                          sample_info = sample_info,
                          column_geneid = "gene_id" ,
-                         log2fc_cutoff = 0.6,
+                         cutoff_lfc = 1,
                          cutoff_pval = 0.05,
                          group_numerator = c("treatment1", "treatment2") ,
                          group_denominator = c("control"))
@@ -108,7 +108,7 @@ res
 
 ```{r}
 
-res$comp
+res$de_comparisons
 
 ```
 
@@ -148,7 +148,8 @@ parcutils::get_normalised_expression_matrix(x = res,
 
 q_genes = c("ENSG00000196415:PRTN3", "ENSG00000221988:PPT2", "ENSG00000163138:PACRGL", "ENSG00000183840:GPR39", "ENSG00000146700:SSC4D", "ENSG00000163746:PLSCR2", "ENSG00000155918:RAET1L", "ENSG00000151458:ANKRD50", "ENSG00000167074:TEF", "ENSG00000130159:ECSIT")
 
-parcutils::get_fold_change_matrix(x = res, sample_comparisons = res$comp, 
+parcutils::get_fold_change_matrix(x = res, 
+                                  sample_comparisons = res$de_comparisons, 
                                   genes = q_genes)
 
 
@@ -162,7 +163,7 @@ parcutils::get_genes_by_regulation(x = res,
 
 # get replicates group data 
 
-parcutils::group_replicates_by_sample(res)
+parcutils::.group_replicates_by_sample(res)
 
 
 ```
@@ -178,7 +179,7 @@ parcutils::get_pairwise_corr_plot(res, samples =c("control" ,"treatment1"))
 
 ### Visualize all sample correlation by heat box
 
-```{r, fig.height=8}
+```{r, fig.height=8, fig.width=6}
 parcutils::get_corr_heatbox(x = res, show_corr_values = T, cluster_samples = F)
 
 ```
@@ -199,17 +200,18 @@ parcutils::get_pca_plot(x = res,
 
 parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control",
                             col_up = "#a40000",
-                            col_down = "#007e2f", 
+                            col_down = "#16317d", 
+                            repair_genes = T,
                             col_other = "grey")
 
 # change cutoffs 
 
-parcutils::get_volcano_plot(x = res, 
+parcutils::get_volcano_plot(x = res, repair_genes = T,
                             sample_comparison = "treatment2_VS_control",
                             pval_cutoff = 0.01,
                             log2fc_cutoff = 0.6, 
                             col_up = "#a40000",
-                            col_down = "#007e2f",
+                            col_down = "#16317d",
                             col_other = "grey")
 
 ```
@@ -239,14 +241,14 @@ parcutils::get_gene_expression_box_plot(x = res,
 
 
 genes_for_hm = parcutils::get_genes_by_regulation(x = res,
-                                                  sample_comparison = res$comp[[2]], 
+                                                  sample_comparison = res$de_comparisons[[2]], 
                                                   regulation = "both")
 
 # heatmap of normalised gene expression values across samples 
 
 hm1 <- parcutils::get_gene_expression_heatmap(x = res, 
                                        samples = c("control","treatment1" , "treatment2") , 
-                                       genes = genes_for_hm , 
+                                       genes = genes_for_hm %>% names() , 
                                        convert_zscore = FALSE, 
                                        convert_log2 = T, 
                                        summarise_replicates = T,
@@ -265,7 +267,7 @@ hm2 <- parcutils::get_gene_expression_heatmap(x = res,
                                        summarise_replicates = F,
                                         col = 
                                          circlize::colorRamp2(breaks = c(-2,0,2), colors = c("#16317d","white","#a40000")),color_default = F,
-                                       genes = genes_for_hm , 
+                                       genes = genes_for_hm %>% names() , 
                                        convert_zscore = TRUE, 
                                        cluster_columns = FALSE)
 
@@ -274,8 +276,9 @@ ComplexHeatmap::draw(hm2)
 
 # log2 FC heatamap
 hm3 <- parcutils::get_fold_change_heatmap(x = res, 
-                                   sample_comparisons = res$comp, 
-                                   genes = genes_for_hm , color_default = F, 
+                                   sample_comparisons = res$de_comparisons, 
+                                   genes = genes_for_hm %>% names() , 
+                                   color_default = F, 
                                      col = 
                                          circlize::colorRamp2(breaks = c(-5,0,5), colors = c("#16317d","white","#a40000")),
                                    name= "Log2FC")
@@ -288,7 +291,8 @@ ComplexHeatmap::draw(hm3)
 
 ```{r}
 
-us_plot <- parcutils::plot_deg_upsets(x = res, sample_comparisons = res$comp)
+us_plot <- parcutils::plot_deg_upsets(x = res, 
+                                      sample_comparisons = res$de_comparisons)
 
 us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_plot %>% print()
 
@@ -297,19 +301,20 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_plot %>% print()
 us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% print()
 ```
 
-### Visualize genes by line plot te
+### Visualize genes by line plot
 
 ```{r, fig.width=5, fig.height=4}
 
 
 genes_for_lineplot = parcutils::get_genes_by_regulation(x = res,
-                                                  sample_comparison = res$comp[[2]], 
-                                                  regulation = "both")
+                                                  sample_comparison = res$de_comparisons[[2]], 
+                                                  regulation = "both") %>% names()
 
 #gene expression values
 parcutils::get_gene_expression_line_plot(x = res, 
                                    genes = genes_for_lineplot , 
-                                   samples = c("control","treatment1","treatment2"),summarise_replicates = T, show_average_line = T) + ggplot2::theme(text = ggplot2::element_text(size = 15))
+                                   samples = c("control","treatment1","treatment2"),summarise_replicates = T, show_average_line = T) + 
+  ggplot2::theme(text = ggplot2::element_text(size = 15))
 
 
 # Fold change values 

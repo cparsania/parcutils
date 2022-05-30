@@ -19,7 +19,7 @@ run_deseq_analysis(
   cutoff_pval = 0.05,
   cutoff_padj = 0.01,
   regul_based_upon = 1,
-  ...
+  print_rows_all_zero = FALSE
 )
 }
 \arguments{
@@ -29,7 +29,7 @@ See details below to know more about format of the count file and count datafram
 \item{column_geneid}{a character string denoting a column of geneid in \code{counts}}
 
 \item{sample_info}{a character string denoting a name of sample information file or a dataframe.
-A file or a dataframe both must have at least two columns without column names. First column denotes to samples names
+A file or a dataframe both must have at least two columns \emph{WITHOUT} column names. First column denotes to samples names
 and second column denotes group name for each sample in first column. For e.g.\tabular{ll}{
     \tab  \cr
    control_rep_1 \tab Control \cr
@@ -59,8 +59,13 @@ Value provided must not be higher than number of samples in each group.
 For example for given values \code{min_replicates = 2} and  \code{minimum_counts = 10}
 the genes which have minimum counts 10 in at least 2 samples within a groups will be accounted for DEG. Rest will be filtered out prior to run DESeq.}
 
-\item{cutoff_lfc, cutoff_pval, cutoff_padj}{a numeric value, default \verb{(cutoff_lfc = 1, cutoff_pval =  0.05, cutoff_padj = 0.01)}denoting cutoffs to categorize
-genes in to either \code{Up}, \code{Down} or \code{Other} category.}
+\item{cutoff_lfc}{minimal threshold for log2fold change, default 1 (2 fold).}
+
+\item{cutoff_pval}{minimal threshold for pvalue, default 0.05. P-value threshold will be applied only when
+\code{regul_based_upon} is either 1 or 3.}
+
+\item{cutoff_padj}{minimal threshold for Padj, default 0.01. Padj threshold will be applied only when
+\code{regul_based_upon} is either 2 or 3.}
 
 \item{regul_based_upon}{one of the numeric choices  1, 2, or 3.
 \subsection{if 1 ...}{
@@ -87,12 +92,12 @@ genes in to either \code{Up}, \code{Down} or \code{Other} category.}
 }
 }}
 
-\item{...}{for future use.}
+\item{print_rows_all_zero}{logical, default FALSE, denoting whether to print genes with value 0 in all columns.}
 }
 \value{
 Return object is a dataframe (tibble) having each row denoting a unique differential comparison. There are total 8 columns as explained below.
 \itemize{
-\item \code{comp} : It stores the name of differential comparison for each row.
+\item \code{de_comparisons} : It stores the name of differential comparison for each row.
 \item \code{numerator} : It stores name of samples which were used as numerator for the differential comparison in each row.
 \item \code{denominator} : It stores name of samples which were used as denominator for the differential comparison in each row.
 \item \code{norm_counts} : This is a \code{named-list} column. Each row in this column is a list of two containing normalised
@@ -105,7 +110,7 @@ differential comparison in each row.
 differential comparison in each row.
 \item \code{dsr_tibble_deg}: The data in this column is same as in the column \code{dsr_tibble} except it contains two extra columns \code{signif} and \code{regul}.
 Values in the \code{signif} specifies statistical and fold change significance of the gene while values in the \code{regul} denotes whether the gene is \code{up} or \code{down}
-regulated or not.
+regulated.
 \item \code{deg_summmary} : This is a \code{named-list} column. Each element of the list is a dataframe summarizing number of differential expressed gene for the differential
 comparison for each row.
 }
@@ -119,12 +124,21 @@ and different cutoffs creates messy and less readable code. This function helps 
 the code readability. Besides that,  output of this function can subsequently used for several other functions of this package.
 }
 \details{
-// TO DO : Explain formats of count file and count dataframe.
+: For the argument \code{count} user can either provide a character string denoting a file or an object of dataframe.
+In each case required format is explained below.
+\itemize{
+\item \verb{Count file}: Count file is a table of row read counts usually derived from .bam file for different genomic features
+(e.g. genes, transcripts etc.). Data in the count file must be in a tabular format with a valid column deliminator
+(e.g., tab, comma etc.). First row and first column will be considered as column names and row names respectively.
+Values for column names and row names are usually character string or combination of character, numbers and
+special characters such as \verb{_}, or  \code{.}. Both row names and column names must have unique values.
+\item \verb{Count dataframe}: Count data in a dataframe format having same requirement of row names and column names explained for \verb{count file}.
+}
 }
 \examples{
 
 count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
-count_data <- readr::read_delim(count_file, delim = "\t")
+count_data <- readr::read_delim(count_file, delim = "\t",show_col_types = FALSE)
 
 sample_info <- count_data \%>\% colnames() \%>\% .[-1]  \%>\%
  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
@@ -133,6 +147,8 @@ sample_info <- count_data \%>\% colnames() \%>\% .[-1]  \%>\%
 res <- run_deseq_analysis(counts = count_data ,
                          sample_info = sample_info,
                          column_geneid = "gene_id" ,
+                         cutoff_lfc = 1 ,
+                         cutoff_pval = 0.05,
                          group_numerator = c("treatment1", "treatment2") ,
                          group_denominator = c("control"))
 
@@ -140,7 +156,7 @@ res
 
 ## all comparisons
 
-print(res$comp)
+print(res$de_comparisons)
 
 ## DESEq result object(s)
 
@@ -157,6 +173,4 @@ print(res$dsr_tibble_deg)
 ## DEG summary
 
 print(res$deg_summmary)
-
-
 }

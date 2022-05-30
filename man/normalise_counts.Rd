@@ -4,12 +4,13 @@
 \alias{normalise_counts}
 \title{Convert raw read counts in to normalised values.}
 \usage{
-normalise_counts(x, .vars, method = "TPM")
+normalise_counts(x, .vars = NULL, method = "TPM")
 }
 \arguments{
 \item{x}{A dataframe of raw counts along with mandatory columns which are \code{GeneID, Chr, Start, End, Strand, Length}.}
 
-\item{.vars}{A character vector containing columns from \code{x}. Normalization will be performed on these columns.}
+\item{.vars}{A character vector containing columns from \code{x}. Normalization will be performed only on these columns. If NULL (default) all columns normlaisation will be
+performed on all columns.}
 
 \item{method}{A character string, default TPM. Choices are one of TPM, RPKM.}
 }
@@ -30,17 +31,16 @@ tt <- tibble::tibble(gene_id = c(paste("Gene_",1:5,sep = "")),
                      start = sample(1:100, 5),
                      end = sample(100:200,5),
                      strand = sample(c("+" ,"-"), 5, replace = T),
-                     length = (End - Start )+ 1 )
+                     length = (end - start )+ 1 )
 
 tt \%<>\% dplyr::mutate(sample_1 = sample(c(1:100),5)*10 ,
                       sample_2 = sample(c(1:100),5)*10 ,
                       sample_3 = sample(c(1:100),5)*100,
                       sample_4 = sample(c(1:100),5)*100 )
 
-
+normalise_counts(x = tt ,method = "RPKM")
 normalise_counts(x = tt, .vars = c("sample_1","sample_2") ,method = "TPM")
 normalise_counts(x = tt, .vars = c("sample_1","sample_2") ,method = "RPKM")
-
 }
 \seealso{
 \code{\link[=get_tpm]{get_tpm()}}  \code{\link[=get_rpkm]{get_rpkm()}}

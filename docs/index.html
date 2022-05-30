@@ -143,7 +143,7 @@
 <code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/run_deseq_analysis.html">run_deseq_analysis</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">count_data</span> ,
                          sample_info <span class="op">=</span> <span class="va">sample_info</span>,
                          column_geneid <span class="op">=</span> <span class="st">"gene_id"</span> ,
-                         log2fc_cutoff <span class="op">=</span> <span class="fl">0.6</span>,
+                         cutoff_lfc <span class="op">=</span> <span class="fl">1</span>,
                          cutoff_pval <span class="op">=</span> <span class="fl">0.05</span>,
                          group_numerator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment1"</span>, <span class="st">"treatment2"</span><span class="op">)</span> ,
                          group_denominator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
@@ -154,23 +154,26 @@
 </h4>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span>
+<span class="co">#&gt; ┌────────────────────────────┐</span>
+<span class="co">#&gt; │                            │</span>
+<span class="co">#&gt; │   Summary of DE analysis   │</span>
+<span class="co">#&gt; │                            │</span>
+<span class="co">#&gt; └────────────────────────────┘</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Total number of genes used for DEG analysis are 4034. </span>
-<span class="co">#&gt; Total number of comparisons are 2. </span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Number of DEGs in each comparison:</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; treatment1_VS_control </span>
 <span class="co">#&gt; • number of up genes   : 13.</span>
 <span class="co">#&gt; • number of down genes : 28.</span>
 <span class="co">#&gt; ──────────────────────────────</span>
+<span class="co">#&gt; </span>
 <span class="co">#&gt; treatment2_VS_control </span>
 <span class="co">#&gt; • number of up genes   : 333.</span>
 <span class="co">#&gt; • number of down genes : 502.</span>
 <span class="co">#&gt; ──────────────────────────────</span></code></pre></div>
 <p><code>res</code> is an object of improved <code>dataframe</code> - <code>tibble</code>. Each row in the <code>res</code> is a differential comparison which can be identified by the value from the column <code>comp</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">comp</span>
+<code class="sourceCode R"><span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span>
 <span class="co">#&gt; [1] "treatment1_VS_control" "treatment2_VS_control"</span></code></pre></div>
 <p>Data related to each differential comparison can be found from other columns of <code>res</code>.</p>
 <p>For example, summary of differently expressed genes can be found from the column <code>deg_summmary</code></p>
@@ -248,7 +251,8 @@
 
 <span class="va">q_genes</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000196415:PRTN3"</span>, <span class="st">"ENSG00000221988:PPT2"</span>, <span class="st">"ENSG00000163138:PACRGL"</span>, <span class="st">"ENSG00000183840:GPR39"</span>, <span class="st">"ENSG00000146700:SSC4D"</span>, <span class="st">"ENSG00000163746:PLSCR2"</span>, <span class="st">"ENSG00000155918:RAET1L"</span>, <span class="st">"ENSG00000151458:ANKRD50"</span>, <span class="st">"ENSG00000167074:TEF"</span>, <span class="st">"ENSG00000130159:ECSIT"</span><span class="op">)</span>
 
-<span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_fold_change_matrix.html">get_fold_change_matrix</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">comp</span>, 
+<span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_fold_change_matrix.html">get_fold_change_matrix</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, 
+                                  sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span>, 
                                   genes <span class="op">=</span> <span class="va">q_genes</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 10 × 3</span>
 <span class="co">#&gt;    gene_id                 treatment1_VS_control treatment2_VS_control</span>
@@ -272,52 +276,53 @@
                                   sample_comparison <span class="op">=</span> <span class="st">"treatment1_VS_control"</span>, 
                                   regulation <span class="op">=</span> <span class="st">"both"</span> <span class="co"># can be one of the "up" , "down" , "both", "other", "all"</span>
                                   <span class="op">)</span>
-<span class="co">#&gt;                           up                           up </span>
-<span class="co">#&gt;       "ENSG00000187193:MT1X" "ENSG00000269533:AC003002.3" </span>
-<span class="co">#&gt;                           up                           up </span>
-<span class="co">#&gt;      "ENSG00000065427:KARS1"       "ENSG00000007171:NOS2" </span>
-<span class="co">#&gt;                           up                           up </span>
-<span class="co">#&gt;     "ENSG00000285447:ZNF883"      "ENSG00000111275:ALDH2" </span>
-<span class="co">#&gt;                           up                           up </span>
-<span class="co">#&gt;     "ENSG00000279111:OR10X1"   "ENSG00000167617:CDC42EP5" </span>
-<span class="co">#&gt;                           up                           up </span>
-<span class="co">#&gt;    "ENSG00000186566:GPATCH8"    "ENSG00000232423:PRAMEF6" </span>
-<span class="co">#&gt;                           up                           up </span>
-<span class="co">#&gt;    "ENSG00000182103:FAM181B"       "ENSG00000172500:FIBP" </span>
-<span class="co">#&gt;                           up                         down </span>
-<span class="co">#&gt;      "ENSG00000151033:LYZL2"     "ENSG00000250305:TRMT9B" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;      "ENSG00000134308:YWHAQ"    "ENSG00000123575:FAM199X" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;   "ENSG00000148482:SLC39A12"      "ENSG00000175264:CHST1" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;      "ENSG00000141933:TPGS1"      "ENSG00000165621:OXGR1" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;        "ENSG00000104081:BMF"       "ENSG00000278023:RDM1" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;    "ENSG00000172264:MACROD2"       "ENSG00000162971:TYW5" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;     "ENSG00000198682:PAPSS2"      "ENSG00000125445:MRPS7" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;   "ENSG00000138670:RASGEF1B"      "ENSG00000124839:RAB17" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;      "ENSG00000069869:NEDD4"      "ENSG00000174576:NPAS4" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;    "ENSG00000143514:TP53BP2"     "ENSG00000181009:OR52N5" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;      "ENSG00000257315:ZBED6"      "ENSG00000141748:ARL5C" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;     "ENSG00000198886:MT-ND4"      "ENSG00000157045:NTAN1" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;     "ENSG00000165131:LLCFC1"   "ENSG00000277611:Z98752.3" </span>
-<span class="co">#&gt;                         down                         down </span>
-<span class="co">#&gt;    "ENSG00000158089:GALNT14"      "ENSG00000124784:RIOK1" </span>
-<span class="co">#&gt;                         down </span>
-<span class="co">#&gt;       "ENSG00000103197:TSC2"</span>
+<span class="co">#&gt;     ENSG00000250305:TRMT9B      ENSG00000134308:YWHAQ </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;    ENSG00000123575:FAM199X   ENSG00000148482:SLC39A12 </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;      ENSG00000175264:CHST1      ENSG00000141933:TPGS1 </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;      ENSG00000165621:OXGR1        ENSG00000104081:BMF </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;       ENSG00000278023:RDM1    ENSG00000172264:MACROD2 </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;       ENSG00000162971:TYW5     ENSG00000198682:PAPSS2 </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;      ENSG00000125445:MRPS7   ENSG00000138670:RASGEF1B </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;      ENSG00000124839:RAB17      ENSG00000069869:NEDD4 </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;      ENSG00000174576:NPAS4    ENSG00000143514:TP53BP2 </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;     ENSG00000181009:OR52N5      ENSG00000257315:ZBED6 </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;      ENSG00000141748:ARL5C     ENSG00000198886:MT-ND4 </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;      ENSG00000157045:NTAN1     ENSG00000165131:LLCFC1 </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;   ENSG00000277611:Z98752.3    ENSG00000158089:GALNT14 </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;      ENSG00000124784:RIOK1       ENSG00000103197:TSC2 </span>
+<span class="co">#&gt;                       down                       down </span>
+<span class="co">#&gt;       ENSG00000187193:MT1X ENSG00000269533:AC003002.3 </span>
+<span class="co">#&gt;                         up                         up </span>
+<span class="co">#&gt;      ENSG00000065427:KARS1       ENSG00000007171:NOS2 </span>
+<span class="co">#&gt;                         up                         up </span>
+<span class="co">#&gt;     ENSG00000285447:ZNF883      ENSG00000111275:ALDH2 </span>
+<span class="co">#&gt;                         up                         up </span>
+<span class="co">#&gt;     ENSG00000279111:OR10X1   ENSG00000167617:CDC42EP5 </span>
+<span class="co">#&gt;                         up                         up </span>
+<span class="co">#&gt;    ENSG00000186566:GPATCH8    ENSG00000232423:PRAMEF6 </span>
+<span class="co">#&gt;                         up                         up </span>
+<span class="co">#&gt;    ENSG00000182103:FAM181B       ENSG00000172500:FIBP </span>
+<span class="co">#&gt;                         up                         up </span>
+<span class="co">#&gt;      ENSG00000151033:LYZL2 </span>
+<span class="co">#&gt;                         up </span>
+<span class="co">#&gt; Levels: up down other</span>
 
 <span class="co"># get replicates group data </span>
 
-<span class="fu">parcutils</span><span class="fu">::</span><span class="fu">group_replicates_by_sample</span><span class="op">(</span><span class="va">res</span><span class="op">)</span>
+<span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/dot-group_replicates_by_sample.html">.group_replicates_by_sample</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 9 × 2</span>
 <span class="co">#&gt;   groups     samples     </span>
 <span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;       </span>
@@ -368,18 +373,19 @@
 <code class="sourceCode R">
 <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_volcano_plot.html">get_volcano_plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparison <span class="op">=</span> <span class="st">"treatment2_VS_control"</span>,
                             col_up <span class="op">=</span> <span class="st">"#a40000"</span>,
-                            col_down <span class="op">=</span> <span class="st">"#007e2f"</span>, 
+                            col_down <span class="op">=</span> <span class="st">"#16317d"</span>, 
+                            repair_genes <span class="op">=</span> <span class="cn">T</span>,
                             col_other <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-15-1.png"><!-- --></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># change cutoffs </span>
 
-<span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_volcano_plot.html">get_volcano_plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, 
+<span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_volcano_plot.html">get_volcano_plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, repair_genes <span class="op">=</span> <span class="cn">T</span>,
                             sample_comparison <span class="op">=</span> <span class="st">"treatment2_VS_control"</span>,
                             pval_cutoff <span class="op">=</span> <span class="fl">0.01</span>,
                             log2fc_cutoff <span class="op">=</span> <span class="fl">0.6</span>, 
                             col_up <span class="op">=</span> <span class="st">"#a40000"</span>,
-                            col_down <span class="op">=</span> <span class="st">"#007e2f"</span>,
+                            col_down <span class="op">=</span> <span class="st">"#16317d"</span>,
                             col_other <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-15-2.png"><!-- --></p>
 </div>
@@ -408,14 +414,14 @@
 <code class="sourceCode R">
 
 <span class="va">genes_for_hm</span> <span class="op">=</span> <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_genes_by_regulation.html">get_genes_by_regulation</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>,
-                                                  sample_comparison <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">comp</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, 
+                                                  sample_comparison <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, 
                                                   regulation <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span>
 
 <span class="co"># heatmap of normalised gene expression values across samples </span>
 
 <span class="va">hm1</span> <span class="op">&lt;-</span> <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_gene_expression_heatmap.html">get_gene_expression_heatmap</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, 
                                        samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span>,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span> , 
-                                       genes <span class="op">=</span> <span class="va">genes_for_hm</span> , 
+                                       genes <span class="op">=</span> <span class="va">genes_for_hm</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="op">)</span> , 
                                        convert_zscore <span class="op">=</span> <span class="cn">FALSE</span>, 
                                        convert_log2 <span class="op">=</span> <span class="cn">T</span>, 
                                        summarise_replicates <span class="op">=</span> <span class="cn">T</span>,
@@ -435,7 +441,7 @@
                                        summarise_replicates <span class="op">=</span> <span class="cn">F</span>,
                                         col <span class="op">=</span> 
                                          <span class="fu">circlize</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/circlize/man/colorRamp2.html" class="external-link">colorRamp2</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>,<span class="fl">0</span>,<span class="fl">2</span><span class="op">)</span>, colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#16317d"</span>,<span class="st">"white"</span>,<span class="st">"#a40000"</span><span class="op">)</span><span class="op">)</span>,color_default <span class="op">=</span> <span class="cn">F</span>,
-                                       genes <span class="op">=</span> <span class="va">genes_for_hm</span> , 
+                                       genes <span class="op">=</span> <span class="va">genes_for_hm</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="op">)</span> , 
                                        convert_zscore <span class="op">=</span> <span class="cn">TRUE</span>, 
                                        cluster_columns <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
@@ -445,8 +451,9 @@
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># log2 FC heatamap</span>
 <span class="va">hm3</span> <span class="op">&lt;-</span> <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_gene_expression_heatmap.html">get_fold_change_heatmap</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, 
-                                   sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">comp</span>, 
-                                   genes <span class="op">=</span> <span class="va">genes_for_hm</span> , color_default <span class="op">=</span> <span class="cn">F</span>, 
+                                   sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span>, 
+                                   genes <span class="op">=</span> <span class="va">genes_for_hm</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="op">)</span> , 
+                                   color_default <span class="op">=</span> <span class="cn">F</span>, 
                                      col <span class="op">=</span> 
                                          <span class="fu">circlize</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/circlize/man/colorRamp2.html" class="external-link">colorRamp2</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">5</span>,<span class="fl">0</span>,<span class="fl">5</span><span class="op">)</span>, colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#16317d"</span>,<span class="st">"white"</span>,<span class="st">"#a40000"</span><span class="op">)</span><span class="op">)</span>,
                                    name<span class="op">=</span> <span class="st">"Log2FC"</span><span class="op">)</span>
@@ -458,7 +465,8 @@
 <h3 id="visualize-differential-genes-overlap-between-comparison">Visualize differential genes overlap between comparison<a class="anchor" aria-label="anchor" href="#visualize-differential-genes-overlap-between-comparison"></a>
 </h3>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">us_plot</span> <span class="op">&lt;-</span> <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/plot_deg_upsets.html">plot_deg_upsets</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">comp</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">us_plot</span> <span class="op">&lt;-</span> <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/plot_deg_upsets.html">plot_deg_upsets</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, 
+                                      sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span><span class="op">)</span>
 
 <span class="va">us_plot</span><span class="op">$</span><span class="va">treatment1_VS_control_AND_treatment2_VS_control</span><span class="op">$</span><span class="va">upset_plot</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-18-1.png"><!-- --></p>
@@ -478,18 +486,19 @@
 <span class="co">#&gt; 7 treatment2_VS_control_down                            &lt;chr [495]&gt;</span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="visualize-genes-by-line-plot-te">Visualize genes by line plot te<a class="anchor" aria-label="anchor" href="#visualize-genes-by-line-plot-te"></a>
+<h3 id="visualize-genes-by-line-plot">Visualize genes by line plot<a class="anchor" aria-label="anchor" href="#visualize-genes-by-line-plot"></a>
 </h3>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">genes_for_lineplot</span> <span class="op">=</span> <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_genes_by_regulation.html">get_genes_by_regulation</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>,
-                                                  sample_comparison <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">comp</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, 
-                                                  regulation <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span>
+                                                  sample_comparison <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, 
+                                                  regulation <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="co">#gene expression values</span>
 <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="reference/get_gene_expression_line_plot.html">get_gene_expression_line_plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, 
                                    genes <span class="op">=</span> <span class="va">genes_for_lineplot</span> , 
-                                   samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span>,<span class="st">"treatment1"</span>,<span class="st">"treatment2"</span><span class="op">)</span>,summarise_replicates <span class="op">=</span> <span class="cn">T</span>, show_average_line <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>text <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">15</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+                                   samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span>,<span class="st">"treatment1"</span>,<span class="st">"treatment2"</span><span class="op">)</span>,summarise_replicates <span class="op">=</span> <span class="cn">T</span>, show_average_line <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>text <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">15</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-19-1.png"><!-- --></p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R">

@@ -14,7 +14,7 @@
 #' See details below to know more about format of the count file and count dataframe.
 #' @param column_geneid a character string denoting a column of geneid in \code{counts}
 #' @param sample_info a character string denoting a name of sample information file or a dataframe.
-#' A file or a dataframe both must have at least two columns without column names. First column denotes to samples names
+#' A file or a dataframe both must have at least two columns *WITHOUT* column names. First column denotes to samples names
 #' and second column denotes group name for each sample in first column. For e.g.
 #'
 #'  |       |  |
@@ -39,8 +39,6 @@
 #' Value provided must not be higher than number of samples in each group.
 #' For example for given values `min_replicates = 2` and  `minimum_counts = 10`
 #' the genes which have minimum counts 10 in at least 2 samples within a groups will be accounted for DEG. Rest will be filtered out prior to run DESeq.
-#' @param cutoff_lfc,cutoff_pval,cutoff_padj a numeric value, default `(cutoff_lfc = 1, cutoff_pval =  0.05, cutoff_padj = 0.01)`denoting cutoffs to categorize
-#' genes in to either `Up`, `Down` or `Other` category.
 #' @param regul_based_upon one of the numeric choices  1, 2, or 3.
 #' ## if 1 ...
 #'  - Up : log2fc >= log2fc_cutoff & pvalue <= pvalue_cutoff
@@ -54,11 +52,23 @@
 #'  - Up : log2fc >= log2fc_cutoff & pvalue <= pvalue_cutoff & padj <= padj_cutoff
 #'  - Down : log2fc  <= (-1) * log2fc_cutoff pvalue <= pvalue_cutoff & padj <= padj_cutoff
 #'  - Other : remaining genes
-#' @param ... for future use.
-#' @details
-#' // TO DO : Explain formats of count file and count dataframe.
+#' @param cutoff_lfc minimal threshold for log2fold change, default 1 (2 fold).
+#' @param cutoff_pval minimal threshold for pvalue, default 0.05. P-value threshold will be applied only when
+#'  `regul_based_upon` is either 1 or 3.
+#' @param cutoff_padj minimal threshold for Padj, default 0.01. Padj threshold will be applied only when
+#'  `regul_based_upon` is either 2 or 3.
+#' @param print_rows_all_zero logical, default FALSE, denoting whether to print genes with value 0 in all columns.
+#'
+#' @details : For the argument `count` user can either provide a character string denoting a file or an object of dataframe.
+#'  In each case required format is explained below.
+#' + `Count file`: Count file is a table of row read counts usually derived from .bam file for different genomic features
+#'  (e.g. genes, transcripts etc.). Data in the count file must be in a tabular format with a valid column deliminator
+#'  (e.g., tab, comma etc.). First row and first column will be considered as column names and row names respectively.
+#'  Values for column names and row names are usually character string or combination of character, numbers and
+#'  special characters such as `_`, or  `.`. Both row names and column names must have unique values.
+#' + `Count dataframe`: Count data in a dataframe format having same requirement of row names and column names explained for `count file`.
 #' @return Return object is a dataframe (tibble) having each row denoting a unique differential comparison. There are total 8 columns as explained below.
-#' + `comp` : It stores the name of differential comparison for each row.
+#' + `de_comparisons` : It stores the name of differential comparison for each row.
 #' + `numerator` : It stores name of samples which were used as numerator for the differential comparison in each row.
 #' + `denominator` : It stores name of samples which were used as denominator for the differential comparison in each row.
 #' + `norm_counts` : This is a `named-list` column. Each row in this column is a list of two containing normalised
@@ -71,7 +81,7 @@
 #' differential comparison in each row.
 #' + `dsr_tibble_deg`: The data in this column is same as in the column `dsr_tibble` except it contains two extra columns `signif` and `regul`.
 #' Values in the `signif` specifies statistical and fold change significance of the gene while values in the `regul` denotes whether the gene is `up` or `down`
-#' regulated or not.
+#' regulated.
 #' + `deg_summmary` : This is a `named-list` column. Each element of the list is a dataframe summarizing number of differential expressed gene for the differential
 #' comparison for each row.
 #' @export
@@ -79,7 +89,7 @@
 #' @examples
 #'
 #' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
-#' count_data <- readr::read_delim(count_file, delim = "\t")
+#' count_data <- readr::read_delim(count_file, delim = "\t",show_col_types = FALSE)
 #'
 #'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
 #'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
@@ -88,6 +98,8 @@
 #'res <- run_deseq_analysis(counts = count_data ,
 #'                          sample_info = sample_info,
 #'                          column_geneid = "gene_id" ,
+#'                          cutoff_lfc = 1 ,
+#'                          cutoff_pval = 0.05,
 #'                          group_numerator = c("treatment1", "treatment2") ,
 #'                          group_denominator = c("control"))
 #'
@@ -95,7 +107,7 @@
 #'
 #' ## all comparisons
 #'
-#' print(res$comp)
+#' print(res$de_comparisons)
 #'
 #' ## DESEq result object(s)
 #'
@@ -112,8 +124,6 @@
 #' ## DEG summary
 #'
 #' print(res$deg_summmary)
-#'
-#'
 run_deseq_analysis <- function(
   counts,
   column_geneid,
@@ -128,8 +138,7 @@ run_deseq_analysis <- function(
   cutoff_pval = 0.05,
   cutoff_padj = 0.01,
   regul_based_upon = 1,
-  ...
-
+  print_rows_all_zero = FALSE
 ){
 
   # defaults
@@ -162,121 +171,66 @@ run_deseq_analysis <- function(
 
   for(i in seq_along(is_numeric_and_scaler)){
     if(!is_numeric_and_scaler[i])
-      stop(glue::glue("{names(is_numeric_and_scaler[i])} must be a double of length 1."))
+      cli::cli_abort("{names(is_numeric_and_scaler[i])} must be of length one and of class {.cls double}.")
   }
 
   if(!rlang::is_scalar_double(min_counts)){
-    stop("'min_counts' must be of length one of class double.")
+    cli::cli_abort(cli::cli_text("{.arg min_counts} must be of length one of class {.cls double}."))
   }
-
-
-  ## prepare count matrix
-  if(!inherits(counts , what = c("character","tbl_df","tbl" ,"data.frame"))){
-    stop("counts must be an object of one of these classes - character, tbl_df, tbl, or data.frame")
-  }
-
-  if(inherits(counts , what = c("character"))){
-    cli::cli_alert_info(" Reading count file ...")
-    count_data <- readr::read_delim(counts ,
-                                    delim = delim,
-                                    comment = comment_char,
-                                    trim_ws = TRUE,
-                                    col_names = TRUE,
-                                    show_col_types = F ,
-                                    progress = T)
-    cli::cli_alert_success("Done.")
-  } else {
-    count_data <- counts
-  }
-
-  # remove duplicate rows if any
-  count_data %<>% unique()
 
   # value for an argument column_geneid must be a character string
 
   if(!is.character(column_geneid) && length(column_geneid) != 1){
-    stop("Value for an argument 'geneid_coulmn' must be a character string")
+    cli::cli_abort("Value for an argument {.arg geneid_coulmn} must be a {.cls character} string")
   }
-
 
   # quote column names
   column_geneid_quo <- rlang::enquo(column_geneid)
 
-  ## prepare sample information
+  ## prepare count matrix
+  count_data <- .get_count_data(counts)
 
-  # value for sample_info either from a class character, tbl_df, tbl or data.frame
-
-  if(!inherits(sample_info, what = c("character","tbl_df","tbl" ,"data.frame"))){
-    stop("sample_info must be an object of one of these classes - character, tbl_df, tbl, or data.frame")
-  }
-
-  # if sample_info is character then read data from file.
-
-  if(inherits(sample_info , what = c("character"))){
-    cli::cli_alert_info(" Reading sample_info file ...")
-    sample_info_data <- readr::read_delim(sample_info ,
-                                          delim = "\t",
-                                          trim_ws = TRUE,
-                                          col_names = FALSE,
-                                          col_types = c("cc"), # both column will be considered as character
-                                          show_col_types = FALSE,
-                                          progress = TRUE)
-
-    cli::cli_alert_success("Done.")
-  } else{
-    sample_info_data <- sample_info
-  }
-  # if more than 2 columns present in sample_info keep only 2 and show warning.
-  if(ncol(sample_info_data) != 2 ){
-    if(ncol(sample_info_data) > 2 ){
-      cli::cli_alert_warning("'sample_info' contains more than 2 columns. Only first 2 will be considered.")
-      sample_info_data %<>%
-        dplyr::select(1:2)
-    } else if(ncol(sample_info_data) < 2 ) {
-      stop("'sample_info' must contains 2 columns deliminated by '\t'")
-    }
-  } else{
-    sample_info_data = sample_info_data
-  }
-
-  # remove duplicates and keep only first two columns.
-  sample_info_data %<>%
-    dplyr::select(1:2) %>% # if more than 2 columns, keep only first 2.
-    unique() # remove duplicate rows if any
+# prepare sample_info
+ sample_info_data <- .get_sample_information(sample_info)
 
   # assign column names to sample_info_data
   colnames(sample_info_data) <- sample_info_colnames
 
   # check if all the samples provided in sample_info are present in count_data file
   count_data_col_names <-  colnames(count_data)
-  sample_info_samples <- sample_info_data %>% dplyr::pull(sample_info_colnames[1])
+  sample_info_samples <- sample_info_data %>% dplyr::pull(1)
   sample_info_samples_quo <- rlang::enquos(sample_info_samples)
 
   if(!all(sample_info_samples %in% count_data_col_names)){
     index_not_present <- which(!(sample_info_samples %in% count_data_col_names))
-    value_not_present <- sample_info_samples[index_not_present] %>% paste0(collapse = "','")
-    stop(glue::glue("Values '{value_not_present}' given in first column of 'sample_info' must present as column(s) in 'counts'."))
+    value_not_present <- sample_info_samples[index_not_present] %>%
+      paste0(collapse = "','")
+    cli::cli_abort("Values - {.emph {cli::col_red({value_not_present})}} -
+                   provided in {.arg sample_info} (first column) must
+                   present as column{?s} in {.arg counts}.")
   }
 
   # validate 'group_numerator' and 'group_denominator'
 
   if(!inherits(group_numerator , what = "character")) {
-    stop("'group_numerator' must be a character vector.")
+    cli::cli_abort(" {.arg group_numerator} must be a {.cls character} vector.")
   }
 
   if(!inherits(group_denominator , what = "character")) {
-    stop("'group_denominator' must be a character vector.")
+    cli::cli_abort("{.arg group_denominator} must be a {.cls character} vector.")
   }
 
   # values mentioned for 'group_numerator' and 'group_denominator' must present in sample_info
-  sample_info_groups <- sample_info_data %>% dplyr::pull(sample_info_colnames[2]) %>% unique()
+  sample_info_groups <- sample_info_data %>%
+    dplyr::pull(sample_info_colnames[2]) %>%
+    unique()
 
   if(!all(group_numerator %in% sample_info_groups)){
-    stop("all values from 'group_numerator' must present in 'sample_info' column 2.")
+    cli::cli_abort("all values from {.arg group_numerator} must present in {.arg sample_info} (2nd column).")
   }
 
   if(!all(group_denominator %in% sample_info_groups)){
-    stop("all values from 'group_denominator' must present in 'sample_info' column 2.")
+    cli::cli_abort("all values from {.arg group_denominator} must present in {.arg sample_info} (2nd column).")
   }
 
 
@@ -292,60 +246,31 @@ run_deseq_analysis <- function(
 
   # in count_data convert NA to 0
 
-  count_data_select_NA <- count_data_select %>% TidyWrappers::tbl_keep_rows_NA_any()
-  if(nrow(count_data_select_NA) >= 1) {
-    cli::cli_alert_warning("Following gene(s) contains NA in one or more samples. Either remove tem or Default NA will be converted to 0.")
-    genes_NA <- count_data_select_NA %>%
-      dplyr::pull(!!column_geneid_quo)
-    cli::cli_alert(genes_NA)
-    # replace NA with 0
-    count_data_select %<>% dplyr::mutate_if(is.numeric , ~ ..1 %>% tidyr::replace_na(0))
+  count_data_select <- .count_data_convert_NA_to_0(count_data = count_data_select)
+
+  # remove rows having 0 in all samples discarded
+
+  if(print_rows_all_zero){
+    count_data_all_zero <- count_data_select %>%
+      TidyWrappers::tbl_keep_rows_zero_all()
+
+    if(nrow(count_data_all_zero) >0 ){
+      rows_zero_all <- count_data_all_zero %>% dplyr::pull(1) %>% unique()
+
+      cli::cli_text("Row{?s} {.emph {cli::col_red({rows_zero_all})}} have count 0 in all samples.
+                {?That/Those} will be discarded.")
+    }
   }
 
-  ## prepare annotation
-  ## // TO DO
-  # cli::cli_alert_info(text = "Preparing annotations")
-  # features_slected <- filter_gff(gtf_file = gtf_file)
-  # cli::cli_alert_success(text = "Done")
-
-  # Run DESeq on those genes which fits on user defined cutoffs - minimum counts to each gene and minimum number of replicates with minimum counts
-
-  count_data_all_zero <- count_data_select %>%
-    TidyWrappers::tbl_keep_rows_zero_all()
-
+  # keep genes which have values non-zero in at least one sample.
   count_data_non_zero_in_one <- count_data_select %>%
     TidyWrappers::tbl_remove_rows_zero_all()
 
-  # to perform DESeq analysis genes having non zero count in at least one sample will be used.
-
-  genes_to_keep <- count_data_non_zero_in_one %>%
-
-    # convert data wide to long format.
-    tidyr::gather(-!!column_geneid_quo, key = "sample", value = "counts") %>%
-
-    # join sampleinfo table
-    dplyr::left_join(sample_info_data, by = c("sample" = sample_info_colnames[1])) %>%
-
-    # to identify genes which has counts more than cutoff across replicates group by sample groups followed by gene id.
-    # total groups will be number of unique genes * number of sample groups.
-    dplyr::group_by(!!rlang::sym(sample_info_colnames[2]), !!rlang::sym(column_geneid)) %>%
-
-    dplyr::arrange(!!rlang::sym(column_geneid), !!rlang::sym(sample_info_colnames[2])) %>%
-
-    # add column (count_above_threshold) containing counts of replicates having min counts >= min_counts
-    dplyr::mutate(count_above_threshold = sum(counts >= min_counts)) %>%
-
-    # filter genes count_above_thresholds >= min_replicates (e.g. 2);
-    # meaning that for a given gene at least two replicates have count >= threshold (e.g., 10)
-    dplyr::filter(count_above_threshold >= min_replicates) %>%
-    dplyr::ungroup() %>%
-    dplyr::pull(!!rlang::sym(column_geneid)) %>%
-    unique()
-
-  #genes_to_keep %>% length()
-
-  count_data_filter <- count_data_select %>%
-    dplyr::filter(!!rlang::sym(column_geneid) %in% genes_to_keep)
+  count_data_filter <- .filter_rows_from_count_data(count_data_non_zero_in_one,
+                                                    column_geneid = column_geneid,
+                                                    sample_info = sample_info_data,
+                                                    min_counts= min_counts,
+                                                    min_replicates = min_replicates)
 
   ## DESeq 2 analysis
   # in order to run DESeq2 order of rows in sample_info_data and columns in count must be same.
@@ -387,22 +312,20 @@ run_deseq_analysis <- function(
 
   # create combinations of all comparisons from  group_numerator and group_denominator.
 
-
   comb <- tidyr::expand_grid(x = group_numerator, y = group_denominator)
 
   column_numerator = rlang::quo(numerator)
   column_denominator = rlang::quo(denominator)
   comb %<>% dplyr::rename(!!column_numerator := x , !!column_denominator := y )
 
-  # remove all combinations where numerator and denominator
+  # remove all combinations where numerator and denominator are same
   comb <- comb %>% dplyr::filter(numerator != denominator)
 
   if(nrow(comb) == 0){
-    stop("Numerator and Denominator have at least a pair of different value.")
+    cli::cli_abort("{.arg group_numerator} and {.arg group_denominator} have at least a pair of different value.")
   }
 
   # summarize results
-
   cli::cli_alert_info("Summarizing DEG ...")
 
   # prepare a tibble where each row denotes to a combination of numerator and denominator.
@@ -410,7 +333,7 @@ run_deseq_analysis <- function(
   xx <- comb %>%
 
     ## add column comparisons
-    dplyr::mutate(comp = stringr::str_c(.$numerator , .$denominator ,sep = "_VS_")) %>%
+    dplyr::mutate(de_comparisons = stringr::str_c(.$numerator , .$denominator ,sep = "_VS_")) %>%
 
     ## add column norm counts
     dplyr::mutate(norm_counts = purrr::map2(.$numerator, .$denominator, ~ norm_counts[c(..1,..2)])) %>%
@@ -441,16 +364,15 @@ run_deseq_analysis <- function(
 
 
   ## use comparisons as names for list elements
-  xx  %<>%  dplyr::mutate_if(is.list, ~rlang::set_names(. , xx$comp))
+  xx  %<>%  dplyr::mutate_if(is.list, ~rlang::set_names(. , xx$de_comparisons))
 
   # column rearrange
 
-  xx %<>% dplyr::select(comp , tidyselect::everything())
+  xx %<>% dplyr::select(de_comparisons , tidyselect::everything())
 
   # assign names to each list in the tibble
 
-  cli::cli_alert_info("Done.")
-
+  cli::cli_alert_success("Done.")
 
   ## set class
 
@@ -485,7 +407,7 @@ run_deseq_analysis <- function(
 #'                          group_numerator = c("treatment1", "treatment2") ,
 #'                          group_denominator = c("control"))
 #'
-#' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control")
+#' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control") %>% names()
 #'
 #' fc_df <- get_fold_change_matrix(x = res, sample_comparison = c("treatment2_VS_control" , "treatment1_VS_control"), genes = genes)
 #'
@@ -507,7 +429,7 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 
   # check if sample_comparisons present in x
 
-  if(!any (x$comp %in% sample_comparisons)) {
+  if(!any (x$de_comparisons %in% sample_comparisons)) {
     stop("None of values from 'sample_comparisons' present in the x.")
   }
 
@@ -519,7 +441,7 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 
   # subset data
   res <- x %>%
-    dplyr::filter(comp %in% sample_comparisons ) %>%
+    dplyr::filter(de_comparisons %in% sample_comparisons ) %>%
     dplyr::pull(dsr_tibble_deg) %>%
     purrr::map(~ ..1 %>% dplyr::filter(!!rlang::sym(gene_id_column) %in% genes) %>% dplyr::select(1,3)) %>%
     dplyr::bind_rows(.id  = "comparisons") %>%
@@ -695,12 +617,12 @@ get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, s
 #' get_genes_by_regulation(x = res, sample_comparisons = c("treatment1_VS_control") , regul = "other") %>% head()
 #'
 #' # Simplify output for multiple sample comparisons
-#' get_genes_by_regulation(x = res, sample_comparisons = res$comp, simplify = T)
+#' get_genes_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify = T, regul= "up")
 #'
 #'
 #' # get genesets by regulation. It uses sample comparison and regulation to name each output geneset.
 #'
-#' get_genesets_by_regulation(x = res, sample_comparisons = "treatment1_VS_control")
+#' get_genesets_by_regulation(x = res, sample_comparisons = "treatment1_VS_control", regul = "both")
 #'
 get_genes_by_regulation <-  function(x, sample_comparisons , regulation = "both" , simplify = FALSE  ) {
 
@@ -745,20 +667,34 @@ get_genes_by_regulation <-  function(x, sample_comparisons , regulation = "both"
   names(genes_by_comp)  <- tolower(names(genes_by_comp))
   regulation = tolower(regulation)
 
+
   if(regulation == "both"){
-    rslt <- genes_by_comp[c("up","down")]  %>% as.list() %>% dplyr::bind_rows()
+    # select up and/or down
+    rslt <- genes_by_comp[names(genes_by_comp) %in% c("up","down")]  %>% as.list() %>% dplyr::bind_rows()
   } else if(regulation == "all"){
+    # select all
     rslt <- genes_by_comp  %>% as.list() %>% dplyr::bind_rows()
   } else{
-    rslt <- genes_by_comp[[regulation]]
+    # select other
+    rslt <- genes_by_comp[names(genes_by_comp) %in% regulation]  %>% as.list() %>% dplyr::bind_rows()
   }
 
-  rslt <- rslt[[1]] %>%
-    purrr::set_names(rslt[[2]] %>% tolower())
+  # rslt <- rslt[[1]] %>%
+  #   purrr::set_names(rslt[[2]] %>% tolower())
+
+  # convert factor
+  if(nrow(rslt) == 0){
+    rslt <- factor(levels = c("up","down","other"))
+  } else{
+    rslt <- factor(rslt[[2]] %>% tolower(), levels = c("up","down","other"))  %>%
+      purrr::set_names(rslt[[1]])
+  }
 
   if(simplify){
-    rslt %<>% tibble::enframe() %>% dplyr::rename(c("regul" = "name" , "genes" = "value")) %>%
-      dplyr::mutate(sample_comparisons = sample_comparisons) %>% dplyr::select(dplyr::all_of(c("sample_comparisons", "genes", "regul")))
+    rslt %<>% tibble::enframe() %>%
+      dplyr::rename(c("regul" = "value" , "genes" = "name")) %>%
+      dplyr::mutate(sample_comparisons = sample_comparisons) %>%
+      dplyr::select(dplyr::all_of(c("sample_comparisons", "genes", "regul")))
   }
   return(rslt)
 
@@ -833,9 +769,9 @@ plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_d
 
   # all sample comparisons must present in x
 
-  if(!all(sample_comparisons %in% x$comp) ){
-    not_present <- sample_comparisons[!(sample_comparisons %in% x$comp)]
-    stop(glue::glue("Value {not_present} is not present in the x. Check x$comp to access all choices."))
+  if(!all(sample_comparisons %in% x$de_comparisons) ){
+    not_present <- sample_comparisons[!(sample_comparisons %in% x$de_comparisons)]
+    stop(glue::glue("Value {not_present} is not present in the x. Check x$de_comparisons to access all choices."))
   }
 
   # validate colors
@@ -928,7 +864,7 @@ plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_d
 #'                          group_numerator = c("treatment1", "treatment2") ,
 #'                          group_denominator = c("control"))
 #'
-#' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both")
+#' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both") %>% names()
 #' get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"), genes = genes)
 #'
 #' # plot raw expression values
@@ -1087,7 +1023,7 @@ get_gene_expression_heatmap <- function(x,
     dplyr::pull(!!rlang::sym(column_gene_id))
   if(length(value_na) > 0){
     value_na <- paste0(value_na, collapse = ",")
-    warning(glue::glue("Genes having value NA - {value_na} are removed from heatmap.",))
+    cli::cli_alert_warning("Gene{?s} with value NA - {.emph {cli::col_red({value_na})}} - {?is/are} removed from heatmap.")
     expr_mat_wide <- expr_mat_wide %>% TidyWrappers::tbl_remove_rows_NA_any()
   }
 
