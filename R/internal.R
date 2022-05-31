@@ -927,3 +927,93 @@
 
   return(count_data_filter)
 }
+
+
+#' Check availability of sample comparisons in the object of parcutils
+#'
+#' @param x an object of class \code{parcutils}
+#' @param sample_comparisons a character vector
+#'
+#' @return either TRUE or abort.
+#' @export
+#'
+#' @keywords internal
+.is_sample_comparsions_present_in_obj_parcutils <- function(x, sample_comparisons){
+
+  .validate_parcutils_obj(x)
+  not_present <- sample_comparisons[!(sample_comparisons %in% x$de_comparisons)]
+  if(length(not_present) > 0 ){
+    cli::cli_abort("{.arg sample_comparisons} - {.emph {cli::col_red({not_present})}} {?is/are} not present in {.arg x}")
+  } else{
+    return(TRUE)
+  }
+}
+
+
+#' Check availability of genes in the object of parcutils
+#'
+#' @param x an object of class \code{parcutils}.
+#' @param genes a character vector.
+#'
+#' @return either TRUE or abort.
+#' @export
+#'
+#' @keywords internal
+.is_genes_present_in_obj_parcutils <- function(x, genes){
+  all_genes <- .get_all_expressed_genes(x) %>% names()
+
+  # check if values from labels present in x
+  not_present <- genes[!genes %in% all_genes]
+  if(length(not_present) >0 ){
+    cli::cli_abort("{.arg genes} - {.emph {cli::col_red({not_present})}} {?is/are} not present in {.arg x}")
+  } else{
+    return(TRUE)
+  }
+
+}
+
+
+#' Get gene groups for fc scatter plot
+#'
+#' @param x an object of class parcutils
+#' @param sample_comparisons a character vector
+#'
+#' @return
+#' @export
+#'
+#' @keywords internal
+.get_gene_groups_for_fc_scatter_plot <- function(x, sample_comparisons,color_label){
+
+  # prepare groups to color data points
+  genes_by_regul <- parcutils::get_genes_by_regulation(x = x,
+                                                       sample_comparisons =sample_comparisons,
+                                                       regulation = "all",simplify = T) %>%
+    dplyr::bind_rows() %>%
+    dplyr::group_by(.data$regul,.data$genes) %>%
+    dplyr::add_count(name = "counts") %>%
+    dplyr::ungroup()
+
+  # assign groups -> both_up, both_down, both
+
+  if(color_label == "both_up"){
+    gene_groups <- genes_by_regul %>%
+      dplyr::mutate(group = dplyr::case_when(counts == 2 & grepl("up", regul) ~
+                                              stringr::str_c("both_",regul,sep = ""),
+                                            TRUE ~ "other")) %>%
+      dplyr::select(.data$genes, .data$group) %>% dplyr::distinct()
+
+  } else if(color_label == "both_down"){
+    gene_groups <- genes_by_regul %>%
+      dplyr::mutate(group = dplyr::case_when(counts == 2 & grepl("down", regul) ~
+                                              stringr::str_c("both_",regul,sep = ""),
+                                            TRUE ~ "other")) %>%
+      dplyr::select(.data$genes, .data$group) %>% dplyr::distinct()
+  } else {
+    gene_groups <- genes_by_regul %>%
+      dplyr::mutate(group = dplyr::case_when(counts == 2 & grepl("up|down", regul) ~
+                                              stringr::str_c("both_",regul,sep = ""),
+                                            TRUE ~ "other")) %>%
+      dplyr::select(.data$genes, .data$group) %>% dplyr::distinct()
+  }
+
+}

@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r, include=FALSE}
 library(magrittr)
+library(ggplot2)
 ```
 
 # parcutils
@@ -299,6 +300,41 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_plot %>% print()
 # get list of intersecting genes. 
 
 us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% print()
+```
+
+### Visualize  common DE genes between comparison by scatter plot
+
+```{r, fig.height=4, fig.width=5}
+
+# show common up and down genes 
+parcutils::get_fold_change_scatter_plot(x = res, 
+                                                   sample_comparisons = res$de_comparisons, point_size = 3,label_size = 3,repair_genes = T)
+
+# show common up and down genes 
+parcutils::get_fold_change_scatter_plot(x = res, 
+                                        sample_comparisons = res$de_comparisons, 
+                                        point_size = 3,
+                                        label_size = 3,
+                                        repair_genes = T)
+
+# show common up genes
+parcutils::get_fold_change_scatter_plot(x = res, 
+                                        sample_comparisons = res$de_comparisons, 
+                                        point_size = 5,
+                                        label_size = 4,
+                                        color_label = "both_up",
+                                        col_up = "red",
+                                        repair_genes = T)
+
+
+# show common down genes
+parcutils::get_fold_change_scatter_plot(x = res, 
+                                        sample_comparisons = res$de_comparisons, 
+                                        point_size = 5,
+                                        label_size = 4,
+                                        color_label = "both_down",
+                                        col_down = "green4",
+                                        repair_genes = T)
 ```
 
 ### Visualize genes by line plot

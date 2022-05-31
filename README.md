@@ -1,23 +1,18 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # parcutils
 
 <!-- badges: start -->
 
-[![](https://img.shields.io/badge/devel%20version-0.1.0-blue.svg)](https://github.com/cparsania/parcutils)
-[![](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![](https://img.shields.io/badge/devel%20version-0.1.0-blue.svg)](https://github.com/cparsania/parcutils) [![](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 <!-- badges: end -->
 
-The goal of `parcutils` is to provide day to day bioinformatics utility
-functions. Most of the functions in the package are useful for analyzing
-and visualizing complex RNA-seq studies.
+The goal of `parcutils` is to provide day to day bioinformatics utility functions. Most of the functions in the package are useful for analyzing and visualizing complex RNA-seq studies.
 
 ## Installation
 
 ``` r
-
 if(require("devtools") && require("BiocManager")){
   options(repos = BiocManager::repositories() )
   devtools::install_github("cparsania/parcutils")
@@ -80,8 +75,7 @@ sample_info
 #> 9 treat2_rep3  treatment2
 ```
 
-> NOTE: Samples which are present in the object ‘sample_info’ will be
-> considered for differential expressed analysis.
+> NOTE: Samples which are present in the object 'sample_info' will be considered for differential expressed analysis.
 
 #### Run `DESeq2` for multiple differential gene comparison.
 
@@ -95,7 +89,7 @@ res <- parcutils::run_deseq_analysis(counts = count_data ,
                          group_denominator = c("control"))
 ```
 
-#### Let’s have a look in to `res`
+#### Let's have a look in to `res`
 
 ``` r
 res
@@ -118,20 +112,16 @@ res
 #> ──────────────────────────────
 ```
 
-`res` is an object of improved `dataframe` - `tibble`. Each row in the
-`res` is a differential comparison which can be identified by the value
-from the column `comp`.
+`res` is an object of improved `dataframe` - `tibble`. Each row in the `res` is a differential comparison which can be identified by the value from the column `comp`.
 
 ``` r
 res$de_comparisons
 #> [1] "treatment1_VS_control" "treatment2_VS_control"
 ```
 
-Data related to each differential comparison can be found from other
-columns of `res`.
+Data related to each differential comparison can be found from other columns of `res`.
 
-For example, summary of differently expressed genes can be found from
-the column `deg_summmary`
+For example, summary of differently expressed genes can be found from the column `deg_summmary`
 
 ``` r
 res$deg_summmary
@@ -152,8 +142,7 @@ res$deg_summmary
 #> 3 Up      333
 ```
 
-As described below there are several helper functions to get data from
-the `res` .
+As described below there are several helper functions to get data from the `res` .
 
 ## Get data from `res` using helper functions
 
@@ -329,7 +318,6 @@ parcutils::get_pca_plot(x = res,
 ### Visualize differential expressed genes by volcano plot
 
 ``` r
-
 parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control",
                             col_up = "#a40000",
                             col_down = "#16317d", 
@@ -378,7 +366,6 @@ parcutils::get_gene_expression_box_plot(x = res,
 ### Visualize genes by heatmaps
 
 ``` r
-
 
 genes_for_hm = parcutils::get_genes_by_regulation(x = res,
                                                   sample_comparison = res$de_comparisons[[2]], 
@@ -463,10 +450,56 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% pri
 #> 7 treatment2_VS_control_down                            <chr [495]>
 ```
 
+### Visualize common DE genes between comparison by scatter plot
+
+``` r
+# show common up and down genes 
+parcutils::get_fold_change_scatter_plot(x = res, 
+                                                   sample_comparisons = res$de_comparisons, point_size = 3,label_size = 3,repair_genes = T)
+```
+
+![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
+
+``` r
+# show common up and down genes 
+parcutils::get_fold_change_scatter_plot(x = res, 
+                                        sample_comparisons = res$de_comparisons, 
+                                        point_size = 3,
+                                        label_size = 3,
+                                        repair_genes = T)
+```
+
+![](man/figures/README-unnamed-chunk-19-2.png)<!-- -->
+
+``` r
+# show common up genes
+parcutils::get_fold_change_scatter_plot(x = res, 
+                                        sample_comparisons = res$de_comparisons, 
+                                        point_size = 5,
+                                        label_size = 4,
+                                        color_label = "both_up",
+                                        col_up = "red",
+                                        repair_genes = T)
+```
+
+![](man/figures/README-unnamed-chunk-19-3.png)<!-- -->
+
+``` r
+# show common down genes
+parcutils::get_fold_change_scatter_plot(x = res, 
+                                        sample_comparisons = res$de_comparisons, 
+                                        point_size = 5,
+                                        label_size = 4,
+                                        color_label = "both_down",
+                                        col_down = "green4",
+                                        repair_genes = T)
+```
+
+![](man/figures/README-unnamed-chunk-19-4.png)<!-- -->
+
 ### Visualize genes by line plot
 
 ``` r
-
 genes_for_lineplot = parcutils::get_genes_by_regulation(x = res,
                                                   sample_comparison = res$de_comparisons[[2]], 
                                                   regulation = "both") %>% names()
@@ -478,10 +511,9 @@ parcutils::get_gene_expression_line_plot(x = res,
   ggplot2::theme(text = ggplot2::element_text(size = 15))
 ```
 
-![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
-
 # Fold change values 
 
 parcutils::get_fold_change_line_plot(x = res, 
@@ -491,7 +523,7 @@ parcutils::get_fold_change_line_plot(x = res,
                                    show_average_line = T) + ggplot2::theme(text = ggplot2::element_text(size = 15))
 ```
 
-![](man/figures/README-unnamed-chunk-19-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-20-2.png)<!-- -->
 
 ## Perform gene ontology analysis and visualization of all UP/DOWN genes from all comparisons in one go.
 
@@ -527,7 +559,7 @@ go_results$go_emap_plots
 #> $treatment1_VS_control_down
 ```
 
-![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
 
 ## Other functions
 
@@ -571,6 +603,6 @@ parcutils::get_star_align_log_summary_plot(x = star_align_log_files,
                                 col_mapped_reads  = "blue") 
 ```
 
-![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
 
 ## 

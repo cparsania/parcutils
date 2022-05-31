@@ -32,6 +32,7 @@ reference:
       - get_diff_gene_count_barplot
       - get_gene_expression_line_plot
       - get_fold_change_line_plot
+      - get_fold_change_scatter_plot
 
   - title: "IR related"
     contents:

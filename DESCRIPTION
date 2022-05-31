@@ -31,7 +31,6 @@ Imports:
     MetBrewer (>= 0.1.0),
     circlize (>= 0.4.13),
     forcats,
-    ggplot2,
     stringr,
     GGally,
     fs,
@@ -49,7 +48,8 @@ Imports:
     enrichplot,
     ggrepel
 Depends: 
-    magrittr
+    magrittr,
+    ggplot2
 Remotes: 
     cparsania/TidyWrappers,
     jokergoo/circlize

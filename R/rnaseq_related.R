@@ -190,8 +190,8 @@ run_deseq_analysis <- function(
   ## prepare count matrix
   count_data <- .get_count_data(counts)
 
-# prepare sample_info
- sample_info_data <- .get_sample_information(sample_info)
+  # prepare sample_info
+  sample_info_data <- .get_sample_information(sample_info)
 
   # assign column names to sample_info_data
   colnames(sample_info_data) <- sample_info_colnames
@@ -353,9 +353,9 @@ run_deseq_analysis <- function(
 
     dplyr::mutate(dsr_tibble_deg = purrr::map(dsr_tibble , ~ ..1 %>%
                                                 .categorize_diff_genes(log2fc_cutoff = cutoff_lfc ,
-                                                                      pval_cutoff = cutoff_pval,
-                                                                      padj_cutoff = cutoff_padj ,
-                                                                      regul_based_upon = regul_based_upon) )) %>%
+                                                                       pval_cutoff = cutoff_pval,
+                                                                       padj_cutoff = cutoff_padj ,
+                                                                       regul_based_upon = regul_based_upon) )) %>%
     # summarize DEG
 
     dplyr::mutate(deg_summmary = purrr::map(dsr_tibble_deg , ~ ..1 %>%
@@ -641,7 +641,7 @@ get_genes_by_regulation <-  function(x, sample_comparisons , regulation = "both"
   # if length of  sample_comparisons > 1, use this function recursively
   if(length(sample_comparisons) > 1){
     rslt <- purrr::map(sample_comparisons,
-               ~get_genes_by_regulation(x = x,sample_comparisons = ..1,regulation = regulation , simplify = simplify))
+                       ~get_genes_by_regulation(x = x,sample_comparisons = ..1,regulation = regulation , simplify = simplify))
     names(rslt) <- sample_comparisons
     return(rslt)
   }
@@ -789,9 +789,9 @@ plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_d
 
 
   all_upsets <- purrr::map(sample_comparisons_all_comb, ~ .piarwise_upset(x = x,
-                                                                         sample_comparison = ..1,
-                                                                         color_up = color_up ,
-                                                                         color_down = color_down) )
+                                                                          sample_comparison = ..1,
+                                                                          color_up = color_up ,
+                                                                          color_down = color_down) )
 
   return(all_upsets)
 }
@@ -1226,6 +1226,184 @@ get_heatmap_data <- function(h){
   return(mat_ordered)
 }
 
+
+#' Compare log2 fold change between two sample comparisons.
+#' @description This function generates a scatter plot of log2 fold change values for two different comparisons.
+#' @param x an object of class parcutils.
+#' @param sample_comparisons a character vector of length 2 denoting sample comparisons to plot.
+#' @param labels a character vector of genes to label. Default NULL, show all genes.
+#' @param point_size a numeric, default 2, denoting size of the points.
+#' @param label_size a numeric, default 2, denoting size of the labels.
+#' @param col_up a character string, default "#a40000", a valid color code for common up regulated genes.
+#' @param col_down a character string, default "#16317d", a valid color code for common down regulated genes.
+#'
+#' @return an object of ggplot2.
+#' @export
+#' @examples
+#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#' count_data <- readr::read_delim(count_file, delim = "\t")
+#'
+#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'
+#'
+#'res <- run_deseq_analysis(counts = count_data ,
+#'                          sample_info = sample_info,
+#'                          column_geneid = "gene_id" ,
+#'                          group_numerator = c("treatment1", "treatment2") ,
+#'                          group_denominator = c("control"))
+#' # show common up and common down
+#' get_fold_change_scatter_plot(x = res,
+#' sample_comparisons = c("treatment1_VS_control",
+#' "treatment2_VS_control"),label_size = 3)
+#'
+#' # show common up
+#'
+#' get_fold_change_scatter_plot(x = res,
+#' sample_comparisons = c("treatment1_VS_control",
+#' "treatment2_VS_control"),
+#' color_label = "both_up",label_size = 4)
+#'
+#'  # show common down
+#' get_fold_change_scatter_plot(x = res,
+#' sample_comparisons = c("treatment1_VS_control",
+#' "treatment2_VS_control"),
+#' color_label = "both_down",label_size = 4, point_size = 4)
+#'
+get_fold_change_scatter_plot <- function(x,
+                                         sample_comparisons,
+                                         labels = NULL,
+                                         point_size = 2,
+                                         label_size = 2,
+                                         color_label = "both", #both_down, "both_up"
+                                         col_up = "#a40000",
+                                         col_down = "#16317d",
+                                         repair_genes = T
+){
+
+  # validate arguments
+
+  .validate_parcutils_obj(x)
+
+  # sample_comparisons
+  if(!(is.character(sample_comparisons) & length(sample_comparisons) == 2)){
+    cli::cli_abort("{.arg sample_comparisons} must be a {.cls character} vector of length 2.")
+  }
+
+  #sample_comparisons must present in x$de_comparisons
+
+  .is_sample_comparsions_present_in_obj_parcutils(x, sample_comparisons = sample_comparisons)
+
+  # labels
+  if(!(is.null(labels) | is.character(labels))){
+    cli::cli_abort("{.arg labels} must be a {.cls NULL} or a {.cls character} vector.")
+  }
+
+  # point_size
+  if(!(is.numeric(point_size) & length(point_size) == 1)){
+    cli::cli_abort("{.arg point_size} must be a {.cls numeric} value of length 1.")
+  }
+
+  # label_size
+  if(!(is.numeric(label_size) & length(label_size) == 1)){
+    cli::cli_abort("{.arg label_size} must be a {.cls numeric} value of length 1.")
+  }
+  # color_label
+  match.arg(color_label , choices = c("both","both_up" ,"both_down"))
+
+  #col_up
+  if(!(is.character(col_up) & length(col_up) == 1)){
+    cli::cli_abort("{.arg col_up} must be a {.cls character} value denoting a valid color name.")
+  }
+  #col_down
+  if(!(is.character(col_down) & length(col_down) == 1)){
+    cli::cli_abort("{.arg col_down} must be a {.cls character} value denoting a valid color name.")
+  }
+  #repair_genes
+  if(!is.logical(repair_genes)){
+    cli::cli_abort("{.arg repair_genes} must be a {.cls logical} value.")
+  }
+
+  # check presence of labels in x
+  .is_genes_present_in_obj_parcutils(x = x, genes = labels)
+
+  # prepare gene groups
+  gene_groups <- .get_gene_groups_for_fc_scatter_plot(x,
+                                                      sample_comparisons = sample_comparisons,
+                                                      color_label = color_label
+  )
+
+  gene_groups_col_names <- gene_groups %>% colnames()
+
+  # prepare color vec
+  if(color_label == "both_up"){
+    color_group <- c("both_up" = col_up,
+                     "other" = "grey")
+
+  }else if(color_label == "both_down"){
+    color_group <- c("both_down" = col_down,
+                     "other" = "grey")
+
+  }else{
+    color_group <- c("both_up" = col_up,
+                     "both_down" = col_down,
+                     "other" = "grey")
+
+  }
+
+  # get all genes from x to plot
+  genes_for_plot <- .get_all_expressed_genes(x = x) %>% names()
+
+  # get fold change values for the required comparisons.
+  fc_data <- get_fold_change_matrix(x = x,
+                                    sample_comparisons = sample_comparisons,
+                                    genes = genes_for_plot)
+
+  fc_data_col_names <- fc_data %>% colnames()
+
+  # join fc values with gene groups
+  for_plot <- fc_data %>%
+    dplyr::left_join(gene_groups,
+                     by = purrr::set_names(gene_groups_col_names[1],fc_data_col_names[1]))
+
+
+  # plot
+  gp <- for_plot %>%
+    ggplot2::ggplot(ggplot2::aes(x = !!rlang::sym(sample_comparisons[1]),
+                                 y = !!rlang::sym(sample_comparisons[2]))) +
+    ggplot2::geom_point(aes(col = group)) +
+
+    ggplot2::theme_bw() +
+    ggplot2::scale_color_manual(values = color_group)
+
+  # prepare data for labels
+  if(!is.null(labels)){
+    data_for_labels  <- for_plot %>%
+      dplyr::filter(!!rlang::sym(fc_data_col_names[1]) %in% labels)
+  } else{
+    data_for_labels <- for_plot %>%
+      dplyr::filter(group != "other")
+  }
+
+  # repair genes
+  if(repair_genes){
+    data_for_labels %<>%
+      dplyr::mutate(gene_id = stringr::str_replace(string = !!rlang::sym(fc_data_col_names[1]),
+                                                   pattern = ".*:",
+                                                   replacement = ""
+      ))
+  }
+
+  gp <- gp + ggrepel::geom_text_repel(data =  data_for_labels,
+                                      aes(label = !!rlang::sym(fc_data_col_names[1])),
+                                      size = label_size)
+  # add suffix 'Log2FC' to axis labels
+  suffix <- "Log2FC"
+  gp$labels$x <- glue::glue("{suffix}\n({gp$labels$x})")
+  gp$labels$y <- glue::glue("{suffix}\n({gp$labels$y})")
+  return(gp)
+
+}
 
 
 
