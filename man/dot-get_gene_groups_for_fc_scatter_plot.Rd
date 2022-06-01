@@ -12,7 +12,7 @@
 \item{sample_comparisons}{a character vector}
 }
 \value{
-
+a dataframe
 }
 \description{
 Get gene groups for fc scatter plot

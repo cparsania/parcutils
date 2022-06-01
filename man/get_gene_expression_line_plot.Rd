@@ -9,11 +9,12 @@ get_gene_expression_line_plot(
   x,
   samples,
   genes,
+  km = NULL,
+  facet_clusters = FALSE,
   summarise_replicates = TRUE,
   summarise_method = "median",
   scale_log10 = TRUE,
-  line_color = "red",
-  line_transparancy = 0.5,
+  line_transparency = 0.5,
   show_average_line = TRUE,
   average_line_color = "black",
   average_line_size = 1,
@@ -24,42 +25,44 @@ get_fold_change_line_plot(
   x,
   sample_comparisons,
   genes,
-  line_color = "red",
-  line_transparancy = 0.5,
+  km = NULL,
+  facet_clusters = FALSE,
+  line_transparency = 0.5,
   show_average_line = TRUE,
-  summarise_method = "median",
   average_line_color = "black",
   average_line_size = 1,
   average_line_summary_method = "median"
 )
 }
 \arguments{
-\item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
+\item{x}{an abject of class \code{parcutils}. This is an output of the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
 
-\item{samples}{a character vector denoting sample names to show in the heatmap.}
+\item{samples}{a character vector denotes sample names to show in the line plot.}
 
-\item{genes}{a character vector denoting genes to show in the heatmap.}
+\item{genes}{a character vector denotes genes to show in the line plot.}
+
+\item{km}{a numeric or NULL, default \code{NULL}, denotes number of clusters for k-means clustering. If \code{NULL}
+data will be plotted without clustering.}
+
+\item{facet_clusters}{a logical, default FALSE, denoting whether to facet clusters.
+Works only when km is set to a numeric value.}
 
 \item{summarise_replicates}{logical, default TRUE, indicating whether to summarise values for each gene across replicates.}
 
-\item{summarise_method}{a character string, default median, denoting a summary method to average gene expression values across replicates. Values can be either mean or median.}
+\item{summarise_method}{a character string, default \code{"median"}, denotes a summary method to average gene expression values across replicates.
+Values can be one of the \code{"mean"} or \code{"median"}.}
 
-\item{scale_log10}{logical, default TRUE, denoting whether to transform y scale on log10 scale.}
+\item{scale_log10}{logical, default \code{TRUE}, denotes whether to transform scale Y on log10.}
 
-\item{line_color}{a character string, default "red", denoting color for each line in the plot.}
+\item{line_transparency}{a numeric, default 0.5, denotes transparency of each line in the line plot.}
 
-\item{line_transparancy}{a numeric, default 0.5, denoting transparency of each line in the plot.}
+\item{show_average_line}{logical, default TRUE, denotes whether to show a line for average gene expression.}
 
-\item{show_average_line}{logical, default TRUE, denoting whether to show line for average gene expression values.}
+\item{average_line_color}{a character string, default \code{"black"}, denotes a color for an average line.}
 
-\item{average_line_color}{a character string, default "black", denoting a color for average line.}
+\item{average_line_size}{a numeric, default 1, denotes a size for an average line.}
 
-\item{average_line_size}{a numeric, default 1, denoting size for average line.}
-
-\item{average_line_summary_method}{a character string, default median, denoting a summary method used to generate an average line. Values can be one of the mean or median.}
-
-\item{sample_comparisons}{a character vector denoting sample comparisons.
-possible values can be found from \code{x$de_comparisons}.}
+\item{average_line_summary_method}{a character string, default \code{"median"}, denoting a summary method used to generate an average line. Values can be one of the \code{"mean"} or \code{"median"}.}
 }
 \value{
 ggplot2.
@@ -70,10 +73,10 @@ Generate a line plot for gene expression / fold change values.
 \examples{
 
 count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
-count_data <- readr::read_delim(count_file, delim = "\t")
+count_data <- readr::read_delim(count_file, delim = "\t", show_col_types = FALSE)
 
 sample_info <- count_data \%>\% colnames() \%>\% .[-1]  \%>\%
-  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3))
 
 
 res <- parcutils::run_deseq_analysis(counts = count_data ,
@@ -83,7 +86,43 @@ res <- parcutils::run_deseq_analysis(counts = count_data ,
                                      group_denominator = c("control"))
 
 genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both") \%>\% names()
-get_gene_expression_line_plot(x = res, samples = c("control", "treatment1" ,"treatment2"), genes = genes, line_transparancy = 0.1, average_line_color = "red", summarise_method = "mean")
 
-get_fold_change_line_plot(x = res, sample_comparisons = c("treatment1_VS_control", "treatment2_VS_control"), genes = genes,average_line_summary_method =  "mean")
+# line plot with all replicates
+get_gene_expression_line_plot(x = res,
+samples = c("control", "treatment1"),
+genes = genes, line_transparency = 0.5,
+average_line_color = "red",
+summarise_replicates = FALSE)
+
+# line plot with replicate average
+get_gene_expression_line_plot(x = res,
+samples = c("control", "treatment1" ,"treatment2"),
+genes = genes, line_transparency = 0.5,
+average_line_color = "red",
+summarise_replicates = TRUE)
+
+# line plot with k-means clustering
+
+get_gene_expression_line_plot(x = res,
+samples = c("control", "treatment1" ,"treatment2"),
+km = 4,
+genes = genes, line_transparency = 0.5,
+average_line_color = "black",
+summarise_replicates = TRUE)
+
+# line plot with k-means clustering faceted
+
+get_gene_expression_line_plot(x = res,
+samples = c("control", "treatment1" ,"treatment2"),
+km = 4,facet_clusters = TRUE,
+genes = genes, line_transparency = 0.5,
+average_line_color = "black",
+summarise_replicates = TRUE)
+
+# fold change lineplot
+get_fold_change_line_plot(x = res,
+sample_comparisons = c("treatment1_VS_control", "treatment2_VS_control"),
+genes = genes,km = 4,
+average_line_summary_method =  "mean")
+
 }

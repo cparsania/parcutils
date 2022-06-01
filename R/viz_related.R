@@ -1035,30 +1035,33 @@ get_corr_heatbox <- function(x,
 
 #' Generate a line plot for gene expression / fold change values.
 #'
-#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_deseq_analysis()].
-#' @param samples a character vector denoting sample names to show in the heatmap.
-#' @param sample_comparisons a character vector denoting sample comparisons.
-#' possible values can be found from \code{x$de_comparisons}.
-#' @param genes a character vector denoting genes to show in the heatmap.
+#' @param x an abject of class \code{parcutils}. This is an output of the function [parcutils::run_deseq_analysis()].
+#' @param samples a character vector denotes sample names to show in the line plot.
+#' @param genes a character vector denotes genes to show in the line plot.
 #' @param summarise_replicates logical, default TRUE, indicating whether to summarise values for each gene across replicates.
-#' @param summarise_method a character string, default median, denoting a summary method to average gene expression values across replicates. Values can be either mean or median.
-#' @param scale_log10 logical, default TRUE, denoting whether to transform y scale on log10 scale.
-#' @param line_color a character string, default "red", denoting color for each line in the plot.
-#' @param line_transparancy a numeric, default 0.5, denoting transparency of each line in the plot.
-#' @param show_average_line logical, default TRUE, denoting whether to show line for average gene expression values.
-#' @param average_line_color a character string, default "black", denoting a color for average line.
-#' @param average_line_size a numeric, default 1, denoting size for average line.
-#' @param average_line_summary_method a character string, default median, denoting a summary method used to generate an average line. Values can be one of the mean or median.
+#' @param summarise_method a character string, default \code{"median"}, denotes a summary method to average gene expression values across replicates.
+#' Values can be one of the \code{"mean"} or \code{"median"}.
+#' @param scale_log10 logical, default \code{TRUE}, denotes whether to transform scale Y on log10.
+#' @param line_transparency a numeric, default 0.5, denotes transparency of each line in the line plot.
+#' @param show_average_line logical, default TRUE, denotes whether to show a line for average gene expression.
+#' @param average_line_color a character string, default \code{"black"}, denotes a color for an average line.
+#' @param average_line_size a numeric, default 1, denotes a size for an average line.
+#' @param km a numeric or NULL, default `NULL`, denotes number of clusters for k-means clustering. If `NULL`
+#' data will be plotted without clustering.
+#' @param facet_clusters a logical, default FALSE, denoting whether to facet clusters.
+#' Works only when km is set to a numeric value.
+#' @param average_line_summary_method a character string, default \code{"median"}, denoting a summary method used to generate an average line. Values can be one of the \code{"mean"} or \code{"median"}.
+#'
 #' @return ggplot2.
 #' @export
 #'
 #' @examples
 #'
 #' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
-#' count_data <- readr::read_delim(count_file, delim = "\t")
+#' count_data <- readr::read_delim(count_file, delim = "\t", show_col_types = FALSE)
 #'
 #' sample_info <- count_data %>% colnames() %>% .[-1]  %>%
-#'   tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+#'   tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3))
 #'
 #'
 #' res <- parcutils::run_deseq_analysis(counts = count_data ,
@@ -1068,17 +1071,54 @@ get_corr_heatbox <- function(x,
 #'                                      group_denominator = c("control"))
 #'
 #' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both") %>% names()
-#' get_gene_expression_line_plot(x = res, samples = c("control", "treatment1" ,"treatment2"), genes = genes, line_transparancy = 0.1, average_line_color = "red", summarise_method = "mean")
 #'
-#'get_fold_change_line_plot(x = res, sample_comparisons = c("treatment1_VS_control", "treatment2_VS_control"), genes = genes,average_line_summary_method =  "mean")
+#' # line plot with all replicates
+#' get_gene_expression_line_plot(x = res,
+#' samples = c("control", "treatment1"),
+#' genes = genes, line_transparency = 0.5,
+#' average_line_color = "red",
+#' summarise_replicates = FALSE)
+#'
+#' # line plot with replicate average
+#' get_gene_expression_line_plot(x = res,
+#' samples = c("control", "treatment1" ,"treatment2"),
+#' genes = genes, line_transparency = 0.5,
+#' average_line_color = "red",
+#' summarise_replicates = TRUE)
+#'
+#' # line plot with k-means clustering
+#'
+#' get_gene_expression_line_plot(x = res,
+#' samples = c("control", "treatment1" ,"treatment2"),
+#' km = 4,
+#' genes = genes, line_transparency = 0.5,
+#' average_line_color = "black",
+#' summarise_replicates = TRUE)
+#'
+#' # line plot with k-means clustering faceted
+#'
+#' get_gene_expression_line_plot(x = res,
+#' samples = c("control", "treatment1" ,"treatment2"),
+#' km = 4,facet_clusters = TRUE,
+#' genes = genes, line_transparency = 0.5,
+#' average_line_color = "black",
+#' summarise_replicates = TRUE)
+#'
+#' # fold change lineplot
+#'get_fold_change_line_plot(x = res,
+#'sample_comparisons = c("treatment1_VS_control", "treatment2_VS_control"),
+#'genes = genes,km = 4,
+#'average_line_summary_method =  "mean")
+#'
 get_gene_expression_line_plot <- function(x,
                                           samples,
                                           genes,
+                                          km = NULL,
+                                          facet_clusters = FALSE,
                                           summarise_replicates = TRUE,
                                           summarise_method = "median",
                                           scale_log10 = TRUE,
-                                          line_color = "red",
-                                          line_transparancy = 0.5,
+                                          line_transparency = 0.5,
                                           show_average_line = TRUE,
                                           average_line_color = "black",
                                           average_line_size = 1,
@@ -1105,13 +1145,9 @@ get_gene_expression_line_plot <- function(x,
 
   match.arg(summarise_method , choices = c("mean" ,"median"))
 
-  # validata color
+  # validate alpha
 
-  stopifnot("'line_color' must be a charcter string of valid color name." = (is.character(line_color) & length(line_color) ==1))
-
-  # validata alpha
-
-  stopifnot("'line_transparancy' must a numeric value between 0 and 1."  = (is.numeric(line_transparancy) & length(line_transparancy) ==1))
+  stopifnot("'line_transparency' must a numeric value between 0 and 1."  = (is.numeric(line_transparency) & length(line_transparency) ==1))
 
   # validate show_average_line
 
@@ -1126,52 +1162,35 @@ get_gene_expression_line_plot <- function(x,
                                                                      genes = genes,
                                                                      samples = samples,
                                                                      summarise_replicates = summarise_replicates, summarise_method = summarise_method )
-  gene_id_col <- line_plot_data_wide %>% colnames() %>%.[1]
 
-  # long data
-  line_plot_data_long <- line_plot_data_wide %>% tidyr::pivot_longer(-!!rlang::sym(gene_id_col), names_to = "samples", values_to = "values") %>%
-    dplyr::group_by(samples) %>%
-    dplyr::mutate(row_num =  1:dplyr::n())
 
-  # plot
-  gg_lineplot <- line_plot_data_long %>% ggplot2::ggplot(ggplot2::aes(x = samples, y = values)) +
-    ggplot2::geom_line(col = line_color, alpha = line_transparancy, ggplot2::aes(group = row_num)) +
-    ggplot2::theme(text = ggplot2::element_text(size = 12)) +
-    ggplot2::theme_bw() +
-    ggplot2::scale_y_continuous(labels = scales::label_number(scale_cut = scales::cut_long_scale()))
 
-  if(scale_log10) {
-    suppressMessages(
-      gg_lineplot <- gg_lineplot + ggplot2::scale_y_log10(labels = scales::label_number(scale_cut = scales::cut_long_scale()))
-    )
-  }
 
-  gg_lineplot  <- gg_lineplot + ggplot2::ylab("Normalised Gene Expression") +
-    ggplot2::xlab("Samples")
-
-  # show average line
-  if(show_average_line){
-    avg_line_data <- line_plot_data_long  %>% dplyr::group_by(samples) %>% dplyr::summarise_at(.vars = dplyr::vars(values), .funs = average_line_summary_method)
-
-    gg_lineplot <- gg_lineplot +
-      ggplot2::geom_line(data = avg_line_data %>% dplyr::mutate(row_num = dplyr::row_number()) , ggplot2::aes( group = 1), col = average_line_color , size = average_line_size)
-
-  }
+    gg_lineplot <- .generate_a_lineplot(
+    line_plot_data_wide = line_plot_data_wide,
+    km = km,
+    facet_clusters=facet_clusters,
+    scale_log10 = scale_log10,
+    line_transparency =line_transparency,
+    show_average_line = show_average_line,
+    average_line_color = average_line_color,
+    average_line_size = average_line_size,
+    average_line_summary_method = average_line_summary_method
+  )
 
   return(gg_lineplot)
 }
 
 
-
 #' @rdname get_gene_expression_line_plot
 #' @export
 get_fold_change_line_plot <- function(x,
-                                      sample_comparisons,
-                                      genes,
-                                      line_color = "red",
-                                      line_transparancy = 0.5,
+                                      sample_comparisons ,
+                                      genes ,
+                                      km =NULL ,
+                                      facet_clusters = FALSE,
+                                      line_transparency= 0.5,
                                       show_average_line = TRUE,
-                                      summarise_method = "median",
                                       average_line_color = "black",
                                       average_line_size = 1,
                                       average_line_summary_method = "median"){
@@ -1188,13 +1207,10 @@ get_fold_change_line_plot <- function(x,
 
   stopifnot("genes must be a character vector." = is.character(genes))
 
-  # validata color
-
-  stopifnot("'line_color' must be a charcter string of valid color name." = (is.character(line_color) & length(line_color) ==1))
 
   # validata alpha
 
-  stopifnot("'line_transparancy' must a numeric value between 0 and 1."  = (is.numeric(line_transparancy) & length(line_transparancy) ==1))
+  stopifnot("'line_transparancy' must a numeric value between 0 and 1."  = (is.numeric(line_transparency) & length(line_transparency) ==1))
 
   # validate show_average_line
 
@@ -1207,30 +1223,19 @@ get_fold_change_line_plot <- function(x,
 
   gene_id_col <- line_plot_data_wide %>% colnames() %>%.[1]
 
-  # long data
-  line_plot_data_long <- line_plot_data_wide %>% tidyr::pivot_longer(-!!rlang::sym(gene_id_col), names_to = "samples", values_to = "values") %>%
-    dplyr::group_by(samples) %>%
-    dplyr::mutate(row_num =  1:dplyr::n())
+  gg_lineplot <- .generate_a_lineplot(line_plot_data_wide = line_plot_data_wide,
+                                 km = km,
+                                 facet_clusters = facet_clusters,
+                                 scale_log10 = FALSE,
+                                 line_transparency = line_transparency,
+                                 show_average_line = show_average_line,
+                                 average_line_color = average_line_color,
+                                 average_line_size = average_line_size,
+                                 average_line_summary_method = average_line_summary_method)
 
-  # plot
-  gg_lineplot <- line_plot_data_long %>%
-    ggplot2::ggplot(ggplot2::aes(x = samples, y = values)) +
-    ggplot2::geom_line(col = line_color, alpha = line_transparancy, ggplot2::aes(group = row_num)) +
-    ggplot2::theme(text = ggplot2::element_text(size = 12)) +
-    ggplot2::theme_bw() +
-    ggplot2::scale_y_continuous(labels = scales::label_number(scale_cut = scales::cut_long_scale()))
-
-  gg_lineplot  <- gg_lineplot + ggplot2::ylab("Log2FC") +
-    ggplot2::xlab("Comparisons")
-
-  # show average line
-  if(show_average_line){
-    avg_line_data <- line_plot_data_long  %>% dplyr::group_by(samples) %>% dplyr::summarise_at(.vars = dplyr::vars(values), .funs = average_line_summary_method)
-
-    gg_lineplot <- gg_lineplot +
-      ggplot2::geom_line(data = avg_line_data %>% dplyr::mutate(row_num = dplyr::row_number()) , ggplot2::aes( group = 1), col = average_line_color , size = average_line_size)
-
-  }
+  gg_lineplot <- gg_lineplot +
+    ggplot2::xlab("Comparisons")+
+    ggplot2::ylab("Log2FC")
 
   return(gg_lineplot)
 

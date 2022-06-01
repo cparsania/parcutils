@@ -302,7 +302,7 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_plot %>% print()
 us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% print()
 ```
 
-### Visualize  common DE genes between comparison by scatter plot
+### Visualize common DE genes between comparison by scatter plot
 
 ```{r, fig.height=4, fig.width=5}
 
@@ -346,20 +346,42 @@ genes_for_lineplot = parcutils::get_genes_by_regulation(x = res,
                                                   sample_comparison = res$de_comparisons[[2]], 
                                                   regulation = "both") %>% names()
 
-#gene expression values
+# line plot of gene expression values
 parcutils::get_gene_expression_line_plot(x = res, 
                                    genes = genes_for_lineplot , 
                                    samples = c("control","treatment1","treatment2"),summarise_replicates = T, show_average_line = T) + 
   ggplot2::theme(text = ggplot2::element_text(size = 15))
 
 
+# line plot of gene expression values with k-means clustering  
+
+parcutils::get_gene_expression_line_plot(x = res, 
+                                         km = 4,
+                                   genes = genes_for_lineplot , 
+                                   samples = c("control","treatment1","treatment2"),summarise_replicates = T, show_average_line = T) + 
+  ggplot2::theme(text = ggplot2::element_text(size = 15))
+
+# line plot of gene expression values with k-means clustering  
+
+parcutils::get_gene_expression_line_plot(x = res, 
+                                         km = 4, 
+                                         facet_clusters = T,
+                                   genes = genes_for_lineplot , 
+                                   samples = c("control","treatment1","treatment2"),summarise_replicates = T, show_average_line = T) + 
+  ggplot2::theme(text = ggplot2::element_text(size = 15), 
+                 axis.text.x = ggplot2::element_text(angle = 40,hjust = 0.8))
+
 # Fold change values 
 
 parcutils::get_fold_change_line_plot(x = res, 
                                    genes = genes_for_lineplot , 
+                                   line_transparency = 0.5, 
+                                   km = 2,facet_clusters = T,
                                      sample_comparisons = c("treatment1_VS_control", "treatment2_VS_control"), 
                                    average_line_summary_method =  "mean",
-                                   show_average_line = T) + ggplot2::theme(text = ggplot2::element_text(size = 15))
+                                   show_average_line = T) + 
+  ggplot2::theme(text = ggplot2::element_text(size = 15),
+                 axis.text.x = ggplot2::element_text(angle = 40,hjust = 0.8))
 
 
 ```
