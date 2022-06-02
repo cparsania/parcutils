@@ -63,6 +63,9 @@ Values can be one of the \code{"mean"} or \code{"median"}.}
 \item{average_line_size}{a numeric, default 1, denotes a size for an average line.}
 
 \item{average_line_summary_method}{a character string, default \code{"median"}, denoting a summary method used to generate an average line. Values can be one of the \code{"mean"} or \code{"median"}.}
+
+\item{sample_comparison}{a character string denoting a valid differential gene comparison.
+Possible comparisons can be found from x$de_comparisons.}
 }
 \value{
 ggplot2.

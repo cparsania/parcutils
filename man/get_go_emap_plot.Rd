@@ -52,7 +52,7 @@ When set to NULL all genes from x will be used as background genes.}
 Perform gene ontology analysis and visualization for DE genesets in one go.
 }
 \examples{
-
+\dontrun{
 count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
 count_data <- readr::read_delim(count_file, delim = "\t", show_col_types = FALSE)
 
@@ -73,4 +73,5 @@ go_out$go_emap_plots
 
 # display table
  go_out$go_enrichment_output \%>\% tibble::as_tibble()
+}
 }

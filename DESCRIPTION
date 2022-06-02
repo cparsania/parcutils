@@ -15,7 +15,6 @@ Imports:
     dplyr (>= 0.8.5),
     GenomicRanges (>= 1.38.0),
     glue,
-    magrittr (>= 1.5),
     purrr (>= 0.3.4),
     readr (>= 2.0.1),
     rlang (>= 0.4.11),
@@ -25,7 +24,6 @@ Imports:
     tidyselect (>= 1.1.1),
     TidyWrappers (>= 0.0.1.9000),
     tools (>= 3.6.2),
-    fs (>= 1.5.0),
     UpSetR (>= 1.4.0),
     ComplexHeatmap,
     MetBrewer (>= 0.1.0),
@@ -58,4 +56,5 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Suggests: 
-    BSgenome.Hsapiens.UCSC.hg38
+    BSgenome.Hsapiens.UCSC.hg38,
+    org.Hs.eg.db

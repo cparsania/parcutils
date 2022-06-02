@@ -99,7 +99,7 @@ When set to NULL all genes from x will be used as background genes.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in"><span class="va">count_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,<span class="st">"toy_counts.txt"</span> , package <span class="op">=</span> <span class="st">"parcutils"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">count_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_delim</a></span><span class="op">(</span><span class="va">count_file</span>, delim <span class="op">=</span> <span class="st">"\t"</span>, show_col_types <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span class="r-in"></span>
@@ -112,48 +112,15 @@ When set to NULL all genes from x will be used as background genes.</p></dd>
 <span class="r-in">                                     column_geneid <span class="op">=</span> <span class="st">"gene_id"</span> ,</span>
 <span class="r-in">                                     group_numerator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment1"</span>, <span class="st">"treatment2"</span><span class="op">)</span> ,</span>
 <span class="r-in">                                     group_denominator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Running DESeq2 ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> converting counts to integer mode</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>some variables in design formula are characters, converting to factors</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> estimating size factors</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> estimating dispersions</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> gene-wise dispersion estimates</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> mean-dispersion relationship</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> final dispersion estimates</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> fitting model and testing</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Summarizing DEG ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">go_out</span> <span class="op">&lt;-</span> <span class="fu">get_go_emap_plot</span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> <span style="color: #C6C6C6; background-color: #262626;">`universe`</span> is set to  <span style="color: #0000BB;">&lt;NULL&gt;</span> Default all expressed genes from <span style="color: #C6C6C6; background-color: #262626;">`x`</span> will be used as background genes.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># display plot</span></span>
 <span class="r-in"><span class="va">go_out</span><span class="op">$</span><span class="va">go_emap_plots</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $treatment1_VS_control_down</span>
-<span class="r-plt img"><img src="get_go_emap_plot-1.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># display table</span></span>
 <span class="r-in"> <span class="va">go_out</span><span class="op">$</span><span class="va">go_enrichment_output</span> <span class="op">%&gt;%</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 15 × 1</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    treatment1_VS_co… $Description  $GeneRatio $BgRatio $pvalue $p.adjust $qvalue</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> GO:0010821        regulation o… 4/25       31/3462  5.84<span style="color: #949494;">e</span><span style="color: #BB0000;">-5</span>   0.009<span style="text-decoration: underline;">74</span> 0.008<span style="text-decoration: underline;">97</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> GO:0051204        protein inse… 3/25       13/3462  9.08<span style="color: #949494;">e</span><span style="color: #BB0000;">-5</span>   0.009<span style="text-decoration: underline;">74</span> 0.008<span style="text-decoration: underline;">97</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> GO:0010822        positive reg… 3/25       14/3462  1.15<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.009<span style="text-decoration: underline;">74</span> 0.008<span style="text-decoration: underline;">97</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> GO:0090151        establishmen… 3/25       14/3462  1.15<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.009<span style="text-decoration: underline;">74</span> 0.008<span style="text-decoration: underline;">97</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> GO:0097345        mitochondria… 3/25       14/3462  1.15<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.009<span style="text-decoration: underline;">74</span> 0.008<span style="text-decoration: underline;">97</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> GO:1902108        regulation o… 3/25       14/3462  1.15<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.009<span style="text-decoration: underline;">74</span> 0.008<span style="text-decoration: underline;">97</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> GO:1902110        positive reg… 3/25       14/3462  1.15<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.009<span style="text-decoration: underline;">74</span> 0.008<span style="text-decoration: underline;">97</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> GO:0035794        positive reg… 3/25       15/3462  1.43<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.009<span style="text-decoration: underline;">74</span> 0.008<span style="text-decoration: underline;">97</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> GO:1902686        mitochondria… 3/25       15/3462  1.43<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.009<span style="text-decoration: underline;">74</span> 0.008<span style="text-decoration: underline;">97</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> GO:1905710        positive reg… 3/25       15/3462  1.43<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.009<span style="text-decoration: underline;">74</span> 0.008<span style="text-decoration: underline;">97</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> GO:0051205        protein inse… 3/25       19/3462  2.99<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.015<span style="text-decoration: underline;">7</span>  0.014<span style="text-decoration: underline;">4</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> GO:0008637        apoptotic mi… 3/25       20/3462  3.50<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.017<span style="text-decoration: underline;">0</span>  0.015<span style="text-decoration: underline;">7</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> GO:0007005        mitochondrio… 5/25       110/3462 9.45<span style="color: #949494;">e</span><span style="color: #BB0000;">-4</span>   0.042<span style="text-decoration: underline;">9</span>  0.039<span style="text-decoration: underline;">5</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> GO:0006886        intracellula… 7/25       238/3462 1.09<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span>   0.046<span style="text-decoration: underline;">5</span>  0.042<span style="text-decoration: underline;">9</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> GO:0007006        mitochondria… 3/25       30/3462  1.19<span style="color: #949494;">e</span><span style="color: #BB0000;">-3</span>   0.047<span style="text-decoration: underline;">6</span>  0.043<span style="text-decoration: underline;">8</span> </span>
+<span class="r-in"><span class="op">}</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

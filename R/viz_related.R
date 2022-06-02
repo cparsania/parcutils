@@ -1051,7 +1051,8 @@ get_corr_heatbox <- function(x,
 #' @param facet_clusters a logical, default FALSE, denoting whether to facet clusters.
 #' Works only when km is set to a numeric value.
 #' @param average_line_summary_method a character string, default \code{"median"}, denoting a summary method used to generate an average line. Values can be one of the \code{"mean"} or \code{"median"}.
-#'
+#' @param sample_comparison a character string denoting a valid differential gene comparison.
+#' Possible comparisons can be found from x$de_comparisons.
 #' @return ggplot2.
 #' @export
 #'
@@ -1266,7 +1267,7 @@ get_fold_change_line_plot <- function(x,
 #' @export
 #'
 #' @examples
-#'
+#'\dontrun{
 #' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
 #' count_data <- readr::read_delim(count_file, delim = "\t", show_col_types = FALSE)
 #'
@@ -1287,6 +1288,7 @@ get_fold_change_line_plot <- function(x,
 #'
 #' # display table
 #'  go_out$go_enrichment_output %>% tibble::as_tibble()
+#'}
 get_go_emap_plot <- function(x,
                              org_db = org.Hs.eg.db::org.Hs.eg.db,
                              universe = NULL,

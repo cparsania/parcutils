@@ -617,7 +617,7 @@ get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, s
 #' get_genes_by_regulation(x = res, sample_comparisons = c("treatment1_VS_control") , regul = "other") %>% head()
 #'
 #' # Simplify output for multiple sample comparisons
-#' get_genes_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify = T, regul= "up")
+#' get_genes_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify = TRUE, regul= "up")
 #'
 #'
 #' # get genesets by regulation. It uses sample comparison and regulation to name each output geneset.
@@ -1229,13 +1229,17 @@ get_heatmap_data <- function(h){
 
 #' Compare log2 fold change between two sample comparisons.
 #' @description This function generates a scatter plot of log2 fold change values for two different comparisons.
+#'
 #' @param x an object of class parcutils.
 #' @param sample_comparisons a character vector of length 2 denoting sample comparisons to plot.
 #' @param labels a character vector of genes to label. Default NULL, show all genes.
 #' @param point_size a numeric, default 2, denoting size of the points.
 #' @param label_size a numeric, default 2, denoting size of the labels.
-#' @param col_up a character string, default "#a40000", a valid color code for common up regulated genes.
-#' @param col_down a character string, default "#16317d", a valid color code for common down regulated genes.
+#' @param col_up a character string, default `#a40000`, a valid color code for common up regulated genes.
+#' @param col_down a character string, default `#16317d`, a valid color code for common down regulated genes.
+#' @param color_label a character string one of the "both", #both_down, or "both_up". Default `both`.
+#' @param repair_genes a logical, default `TRUE`, denotes whether to repair gene names or not,
+#' If `TRUE` string prior to `:` will be removed from the gene names.
 #'
 #' @return an object of ggplot2.
 #' @export

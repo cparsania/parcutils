@@ -987,7 +987,7 @@
   # prepare groups to color data points
   genes_by_regul <- parcutils::get_genes_by_regulation(x = x,
                                                        sample_comparisons =sample_comparisons,
-                                                       regulation = "all",simplify = T) %>%
+                                                       regulation = "all",simplify = TRUE) %>%
     dplyr::bind_rows() %>%
     dplyr::group_by(.data$regul,.data$genes) %>%
     dplyr::add_count(name = "counts") %>%

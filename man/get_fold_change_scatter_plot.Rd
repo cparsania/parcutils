@@ -27,9 +27,14 @@ get_fold_change_scatter_plot(
 
 \item{label_size}{a numeric, default 2, denoting size of the labels.}
 
-\item{col_up}{a character string, default "#a40000", a valid color code for common up regulated genes.}
+\item{color_label}{a character string one of the "both", #both_down, or "both_up". Default \code{both}.}
 
-\item{col_down}{a character string, default "#16317d", a valid color code for common down regulated genes.}
+\item{col_up}{a character string, default \verb{#a40000}, a valid color code for common up regulated genes.}
+
+\item{col_down}{a character string, default \verb{#16317d}, a valid color code for common down regulated genes.}
+
+\item{repair_genes}{a logical, default \code{TRUE}, denotes whether to repair gene names or not,
+If \code{TRUE} string prior to \code{:} will be removed from the gene names.}
 }
 \value{
 an object of ggplot2.
