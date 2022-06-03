@@ -146,8 +146,8 @@
                            nsets = length(input_list_for_upset),
                            nintersects = NA,
                            sets = names(input_list_for_upset) %>% rev(),
-                           keep.order=T,
-                           text.scale=1.5,
+                           keep.order = TRUE,
+                           text.scale = 1.5,
                            mb.ratio = c(0.6, 0.4),
                            sets.x.label = "No. of genes",
                            sets.bar.color = rep(upset_colors %>% rev(),each = 2),...)

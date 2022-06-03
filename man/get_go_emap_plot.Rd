@@ -12,6 +12,7 @@ get_go_emap_plot(
   p_adj_method = "BH",
   pval_cutoff = 0.05,
   qval_cutoff = 0.05,
+  simplify = TRUE,
   min_geneset_size = 10,
   max_geneset_size = 500,
   go_similarity_cutoff = 0.8,

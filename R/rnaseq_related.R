@@ -707,7 +707,7 @@ get_genesets_by_regulation <- function(x, sample_comparisons, regulation = "both
 
   genes <- get_genes_by_regulation(x, sample_comparisons = sample_comparisons,
                                    regulation = regulation,
-                                   simplify = T)
+                                   simplify = TRUE)
 
   gene_sets <- dplyr::bind_rows(genes) %>%
     dplyr::mutate(gene_set_name = stringr::str_c(sample_comparisons, regul , sep = "_")) %>%
