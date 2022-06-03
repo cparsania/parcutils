@@ -287,7 +287,7 @@ run_deseq_analysis <- function(
   dds <- DESeq2::DESeqDataSetFromMatrix(countData = count_data_filter %>% as.data.frame(),
                                         colData = sample_info_data %>% tibble::column_to_rownames(sample_info_colnames[[1]]),
                                         design =  rlang::new_formula(NULL, rlang::sym(sample_info_colnames[2])) ,
-                                        tidy = T)
+                                        tidy = TRUE)
 
   dds <- DESeq2::DESeq(dds)
 
@@ -295,7 +295,7 @@ run_deseq_analysis <- function(
 
   # generate normalize count matrix
 
-  norm_counts <- DESeq2::counts(dds, normalized  = T) %>%
+  norm_counts <- DESeq2::counts(dds, normalized  = TRUE) %>%
     as.data.frame() %>%
     tibble::rownames_to_column(var = column_geneid) %>%
     tibble::as_tibble()
@@ -491,7 +491,7 @@ get_fold_change_matrix <- function(x , sample_comparisons , genes){
 #'
 #' # summarise replicates by median
 #'
-#' get_normalised_expression_matrix(x = res ,summarise_replicates = T, summarise_method = "median") %>% print()
+#' get_normalised_expression_matrix(x = res ,summarise_replicates = TRUE, summarise_method = "median") %>% print()
 get_normalised_expression_matrix <- function(x , samples = NULL, genes = NULL, summarise_replicates = FALSE, summarise_method = "median" ){
 
   # validate x
@@ -633,7 +633,7 @@ get_genes_by_regulation <-  function(x, sample_comparisons , regulation = "both"
   stopifnot("sample_comparisons must be a character vector" = is.character(sample_comparisons) & length(sample_comparisons) >= 1)
 
   # validate regulation.
-  match.arg(regulation , choices = c("up","down" , "both", "other" ,"all"), several.ok = F)
+  match.arg(regulation , choices = c("up","down" , "both", "other" ,"all"), several.ok = FALSE)
 
   # validate simplify
   stopifnot("simplify must be a logical value" = is.logical(simplify))
@@ -1282,7 +1282,7 @@ get_fold_change_scatter_plot <- function(x,
                                          color_label = "both", #both_down, "both_up"
                                          col_up = "#a40000",
                                          col_down = "#16317d",
-                                         repair_genes = T
+                                         repair_genes = TRUE
 ){
 
   # validate arguments

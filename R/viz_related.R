@@ -22,18 +22,18 @@
 #' ss <- dd %>%
 #'   ggplot2::ggplot() +
 #'   geom_boxplot(aes(x = name, y = value))
-#' sort_geom_box(x = ss,decreasing = T)
-#' sort_geom_box(x = ss,decreasing = F)
+#' sort_geom_box(x = ss,decreasing = TRUE)
+#' sort_geom_box(x = ss,decreasing = FALSE)
 #'
 #' # multiple layer
 #' ss <- dd %>%
 #'   ggplot2::ggplot() +
 #'   geom_point(aes(y = value , x = name)) +
 #'   geom_boxplot(aes(x = name, y = value))
-#' sort_geom_box(x = ss,decreasing = T)
-#' sort_geom_box(x = ss,decreasing = F)
+#' sort_geom_box(x = ss,decreasing = TRUE)
+#' sort_geom_box(x = ss,decreasing = FALSE)
 #'
-sort_geom_box <- function(x, decreasing = T){
+sort_geom_box <- function(x, decreasing = TRUE){
   #x <- ss
   plt <- x
 
@@ -49,7 +49,7 @@ sort_geom_box <- function(x, decreasing = T){
     stop("'x'  must contain atleast one layer of 'geom_boxplot'")
   }
 
-  is_ggbox_index <- which(is_ggbox == T)
+  is_ggbox_index <- which(is_ggbox == TRUE)
 
   oo <- plt$layers[[is_ggbox_index]]
 
@@ -96,13 +96,13 @@ sort_geom_box <- function(x, decreasing = T){
 #' @param FCcutoff \code{FCcutoff} [EnhancedVolcano::EnhancedVolcano()]
 #' @param col_by_regul lgl, default T, whether to color variable by gene regulation - Up, Down, Other
 #' @param ... Other parameters pass to [EnhancedVolcano::EnhancedVolcano()]
-#' @param col_up a character string denoting color for up genes, works only when col_by_regul = T
-#' @param col_down  a character string denoting color for down genes, works only when col_by_regul = T.
-#' @param col_others a character string denoting color for other genes, works only when col_by_regul = T.
+#' @param col_up a character string denoting color for up genes, works only when col_by_regul = `TRUE`.
+#' @param col_down  a character string denoting color for down genes, works only when col_by_regul = `TRUE`.
+#' @param col_others a character string denoting color for other genes, works only when col_by_regul = `TRUE`.
 #'
 #' @return a volcano plot
 #' @export
-EnhancedVolcano2 <- function(toptable, lab, x, y, pCutoff = 10e-4,FCcutoff = 1.5,col_by_regul = T,
+EnhancedVolcano2 <- function(toptable, lab, x, y, pCutoff = 10e-4,FCcutoff = 1.5,col_by_regul = TRUE,
                              col_up = "#b2182b" ,col_down = "#2166ac", col_others = "#e0e0e0" ,...){
 
   if(col_by_regul) {
@@ -228,8 +228,8 @@ plot_regions_relative_to_reference <- function(query , reference){
   # prepare final table for plot
 
   for_plot <- mapped_id_table %>%
-    tidyr::separate(col = query_id , into = c("qseqname","qstart", "qend", "qstrand"), sep = "\\|", convert = T ,remove = F) %>%
-    tidyr::separate(col = reference_id , into = c("rseqname","rstart", "rend", "rstrand") , sep = "\\|", convert = T, remove = F) %>%
+    tidyr::separate(col = query_id , into = c("qseqname","qstart", "qend", "qstrand"), sep = "\\|", convert = TRUE ,remove = FALSE) %>%
+    tidyr::separate(col = reference_id , into = c("rseqname","rstart", "rend", "rstrand") , sep = "\\|", convert = TRUE, remove = FALSE) %>%
 
     # add width
     dplyr::mutate(qwidth = qend - qstart + 1 , rwidth = rend - rstart + 1) %>%
@@ -358,7 +358,7 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10,
     as.data.frame() %>%
     tibble::column_to_rownames("sample")
 
-  pr_comps <- prcomp(pca_input,scale = T)
+  pr_comps <- prcomp(pca_input,scale = TRUE)
 
   pr_comps_tbl <- pr_comps %>%
     .$x %>%
@@ -459,8 +459,8 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10,
 #' get_gene_expression_box_plot(x = res , group_replicates = TRUE ) %>% print()
 #'
 get_gene_expression_box_plot <- function(x, samples = NULL, genes = NULL,
-                                         group_replicates = F,
-                                         convert_log2 = T){
+                                         group_replicates = FALSE,
+                                         convert_log2 = TRUE){
 
 
   # validate x
@@ -598,7 +598,7 @@ get_pairwise_corr_plot  <- function(x , samples = NULL, genes = NULL){
   stopifnot("'genes' must be a character vector or NULL." = is.character(genes) | is.null(genes))
 
   # get expression values
-  norm_expr_mat <- parcutils::get_normalised_expression_matrix(x = x, samples = samples, genes = genes, summarise_replicates = F)
+  norm_expr_mat <- parcutils::get_normalised_expression_matrix(x = x, samples = samples, genes = genes, summarise_replicates = FALSE)
 
   # convert log2
   if(TRUE){
@@ -722,7 +722,7 @@ get_volcano_plot <- function(x,
                                     pCutoff = pval_cutoff,
                                     labSize = lab_size,
                                     pointSize =point_size,
-                                    col_by_regul = T,
+                                    col_by_regul = TRUE,
                                     col_up = col_up,
                                     col_down = col_down,
                                     col_other = col_other,
@@ -752,7 +752,7 @@ get_volcano_plot <- function(x,
 #' file_dir <- system.file("extdata",package = "parcutils")
 #'
 #' file_paths <- fs::dir_ls(path = file_dir,
-#' glob = "*Log.final.out" , recurse = T, type = "file") %>% as.character()
+#' glob = "*Log.final.out" , recurse = TRUE, type = "file") %>% as.character()
 #'
 #' get_star_align_log_summary_plot(x  = file_paths)
 #' get_star_align_log_summary_plot(x  = file_paths, col_total_reads = "red",
@@ -764,7 +764,7 @@ get_star_align_log_summary_plot <- function(x,is_paired_data = TRUE,
                                             col_mapped_reads = "#ffcd12") {
 
   if(! (fs::file_exists(x) %>% all()) ){
-    not_exist_indx <- which(fs::file_exists(x) == F)
+    not_exist_indx <- which(fs::file_exists(x) == FALSE)
     not_exist_file <- paste0(x[not_exist_indx], collapse = ",")
     stop(glue::glue("file(s) {not_exist_file } not exist."))
   }
@@ -979,7 +979,7 @@ get_corr_heatbox <- function(x,
   norm_expr_mat <- parcutils::get_normalised_expression_matrix(x = x,
                                                                samples = samples,
                                                                genes = genes,
-                                                               summarise_replicates = F)
+                                                               summarise_replicates = FALSE)
 
   # convert log2
   if(TRUE){
@@ -1349,7 +1349,7 @@ get_go_emap_plot <- function(x,
     deg_genes <- purrr::map(deg_genes, ~{
       parcutils::annotate_retained_introns(x = x,
                                            query_introns = ..1,
-                                           add_meta_data = F) %>%
+                                           add_meta_data = FALSE) %>%
         dplyr::pull("gene_id") %>%
         unique()
     })
@@ -1358,7 +1358,7 @@ get_go_emap_plot <- function(x,
     if(is.null(universe)){
       universe <- parcutils::annotate_retained_introns(x = x,
                                                        query_introns = universe,
-                                                       add_meta_data = F) %>%
+                                                       add_meta_data = FALSE) %>%
         dplyr::pull("gene_id")
     }
   }

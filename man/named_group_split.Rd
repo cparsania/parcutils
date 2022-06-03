@@ -5,7 +5,7 @@
 \title{Split grouped data with names. A wrapper around dplyr::group_by()
 ref: https://github.com/tidyverse/dplyr/issues/4223}
 \usage{
-named_group_split(.tbl, ..., keep_order = T)
+named_group_split(.tbl, ..., keep_order = TRUE)
 }
 \arguments{
 \item{.tbl}{a data frame}
@@ -25,7 +25,7 @@ ref: https://github.com/tidyverse/dplyr/issues/4223
 \dontrun{
 a <- tibble::tibble(x = 1:5, y = sample(letters[1:5]))
 a  \%>\% named_group_split(y)
-a  \%>\% named_group_split(y , keep_order = F)
+a  \%>\% named_group_split(y , keep_order = FALSE)
 }
 
 

@@ -20,7 +20,7 @@ Get intersects of upset plot.
 \examples{
 \dontrun{
 set.seed(123)
-x <- list(A = sample(1:5, 10, replace = T ) , B = sample(1:5, 10, replace = T ) , c = sample(1:10, 10, replace = T))
+x <- list(A = sample(1:5, 10, replace = TRUE) , B = sample(1:5, 10, replace = TRUE) , c = sample(1:10, 10, replace = TRUE))
 us <- UpSetR::upset(UpSetR::fromList(x))
 get_upset_intersects(x , us )
 

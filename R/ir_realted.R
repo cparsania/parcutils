@@ -1,7 +1,7 @@
 # IR analysis functions
 retained_introns_files  <-
   list.files(path  = "000_data_files/ir_finder_s_output/",
-             pattern =  "*nondir_SRR*", full.names = T,recursive = T)
+             pattern =  "*nondir_SRR*", full.names = TRUE,recursive = TRUE)
 
 names(retained_introns_files) <- stringr::str_extract(retained_introns_files,
                                                       pattern = "SRR([^_])+")
@@ -147,7 +147,7 @@ select_cols_irfinderS_output <- function(x, keep_columns = c("chr",
 #' example_files <- fs::dir_ls(example_dir, glob = "*-IR-nondir*.txt")
 #' get_intron_master_list(f = example_files[1],add_prefix_chr = TRUE,bs_genome_object = BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38)
 get_intron_master_list <- function(f,
-                                   add_meta_data = T,
+                                   add_meta_data = TRUE,
                                    add_prefix_chr = FALSE,
                                    remove_prefix_chr = FALSE,
                                    bs_genome_object = NULL){

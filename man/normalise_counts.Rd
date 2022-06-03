@@ -30,7 +30,7 @@ tt <- tibble::tibble(gene_id = c(paste("Gene_",1:5,sep = "")),
                      chr = "Chr1",
                      start = sample(1:100, 5),
                      end = sample(100:200,5),
-                     strand = sample(c("+" ,"-"), 5, replace = T),
+                     strand = sample(c("+" ,"-"), 5, replace = TRUE),
                      length = (end - start )+ 1 )
 
 tt \%<>\% dplyr::mutate(sample_1 = sample(c(1:100),5)*10 ,

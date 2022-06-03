@@ -6,7 +6,7 @@
 \usage{
 get_intron_master_list(
   f,
-  add_meta_data = T,
+  add_meta_data = TRUE,
   add_prefix_chr = FALSE,
   remove_prefix_chr = FALSE,
   bs_genome_object = NULL

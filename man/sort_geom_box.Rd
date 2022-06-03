@@ -4,7 +4,7 @@
 \alias{sort_geom_box}
 \title{Sort order of box obtained from geom_boxplot}
 \usage{
-sort_geom_box(x, decreasing = T)
+sort_geom_box(x, decreasing = TRUE)
 }
 \arguments{
 \item{x}{ggplot2 with atleast one layer of geom_boxplot}
@@ -26,15 +26,15 @@ dd <- iris \%>\%
 ss <- dd \%>\%
   ggplot2::ggplot() +
   geom_boxplot(aes(x = name, y = value))
-sort_geom_box(x = ss,decreasing = T)
-sort_geom_box(x = ss,decreasing = F)
+sort_geom_box(x = ss,decreasing = TRUE)
+sort_geom_box(x = ss,decreasing = FALSE)
 
 # multiple layer
 ss <- dd \%>\%
   ggplot2::ggplot() +
   geom_point(aes(y = value , x = name)) +
   geom_boxplot(aes(x = name, y = value))
-sort_geom_box(x = ss,decreasing = T)
-sort_geom_box(x = ss,decreasing = F)
+sort_geom_box(x = ss,decreasing = TRUE)
+sort_geom_box(x = ss,decreasing = FALSE)
 
 }

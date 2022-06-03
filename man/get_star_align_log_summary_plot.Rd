@@ -34,7 +34,7 @@ Visualise alignment stats in a bar plot
 file_dir <- system.file("extdata",package = "parcutils")
 
 file_paths <- fs::dir_ls(path = file_dir,
-glob = "*Log.final.out" , recurse = T, type = "file") \%>\% as.character()
+glob = "*Log.final.out" , recurse = TRUE, type = "file") \%>\% as.character()
 
 get_star_align_log_summary_plot(x  = file_paths)
 get_star_align_log_summary_plot(x  = file_paths, col_total_reads = "red",

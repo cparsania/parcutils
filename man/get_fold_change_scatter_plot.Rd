@@ -13,7 +13,7 @@ get_fold_change_scatter_plot(
   color_label = "both",
   col_up = "#a40000",
   col_down = "#16317d",
-  repair_genes = T
+  repair_genes = TRUE
 )
 }
 \arguments{

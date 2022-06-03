@@ -517,7 +517,7 @@
     dplyr::mutate(seq =  BSgenome::getSeq(bs_genome_object,x)) %>%
 
     # add GC for each intron
-    dplyr::mutate(GC =  BSgenome::letterFrequency(seq, letters = "GC", as.prob = T) %>%  as.numeric()) %>%
+    dplyr::mutate(GC =  BSgenome::letterFrequency(seq, letters = "GC", as.prob = TRUE) %>%  as.numeric()) %>%
 
     # add length for each intron
     dplyr::mutate(length =  BSgenome::width(seq))
@@ -780,8 +780,8 @@
                                     comment = comment_char,
                                     trim_ws = TRUE,
                                     col_names = TRUE,
-                                    show_col_types = F ,
-                                    progress = T)
+                                    show_col_types = FALSE ,
+                                    progress = TRUE)
     cli::cli_alert_success("Done.")
   } else {
     count_data <- counts

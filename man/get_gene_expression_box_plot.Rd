@@ -8,8 +8,8 @@ get_gene_expression_box_plot(
   x,
   samples = NULL,
   genes = NULL,
-  group_replicates = F,
-  convert_log2 = T
+  group_replicates = FALSE,
+  convert_log2 = TRUE
 )
 }
 \arguments{

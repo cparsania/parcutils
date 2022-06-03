@@ -73,7 +73,7 @@ get_intergenic_signals <- function(bw_file , gff_file){
 #'                      chr = "Chr1",
 #'                      start = sample(1:100, 5),
 #'                      end = sample(100:200,5),
-#'                      strand = sample(c("+" ,"-"), 5, replace = T),
+#'                      strand = sample(c("+" ,"-"), 5, replace = TRUE),
 #'                      length = (end - start )+ 1 )
 #'
 #' tt %<>% dplyr::mutate(sample_1 = sample(c(1:100),5)*10 ,
@@ -104,7 +104,7 @@ normalise_counts <- function(x, .vars = NULL ,method = "TPM"){
   mandatory_cols <- c("Gene_ID", "Chr", "Start", "End", "Strand", "Length") %>% tolower()
 
   if(!all(mandatory_cols %in% x_colnames)){
-    i <- which(mandatory_cols %in% x_colnames == F)
+    i <- which(mandatory_cols %in% x_colnames == FALSE)
     cols_not_present <- mandatory_cols %>% .[i] %>% stringr::str_flatten(collapse = ",")
     cli::cli_abort("Column{?s}  {.emph {cli::col_red({cols_not_present})}} {?is/are} not present in the x.")
   }
@@ -116,7 +116,7 @@ normalise_counts <- function(x, .vars = NULL ,method = "TPM"){
   .vars_quot = rlang::enquo(.vars)
   # check presence of .vars in x
   if(!all(.vars %in% x_colnames)){
-    i <- which(.vars %in% x_colnames == F)
+    i <- which(.vars %in% x_colnames == FALSE)
     cols_not_present <- .vars %>% .[i] %>% stringr::str_flatten(collapse = ",")
     cli::cli_abort("Column{?s}  {.emph {cli::col_red({cols_not_present})}} {?is/are} not present in the x.")
   }
@@ -278,7 +278,7 @@ get_star_align_log_summary <- function(log_file){
 #' @examples
 #' \dontrun{
 #' set.seed(123)
-#' x <- list(A = sample(1:5, 10, replace = T ) , B = sample(1:5, 10, replace = T ) , c = sample(1:10, 10, replace = T))
+#' x <- list(A = sample(1:5, 10, replace = TRUE) , B = sample(1:5, 10, replace = TRUE) , c = sample(1:10, 10, replace = TRUE))
 #' us <- UpSetR::upset(UpSetR::fromList(x))
 #' get_upset_intersects(x , us )
 #'
@@ -338,11 +338,11 @@ get_upset_intersects <- function(upset_data, upset_plot){
 #' \dontrun{
 #' a <- tibble::tibble(x = 1:5, y = sample(letters[1:5]))
 #' a  %>% named_group_split(y)
-#' a  %>% named_group_split(y , keep_order = F)
+#' a  %>% named_group_split(y , keep_order = FALSE)
 #' }
 #'
 #'
-named_group_split <- function(.tbl, ..., keep_order = T) {
+named_group_split <- function(.tbl, ..., keep_order = TRUE) {
 
   grouped <- dplyr::group_by(.tbl, ...)
   names <- rlang::inject(paste(!!!dplyr::group_keys(grouped), sep = " / "))

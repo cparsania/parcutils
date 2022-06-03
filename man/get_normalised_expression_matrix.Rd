@@ -51,5 +51,5 @@ get_normalised_expression_matrix(x = res) \%>\% print()
 
 # summarise replicates by median
 
-get_normalised_expression_matrix(x = res ,summarise_replicates = T, summarise_method = "median") \%>\% print()
+get_normalised_expression_matrix(x = res ,summarise_replicates = TRUE, summarise_method = "median") \%>\% print()
 }
