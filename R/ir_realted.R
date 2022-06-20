@@ -441,7 +441,7 @@ run_deseq_analysis_ir <- function(x,
                  dplyr::pull(intron_id)) %>%
     tibble::enframe(name = "samples", value ="intron_id") %>%
     tidyr::unnest(cols = c(intron_id)) %>%
-    dplyr::left_join(ir_sample_info, by = "samples") %>%
+    dplyr::left_join(sample_info, by = "samples") %>%
     dplyr::group_by(groups, intron_id) %>%
     dplyr::summarise( n = dplyr::n()) %>%
     dplyr::ungroup() %>%
