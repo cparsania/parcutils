@@ -14,6 +14,7 @@ get_gene_expression_heatmap(
   color_default = TRUE,
   col = NULL,
   convert_zscore = TRUE,
+  convert_rowmeans = FALSE,
   summarise_replicates = TRUE,
   summarise_method = "median",
   show_row_names = FALSE,
@@ -59,6 +60,9 @@ get_fold_change_heatmap(
 \item{col}{an output of \code{\link[circlize:colorRamp2]{circlize::colorRamp2()}}, default NULL.}
 
 \item{convert_zscore}{logical, default \code{TRUE}, indicating whether to convert gene expression values in to the z-score or not. see details.}
+
+\item{convert_rowmeans}{logical, default \code{FALSE}, indicating whether to subtract gene expression values from mean of the each row.
+It is recommended to use \code{convert_log2 = TRUE} while using \code{convert_rowmeans = TRUE}.}
 
 \item{summarise_replicates}{logical, default \code{TRUE}, indicating whether to summarise values for each gene across replicates.}
 

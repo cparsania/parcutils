@@ -820,6 +820,8 @@ plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_d
 #' @param color_default logical, default \code{TRUE}, indicating whether to use default heatmap colors.
 #' @param col an output of [circlize::colorRamp2()], default NULL.
 #' @param convert_zscore logical, default \code{TRUE}, indicating whether to convert gene expression values in to the z-score or not. see details.
+#' @param convert_rowmeans logical, default \code{FALSE}, indicating whether to subtract gene expression values from mean of the each row.
+#' It is recommended to use \code{convert_log2 = TRUE} while using \code{convert_rowmeans = TRUE}.
 #' @param summarise_replicates logical, default \code{TRUE}, indicating whether to summarise values for each gene across replicates.
 #' @param summarise_method a character string, either mean or median.
 #' @param show_row_names logical, default \code{FALSE}, indicating whether to show row names in the heatmap or not.
@@ -907,6 +909,7 @@ get_gene_expression_heatmap <- function(x,
                                         color_default = TRUE,
                                         col = NULL,
                                         convert_zscore = TRUE,
+                                        convert_rowmeans = FALSE,
                                         summarise_replicates = TRUE,
                                         summarise_method = "median",
 
@@ -969,6 +972,14 @@ get_gene_expression_heatmap <- function(x,
 
   stopifnot("convert_zscore must be a logical." = is.logical(convert_zscore))
 
+  # validate convert_rowmeans
+
+  stopifnot("convert_rowmeans must be a logical." = is.logical(convert_rowmeans))
+
+  # validate convert_zscore and convert_rowmeans both cannot be TRUE same time.
+
+  stopifnot("convert_zscore and convert_rowmeans both cannot be TRUE" = !all(convert_zscore , convert_rowmeans))
+
   ## prepare matrix for heatmap
   all_expr_mat <-  .get_all_named_expression_matrix(x)
 
@@ -1011,7 +1022,19 @@ get_gene_expression_heatmap <- function(x,
   # convert z score
 
   if(convert_zscore){
-    expr_mat_wide <- expr_mat_wide %>% TidyWrappers::tbl_convert_row_zscore()
+    expr_mat_wide <- expr_mat_wide %>%
+      TidyWrappers::tbl_convert_row_zscore()
+  }
+
+  # subtract each value from row means.
+
+  if(convert_rowmeans){
+    rowmeans  <- expr_mat_wide %>%
+      dplyr::select_if(is.numeric) %>% rowMeans()
+
+    expr_mat_wide <- expr_mat_wide %>%
+      dplyr::mutate_if(is.numeric, ~ . - rowmeans)
+
   }
 
   # filter by user supplied genes
