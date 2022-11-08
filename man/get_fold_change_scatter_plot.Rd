@@ -13,6 +13,8 @@ get_fold_change_scatter_plot(
   color_label = "both",
   col_up = "#a40000",
   col_down = "#16317d",
+  show_diagonal_line = TRUE,
+  show_correlation = TRUE,
   repair_genes = TRUE
 )
 }
@@ -32,6 +34,10 @@ get_fold_change_scatter_plot(
 \item{col_up}{a character string, default \verb{#a40000}, a valid color code for common up regulated genes.}
 
 \item{col_down}{a character string, default \verb{#16317d}, a valid color code for common down regulated genes.}
+
+\item{show_diagonal_line}{a logical, default TRUE, denoting whether to show a diagonal line.}
+
+\item{show_correlation}{a logical, default TRUE, denoting whether to show Pearson correlation value.}
 
 \item{repair_genes}{a logical, default \code{TRUE}, denotes whether to repair gene names or not,
 If \code{TRUE} string prior to \code{:} will be removed from the gene names.}

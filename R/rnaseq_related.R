@@ -1261,6 +1261,8 @@ get_heatmap_data <- function(h){
 #' @param col_up a character string, default `#a40000`, a valid color code for common up regulated genes.
 #' @param col_down a character string, default `#16317d`, a valid color code for common down regulated genes.
 #' @param color_label a character string one of the "both", #both_down, or "both_up". Default `both`.
+#' @param show_diagonal_line a logical, default TRUE, denoting whether to show a diagonal line.
+#' @param show_correlation a logical, default TRUE, denoting whether to show Pearson correlation value.
 #' @param repair_genes a logical, default `TRUE`, denotes whether to repair gene names or not,
 #' If `TRUE` string prior to `:` will be removed from the gene names.
 #'
@@ -1305,6 +1307,8 @@ get_fold_change_scatter_plot <- function(x,
                                          color_label = "both", #both_down, "both_up"
                                          col_up = "#a40000",
                                          col_down = "#16317d",
+                                         show_diagonal_line = TRUE,
+                                         show_correlation = TRUE,
                                          repair_genes = TRUE
 ){
 
@@ -1420,12 +1424,24 @@ get_fold_change_scatter_plot <- function(x,
 
   }
 
-
   # add labels
   if(!is.null(labels)){
     gp <- gp + ggrepel::geom_text_repel(data =  data_for_labels,
                                         aes(label = !!rlang::sym(fc_data_col_names[1])),
                                         size = label_size)
+  }
+
+  # add a diagonal line
+  if(show_diagonal_line){
+    gp <- gp + ggplot2::geom_abline()
+  }
+
+  # show pearson correlation
+  if(show_correlation){
+    var1 <- for_plot[sample_comparisons[1]]
+    var2 <- for_plot[sample_comparisons[2]]
+    cor_value <- cor(var1, var2, method = "pearson") %>% round(2)
+    gp <- gp + ggtitle(glue::glue("Pearson correlation: {cor_value}"))
   }
 
   # add suffix 'Log2FC' to axis labels
