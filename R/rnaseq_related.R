@@ -1255,7 +1255,7 @@ get_heatmap_data <- function(h){
 #'
 #' @param x an object of class parcutils.
 #' @param sample_comparisons a character vector of length 2 denoting sample comparisons to plot.
-#' @param labels a character vector of genes to label. Default NULL, show all genes.
+#' @param labels a character vector of genes to label. Default NULL, no labels.
 #' @param point_size a numeric, default 2, denoting size of the points.
 #' @param label_size a numeric, default 2, denoting size of the labels.
 #' @param col_up a character string, default `#a40000`, a valid color code for common up regulated genes.
@@ -1407,23 +1407,27 @@ get_fold_change_scatter_plot <- function(x,
   if(!is.null(labels)){
     data_for_labels  <- for_plot %>%
       dplyr::filter(!!rlang::sym(fc_data_col_names[1]) %in% labels)
-  } else{
-    data_for_labels <- for_plot %>%
-      dplyr::filter(group != "other")
+
+    # repair genes
+    if(repair_genes){
+      data_for_labels %<>%
+        dplyr::mutate(gene_id = stringr::str_replace(string = !!rlang::sym(fc_data_col_names[1]),
+                                                     pattern = ".*:",
+                                                     replacement = ""
+        ))
+    }
+
+
   }
 
-  # repair genes
-  if(repair_genes){
-    data_for_labels %<>%
-      dplyr::mutate(gene_id = stringr::str_replace(string = !!rlang::sym(fc_data_col_names[1]),
-                                                   pattern = ".*:",
-                                                   replacement = ""
-      ))
+
+  # add labels
+  if(!is.null(labels)){
+    gp <- gp + ggrepel::geom_text_repel(data =  data_for_labels,
+                                        aes(label = !!rlang::sym(fc_data_col_names[1])),
+                                        size = label_size)
   }
 
-  gp <- gp + ggrepel::geom_text_repel(data =  data_for_labels,
-                                      aes(label = !!rlang::sym(fc_data_col_names[1])),
-                                      size = label_size)
   # add suffix 'Log2FC' to axis labels
   suffix <- "Log2FC"
   gp$labels$x <- glue::glue("{suffix}\n({gp$labels$x})")

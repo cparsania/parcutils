@@ -21,7 +21,7 @@ get_fold_change_scatter_plot(
 
 \item{sample_comparisons}{a character vector of length 2 denoting sample comparisons to plot.}
 
-\item{labels}{a character vector of genes to label. Default NULL, show all genes.}
+\item{labels}{a character vector of genes to label. Default NULL, no labels.}
 
 \item{point_size}{a numeric, default 2, denoting size of the points.}
 
