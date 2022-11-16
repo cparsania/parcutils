@@ -20,7 +20,7 @@ spliceWiz_plot_event_counts <- function(x){
     dplyr::mutate(EventType = forcats::fct_reorder(EventType, -n)) %>%
     ggplot(aes(x = EventType, y = n)) +
     geom_bar(position ="dodge", stat = 'identity') +
-    geom_text(aes(label=n), inherit.aes = T, position = position_dodge(width = 0.9),size = 4, vjust=-0.25) +
+    geom_text(aes(label=n), inherit.aes = TRUE, position = position_dodge(width = 0.9),size = 4, vjust=-0.25) +
     ggplot2::theme_bw() +
     ggplot2::theme(text = ggplot2::element_text(size = 15)) +
     ggplot2::ylab("Counts") +

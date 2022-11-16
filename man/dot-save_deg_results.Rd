@@ -11,9 +11,6 @@
 
 \item{file}{a file path.}
 }
-\value{
-
-}
 \description{
 Save DEG results in an excel file.
 }

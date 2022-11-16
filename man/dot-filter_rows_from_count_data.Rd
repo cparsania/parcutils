@@ -23,9 +23,6 @@
 
 \item{min_replicates}{a numeric value}
 }
-\value{
-
-}
 \description{
 Filter count data using user thresholds for the function \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}
 }

@@ -47,9 +47,6 @@ Same value will be passed to argument \code{min_replicates} in \code{\link[=run_
 
 \item{regul_based_upon}{internally passed to \code{\link[=run_deseq_analysis]{run_deseq_analysis()}}.}
 }
-\value{
-
-}
 \description{
 This function performs DEseq2 analysis for retained introns which are identified
 by IRFinder-S program. It mainly requires two inputs - 1) output file(s) from IRFinder-S program,

@@ -46,9 +46,6 @@ When set to NULL all genes from x will be used as background genes.}
 
 \item{color_terms_by}{a character string, default \code{"p.adjust"}, denoting a variable to color gene ontology terms.}
 }
-\value{
-
-}
 \description{
 Perform gene ontology analysis and visualization for DE genesets in one go.
 }

@@ -9,7 +9,7 @@ sort_geom_box(x, decreasing = TRUE)
 \arguments{
 \item{x}{ggplot2 with atleast one layer of geom_boxplot}
 
-\item{decreasing}{logical, default T, indicating whether the box are arraged in increasing or decreasing order.}
+\item{decreasing}{logical, default TRUE, indicating whether the box are arraged in increasing or decreasing order.}
 }
 \value{
 a ggplot.

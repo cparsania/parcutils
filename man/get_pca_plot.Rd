@@ -48,6 +48,6 @@ res <- run_deseq_analysis(counts = count_data ,
 
 # label replicates
 
-get_pca_plot(x = res, label_replicates =  T)
+get_pca_plot(x = res, label_replicates =  TRUE)
 
 }

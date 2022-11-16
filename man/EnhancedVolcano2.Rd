@@ -31,7 +31,7 @@ EnhancedVolcano2(
 
 \item{FCcutoff}{\code{FCcutoff} \code{\link[EnhancedVolcano:EnhancedVolcano]{EnhancedVolcano::EnhancedVolcano()}}}
 
-\item{col_by_regul}{lgl, default T, whether to color variable by gene regulation - Up, Down, Other}
+\item{col_by_regul}{lgl, default TRUE, whether to color variable by gene regulation - Up, Down, Other}
 
 \item{col_up}{a character string denoting color for up genes, works only when col_by_regul = \code{TRUE}.}
 

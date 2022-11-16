@@ -2,7 +2,7 @@
 #' Sort order of box obtained from geom_boxplot
 #'
 #' @param x ggplot2 with atleast one layer of geom_boxplot
-#' @param decreasing logical, default T, indicating whether the box are arraged in increasing or decreasing order.
+#' @param decreasing logical, default TRUE, indicating whether the box are arraged in increasing or decreasing order.
 #'
 #' @return a ggplot.
 #' @export
@@ -94,7 +94,7 @@ sort_geom_box <- function(x, decreasing = TRUE){
 #' @param y \code{y} [EnhancedVolcano::EnhancedVolcano()]
 #' @param pCutoff \code{pCutoff} [EnhancedVolcano::EnhancedVolcano()]
 #' @param FCcutoff \code{FCcutoff} [EnhancedVolcano::EnhancedVolcano()]
-#' @param col_by_regul lgl, default T, whether to color variable by gene regulation - Up, Down, Other
+#' @param col_by_regul lgl, default TRUE, whether to color variable by gene regulation - Up, Down, Other
 #' @param ... Other parameters pass to [EnhancedVolcano::EnhancedVolcano()]
 #' @param col_up a character string denoting color for up genes, works only when col_by_regul = `TRUE`.
 #' @param col_down  a character string denoting color for down genes, works only when col_by_regul = `TRUE`.
@@ -320,7 +320,7 @@ plot_regions_relative_to_reference <- function(query , reference){
 #'
 #' # label replicates
 #'
-#' get_pca_plot(x = res, label_replicates =  T)
+#' get_pca_plot(x = res, label_replicates =  TRUE)
 #'
 get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10,
                          label_replicates = FALSE){
@@ -1384,7 +1384,7 @@ get_go_emap_plot <- function(x,
       ont        = ont_type,
       minGSSize = min_geneset_size,
       maxGSSize = max_geneset_size,
-      readable = T,
+      readable = TRUE,
       pAdjustMethod = p_adj_method,
       pvalueCutoff  = pval_cutoff,
       qvalueCutoff  = qval_cutoff)

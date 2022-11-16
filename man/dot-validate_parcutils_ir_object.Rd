@@ -9,9 +9,6 @@
 \arguments{
 \item{x}{}
 }
-\value{
-
-}
 \description{
 Validate parcutils_ir object
 }

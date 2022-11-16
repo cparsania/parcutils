@@ -26,9 +26,6 @@ For e.g.  for \code{up} regulated genes from the comparison treatment_VS_control
 \item{width}{plot width in inch, default 10.
 \code{treatment_VS_control_up_go_plot.pdf}}
 }
-\value{
-
-}
 \description{
 Save GO plot(s) in .pdf files.
 }

@@ -30,9 +30,6 @@ select_cols_irfinderS_output(
 \item warnings
 }}
 }
-\value{
-
-}
 \description{
 Subset columns from IRfinder-S output
 }

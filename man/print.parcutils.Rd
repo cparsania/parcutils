@@ -9,9 +9,6 @@
 \arguments{
 \item{object}{}
 }
-\value{
-
-}
 \description{
 S3 print for object \code{parcutils}
 }

@@ -14,9 +14,6 @@
 
 \item{bs_genome_object}{an object of class BSgenome, default \code{BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38}}
 }
-\value{
-
-}
 \description{
 Map metadata (GC, length and seq) to GRanges object
 }
