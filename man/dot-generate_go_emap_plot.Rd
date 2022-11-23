@@ -13,6 +13,9 @@
 
 \item{color_terms_by}{}
 }
+\value{
+a list of GO plots.
+}
 \description{
 Generate a list of GO EMAP plot.
 }

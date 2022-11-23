@@ -111,7 +111,8 @@
 #' @export
 #' @keywords internal
 #' @examples
-#'
+#' \dontrun{
+#' }
 .piarwise_upset <- function(x, sample_comparison , color_up = "#b30000", color_down = "#006d2c",... ){
 
   # validate sample_comparison
@@ -287,20 +288,24 @@
 #' @param gtf_file  // TO DO
 #' @param feature_type // TO DO
 #' @param feature_biotype // TO DO
-#' @param column_gene_id // TO DO
-#' @param column_feature_type // TO DO
-#' @param column_feature_biotype // TO DO
+#' @param var_gene_id // TO DO
+#' @param var_feature_type // TO DO
+#' @param var_feature_biotype // TO DO
+#' @param var_gene_name // TO DO, to be implement yet.
 #'
 #' @return // TO DO
 #' @keywords internal
 .filter_gff <- function(gtf_file ,
+
                        feature_type = "gene" ,
                        feature_biotype = "protein_coding",
-                       column_gene_id = "gene_id",
-                       column_feature_type = "type" ,
-                       column_feature_biotype = "gene_biotype"){
 
-  # gtf_file = gtf_file
+                       var_gene_name = "gene_name",
+                       var_gene_id = "gene_id",
+                       var_feature_type = "type" ,
+                       var_feature_biotype = "gene_biotype"){
+
+  # gtf_file = gff
   # feature_type = feature_type
   # feature_bio_type = feature_bio_type
 
@@ -430,7 +435,7 @@
 #' @param n_terms number of terms to show.
 #' @param color_terms_by
 #'
-#' @return
+#' @return a list of GO plots.
 #' @export
 #'
 #' @keywords internal
@@ -503,7 +508,7 @@
 #' @param x an object of class GRanges
 #' @param bs_genome_object an object of class BSgenome, default \code{BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38}
 #'
-#' @return
+#' @return a dataframe.
 #' @export
 #'
 #' @keywords internal
@@ -681,7 +686,7 @@
 #'
 #' @param x an object of class 'parcutils'.
 #'
-#' @return
+#' @return an object of class 'parcutils_ir'
 #' @export
 #' @keywords internal
 .prepare_parcutils_ir <-  function(x){
@@ -710,7 +715,7 @@
 #' @param x an object of class parcutils.
 #' @param file a file path.
 #'
-#' @return
+#' @return output of \code{writexl::write_xlsx()}
 #' @export
 #' @keywords internal
 .save_deg_results <- function(x, file){
@@ -1160,3 +1165,64 @@
   }
   return(gp)
 }
+
+
+
+
+#' Get the gene names stored in the parcutils object
+#'
+#' @param x an object of class parcutils
+#' @param query_genes a character vector denoting genes for which corresponding gene names to be derived from the parcutils object.
+#'
+#' @return a dataframe containing two columns - 1) queried genes and 2) gene names from the object parcutils.
+#' @export
+#'
+#' @examples
+#'
+#' res = .get_parcutils_object_example()
+#' .get_parcutils_obj_gene_names(x = res, query_genes= c("LSS", "GOLGA8S", "FXYD5", "CDC34"))
+#'
+.get_parcutils_obj_gene_names <- function(x, query_genes){
+
+
+  lookup_table <- parcutils:::.get_all_expressed_genes(x = x) %>%
+    names()
+
+  names(query_genes) <- query_genes
+
+  purrr::map(query_genes , ~which(stringr::str_detect(pattern = ..1,string = lookup_table))) %>%
+    tibble::enframe(value = "index") %>%
+    tidyr::unnest(keep_empty = T) %>%
+    dplyr::mutate(full_name = lookup_table[index]) %>%
+    dplyr::select(-index)
+
+
+}
+
+
+#' Obtain an example object of the class parcutils
+#'
+#' @return an object of class \code{parcutils}
+#' @export
+#'
+#' @keywords internal
+.get_parcutils_object_example <- function(){
+  count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+  count_data <- readr::read_delim(count_file, delim = "\t",show_col_types = FALSE)
+
+  sample_info <- count_data %>% colnames() %>% .[-1]  %>%
+    tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
+
+
+  res <- run_deseq_analysis(counts = count_data ,
+                            sample_info = sample_info,
+                            column_geneid = "gene_id" ,
+                            cutoff_lfc = 1 ,
+                            cutoff_pval = 0.05,
+                            group_numerator = c("treatment1", "treatment2") ,
+                            group_denominator = c("control"))
+
+  return(res)
+}
+
+

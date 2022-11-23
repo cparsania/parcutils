@@ -8,9 +8,10 @@
   gtf_file,
   feature_type = "gene",
   feature_biotype = "protein_coding",
-  column_gene_id = "gene_id",
-  column_feature_type = "type",
-  column_feature_biotype = "gene_biotype"
+  var_gene_name = "gene_name",
+  var_gene_id = "gene_id",
+  var_feature_type = "type",
+  var_feature_biotype = "gene_biotype"
 )
 }
 \arguments{
@@ -20,11 +21,13 @@
 
 \item{feature_biotype}{// TO DO}
 
-\item{column_gene_id}{// TO DO}
+\item{var_gene_name}{// TO DO, to be implement yet.}
 
-\item{column_feature_type}{// TO DO}
+\item{var_gene_id}{// TO DO}
 
-\item{column_feature_biotype}{// TO DO}
+\item{var_feature_type}{// TO DO}
+
+\item{var_feature_biotype}{// TO DO}
 }
 \value{
 // TO DO

@@ -11,6 +11,9 @@
 
 \item{file}{a file path.}
 }
+\value{
+output of \code{writexl::write_xlsx()}
+}
 \description{
 Save DEG results in an excel file.
 }

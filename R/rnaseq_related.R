@@ -1453,6 +1453,42 @@ get_fold_change_scatter_plot <- function(x,
 }
 
 
+# # filter gene matrix by gene_biotype
+#
+# filter_feature_table_by_gene_biotype <- function(x,
+#                                                  gff,
+#                                                  gene_biotype = "protein_coding",
+#                                                  var_gene_id = "gene_id",
+#                                                  var_gene_name = "gene_name"){
+#
+#   count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
+#
+#   x <- readr::read_delim(count_file, delim = "\t",show_col_types = FALSE)
+#
+#   x <- x  %>% dplyr::mutate(gene_id = stringr::str_replace(gene_id,
+#                                                       pattern = ":.*",
+#                                                       replacement  = ""))
+#   gff <- system.file("extdata","Homo_sapiens.GRCh38.101.gtf.gz" ,
+#                      package = "parcutils")
+#
+#   var_gene_id  <- rlang::sym(var_gene_id)
+#   var_gene_name  <- rlang::sym(var_gene_name)
+#
+#   gff_filt <- rtracklayer::readGFF(gff) %>%
+#     dplyr::select()
+#     tibble::as_tibble() %>%
+#     dplyr::filter(type == "gene" & gene_biotype == !!gene_biotype)
+#
+#     gene_table  <- gff_filt %>%
+#       dplyr::select(!!var_gene_id, !!var_gene_name) %>%
+#         dplyr::distinct()
+#
+#
+#
+#
+# }
+
+
 
 
 

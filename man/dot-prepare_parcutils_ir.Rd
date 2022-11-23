@@ -9,6 +9,9 @@
 \arguments{
 \item{x}{an object of class 'parcutils'.}
 }
+\value{
+an object of class 'parcutils_ir'
+}
 \description{
 Prepare object of parcutils_ir from the object of parcutils
 }

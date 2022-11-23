@@ -397,7 +397,7 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10,
   x_pc = rlang::quo(PC1)
   y_pc = rlang::quo(PC2)
 
-  # pca plot  ----
+  # pca plot
 
   pca_plot <- pr_comps_tbl %>%
     ggplot2::ggplot(ggplot2::aes(x = !!x_pc, y = !!y_pc)) +
@@ -836,29 +836,19 @@ get_star_align_log_summary_plot <- function(x,is_paired_data = TRUE,
 #' @param col_up a character string, default #a40000, denoting valid a color name for "Up" regulated genes.
 #' @param col_down a character string, default #16317d, denoting valid a color name "Down" regulated genes.
 #' @param font_size a numeric, default 12, denoting font size in the plot.
+#' @param show_counts a logical, default \code{TRUE} denoting whether to show counts on each bar.
 #'
 #' @return a ggplot
 #' @export
 #'
 #' @examples
-#' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
-#' count_data <- readr::read_delim(count_file, delim = "\t")
-#'
-#'sample_info <- count_data %>% colnames() %>% .[-1]  %>%
-#'  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
-#'
-#'
-#'res <- run_deseq_analysis(counts = count_data ,
-#'                          sample_info = sample_info,
-#'                          column_geneid = "gene_id" ,
-#'                          group_numerator = c("treatment1", "treatment2") ,
-#'                          group_denominator = c("control"))
-#'
-#'get_diff_gene_count_barplot(res)
+#' res = .get_parcutils_object()
+#' get_diff_gene_count_barplot(res, font_size = 15)
 get_diff_gene_count_barplot <- function(x,
                                         col_up="#a40000",
                                         col_down="#16317d",
-                                        font_size = 12){
+                                        font_size = 12,
+                                        show_counts = TRUE){
 
   .validate_parcutils_obj(x)
 
@@ -878,6 +868,13 @@ get_diff_gene_count_barplot <- function(x,
     ggplot2::xlab("Regulation") +
     ggplot2::ylab("Counts") +
     ggplot2::guides(fill =  ggplot2::guide_legend("Regulation"))
+
+  if(show_counts){
+    gp <- gp + ggplot2::geom_text(ggplot2::aes(label = n),
+                                  inherit.aes = T,
+              position = position_dodge(width = 0.9),
+              size = font_size/3, vjust = 0.05, col = "black")
+  }
 
   return(gp)
 

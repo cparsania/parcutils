@@ -8,7 +8,8 @@ get_diff_gene_count_barplot(
   x,
   col_up = "#a40000",
   col_down = "#16317d",
-  font_size = 12
+  font_size = 12,
+  show_counts = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ get_diff_gene_count_barplot(
 \item{col_down}{a character string, default #16317d, denoting valid a color name "Down" regulated genes.}
 
 \item{font_size}{a numeric, default 12, denoting font size in the plot.}
+
+\item{show_counts}{a logical, default \code{TRUE} denoting whether to show counts on each bar.}
 }
 \value{
 a ggplot
@@ -27,18 +30,6 @@ a ggplot
 Generate a barplot of DEG counts.
 }
 \examples{
-count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
-count_data <- readr::read_delim(count_file, delim = "\t")
-
-sample_info <- count_data \%>\% colnames() \%>\% .[-1]  \%>\%
- tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2"), each = 3) )
-
-
-res <- run_deseq_analysis(counts = count_data ,
-                         sample_info = sample_info,
-                         column_geneid = "gene_id" ,
-                         group_numerator = c("treatment1", "treatment2") ,
-                         group_denominator = c("control"))
-
-get_diff_gene_count_barplot(res)
+res = .get_parcutils_object()
+get_diff_gene_count_barplot(res, font_size = 15)
 }
