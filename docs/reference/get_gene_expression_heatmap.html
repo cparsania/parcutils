@@ -81,94 +81,139 @@ which then can be used with other functions of the <a href="https://jokergoo.git
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">samples</span>,
-  <span class="va">genes</span>,
-  repair_genes <span class="op">=</span> <span class="cn">FALSE</span>,
-  convert_log2 <span class="op">=</span> <span class="cn">FALSE</span>,
-  color_default <span class="op">=</span> <span class="cn">TRUE</span>,
-  col <span class="op">=</span> <span class="cn">NULL</span>,
-  convert_zscore <span class="op">=</span> <span class="cn">TRUE</span>,
-  summarise_replicates <span class="op">=</span> <span class="cn">TRUE</span>,
-  summarise_method <span class="op">=</span> <span class="st">"median"</span>,
-  show_row_names <span class="op">=</span> <span class="cn">FALSE</span>,
-  cluster_rows <span class="op">=</span> <span class="cn">TRUE</span>,
-  show_row_dend <span class="op">=</span> <span class="cn">TRUE</span>,
-  row_names_font_size <span class="op">=</span> <span class="fl">10</span>,
-  show_column_names <span class="op">=</span> <span class="cn">TRUE</span>,
-  cluster_columns <span class="op">=</span> <span class="cn">TRUE</span>,
-  show_heatmap_legend <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">get_fold_change_heatmap</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">sample_comparisons</span>,
-  <span class="va">genes</span>,
-  repair_genes <span class="op">=</span> <span class="cn">FALSE</span>,
-  color_default <span class="op">=</span> <span class="cn">TRUE</span>,
-  col <span class="op">=</span> <span class="cn">NULL</span>,
-  show_row_names <span class="op">=</span> <span class="cn">FALSE</span>,
-  cluster_rows <span class="op">=</span> <span class="cn">TRUE</span>,
-  show_row_dend <span class="op">=</span> <span class="cn">TRUE</span>,
-  row_names_font_size <span class="op">=</span> <span class="fl">10</span>,
-  show_column_names <span class="op">=</span> <span class="cn">TRUE</span>,
-  cluster_columns <span class="op">=</span> <span class="cn">TRUE</span>,
-  show_heatmap_legend <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">samples</span>,</span>
+<span>  <span class="va">genes</span>,</span>
+<span>  repair_genes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  convert_log2 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  color_default <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  convert_zscore <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  convert_rowmeans <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  summarise_replicates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  summarise_method <span class="op">=</span> <span class="st">"median"</span>,</span>
+<span>  show_row_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  cluster_rows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_row_dend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  row_names_font_size <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  show_column_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cluster_columns <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_heatmap_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_fold_change_heatmap</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">sample_comparisons</span>,</span>
+<span>  <span class="va">genes</span>,</span>
+<span>  repair_genes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  color_default <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_row_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  cluster_rows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_row_dend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  row_names_font_size <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  show_column_names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cluster_columns <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_heatmap_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
 <dd><p>an abject of the class <code>parcutils</code>. This is can be created using the function <code><a href="run_deseq_analysis.html">run_deseq_analysis()</a></code>.</p></dd>
+
+
 <dt>samples</dt>
 <dd><p>a character vector denoting sample names to use in the heatmap.</p></dd>
+
+
 <dt>genes</dt>
 <dd><p>a character vector denoting genes to use in the heatmap.</p></dd>
+
+
 <dt>repair_genes</dt>
 <dd><p>logical, default <code>FALSE</code>, indicating whether to repair gene names. See details.</p></dd>
+
+
 <dt>convert_log2</dt>
 <dd><p>logical, default <code>FALSE</code>, indicating whether to log2 transform gene expression values.</p></dd>
+
+
 <dt>color_default</dt>
 <dd><p>logical, default <code>TRUE</code>, indicating whether to use default heatmap colors.</p></dd>
+
+
 <dt>col</dt>
 <dd><p>an output of <code><a href="https://rdrr.io/pkg/circlize/man/colorRamp2.html" class="external-link">circlize::colorRamp2()</a></code>, default NULL.</p></dd>
+
+
 <dt>convert_zscore</dt>
 <dd><p>logical, default <code>TRUE</code>, indicating whether to convert gene expression values in to the z-score or not. see details.</p></dd>
+
+
+<dt>convert_rowmeans</dt>
+<dd><p>logical, default <code>FALSE</code>, indicating whether to subtract gene expression values from mean of the each row.
+It is recommended to use <code>convert_log2 = TRUE</code> while using <code>convert_rowmeans = TRUE</code>.</p></dd>
+
+
 <dt>summarise_replicates</dt>
 <dd><p>logical, default <code>TRUE</code>, indicating whether to summarise values for each gene across replicates.</p></dd>
+
+
 <dt>summarise_method</dt>
 <dd><p>a character string, either mean or median.</p></dd>
+
+
 <dt>show_row_names</dt>
 <dd><p>logical, default <code>FALSE</code>, indicating whether to show row names in the heatmap or not.
 Internally this argument is passed to the function <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">ComplexHeatmap::Heatmap()</a></code>.</p></dd>
+
+
 <dt>cluster_rows</dt>
 <dd><p>logical, default <code>TRUE</code>, indicating whether to cluster rows in the heatmap or not.
 Internally this argument is passed to the function <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">ComplexHeatmap::Heatmap()</a></code>.</p></dd>
+
+
 <dt>show_row_dend</dt>
 <dd><p>logical, default <code>TRUE</code>, indicating whether to show dendrogram in the heatmap or not.
 Internally this argument is passed to the function <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">ComplexHeatmap::Heatmap()</a></code>.</p></dd>
+
+
 <dt>row_names_font_size</dt>
 <dd><p>a numeric value, default 10, indicating size of row names in the heatmap.</p></dd>
+
+
 <dt>show_column_names</dt>
 <dd><p>logical, default <code>TRUE</code>, indicating whether to show column names in the heatmap or not.
 Internally this argument is passed to the function <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">ComplexHeatmap::Heatmap()</a></code>.</p></dd>
+
+
 <dt>cluster_columns</dt>
 <dd><p>logical, default <code>TRUE</code>, indicating whether to cluster columns in the heatmap or not.
 Internally this argument is passed to the function <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">ComplexHeatmap::Heatmap()</a></code>.</p></dd>
+
+
 <dt>show_heatmap_legend</dt>
 <dd><p>logical, default <code>TRUE</code>, indicating whether to show heatmap legend or not.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Other parameters to be passes to <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">ComplexHeatmap::Heatmap()</a></code>.</p></dd>
+
+
 <dt>sample_comparisons</dt>
 <dd><p>a character vector denoting sample comparisons for which heatmap of log2 fold-change to be plotted.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>an output of the function <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">ComplexHeatmap::Heatmap()</a></code>.</p>
+    
+
+<p>an output of the function <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">ComplexHeatmap::Heatmap()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -182,27 +227,27 @@ with all default parameters.</p></li>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">count_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,<span class="st">"toy_counts.txt"</span> , package <span class="op">=</span> <span class="st">"parcutils"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">count_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_delim</a></span><span class="op">(</span><span class="va">count_file</span>, delim <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">count_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,<span class="st">"toy_counts.txt"</span> , package <span class="op">=</span> <span class="st">"parcutils"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">count_data</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_delim</a></span><span class="op">(</span><span class="va">count_file</span>, delim <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">5000</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">10</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Delimiter:</span> "\t"</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">chr</span> (1): gene_id</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">dbl</span> (9): control_rep1, control_rep2, control_rep3, treat1_rep1, treat1_rep2,...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use <span style="color: #C6C6C6; background-color: #262626;">`spec()`</span> to retrieve the full column specification for this data.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Specify the column types or set <span style="color: #C6C6C6; background-color: #262626;">`show_col_types = FALSE`</span> to quiet this message.</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">sample_info</span> <span class="op">&lt;-</span> <span class="va">count_data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="va">.</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>  <span class="op">%&gt;%</span></span>
-<span class="r-in"> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>samples <span class="op">=</span> <span class="va">.</span> , groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="run_deseq_analysis.html">run_deseq_analysis</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">count_data</span> ,</span>
-<span class="r-in">                         sample_info <span class="op">=</span> <span class="va">sample_info</span>,</span>
-<span class="r-in">                         column_geneid <span class="op">=</span> <span class="st">"gene_id"</span> ,</span>
-<span class="r-in">                         group_numerator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment1"</span>, <span class="st">"treatment2"</span><span class="op">)</span> ,</span>
-<span class="r-in">                         group_denominator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">sample_info</span> <span class="op">&lt;-</span> <span class="va">count_data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="va">.</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>  <span class="op">%&gt;%</span></span></span>
+<span class="r-in"><span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>samples <span class="op">=</span> <span class="va">.</span> , groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="run_deseq_analysis.html">run_deseq_analysis</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">count_data</span> ,</span></span>
+<span class="r-in"><span>                         sample_info <span class="op">=</span> <span class="va">sample_info</span>,</span></span>
+<span class="r-in"><span>                         column_geneid <span class="op">=</span> <span class="st">"gene_id"</span> ,</span></span>
+<span class="r-in"><span>                         group_numerator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment1"</span>, <span class="st">"treatment2"</span><span class="op">)</span> ,</span></span>
+<span class="r-in"><span>                         group_denominator <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Running DESeq2 ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> converting counts to integer mode</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>some variables in design formula are characters, converting to factors</span>
@@ -215,48 +260,48 @@ with all default parameters.</p></li>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Summarizing DEG ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Done.</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">genes</span> <span class="op">=</span> <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="get_genes_by_regulation.html">get_genes_by_regulation</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparison <span class="op">=</span> <span class="st">"treatment2_VS_control"</span> , <span class="st">"both"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>, genes <span class="op">=</span> <span class="va">genes</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">genes</span> <span class="op">=</span> <span class="fu">parcutils</span><span class="fu">::</span><span class="fu"><a href="get_genes_by_regulation.html">get_genes_by_regulation</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparison <span class="op">=</span> <span class="st">"treatment2_VS_control"</span> , <span class="st">"both"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>, genes <span class="op">=</span> <span class="va">genes</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="get_gene_expression_heatmap-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plot raw expression values</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>,</span>
-<span class="r-in">genes <span class="op">=</span> <span class="va">genes</span>, convert_zscore <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plot raw expression values</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>genes <span class="op">=</span> <span class="va">genes</span>, convert_zscore <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="get_gene_expression_heatmap-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plot log2 expression values</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>,</span>
-<span class="r-in">genes <span class="op">=</span> <span class="va">genes</span>, convert_zscore <span class="op">=</span> <span class="cn">FALSE</span>,convert_log2 <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plot log2 expression values</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>genes <span class="op">=</span> <span class="va">genes</span>, convert_zscore <span class="op">=</span> <span class="cn">FALSE</span>,convert_log2 <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="get_gene_expression_heatmap-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plot all replicates</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>,</span>
-<span class="r-in">genes <span class="op">=</span> <span class="va">genes</span>, convert_zscore <span class="op">=</span> <span class="cn">TRUE</span>, summarise_replicates <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plot all replicates</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>genes <span class="op">=</span> <span class="va">genes</span>, convert_zscore <span class="op">=</span> <span class="cn">TRUE</span>, summarise_replicates <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="get_gene_expression_heatmap-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># show gene names</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>,</span>
-<span class="r-in">genes <span class="op">=</span> <span class="va">genes</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, convert_zscore <span class="op">=</span> <span class="cn">TRUE</span>, summarise_replicates <span class="op">=</span> <span class="cn">FALSE</span> , show_row_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># show gene names</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>genes <span class="op">=</span> <span class="va">genes</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, convert_zscore <span class="op">=</span> <span class="cn">TRUE</span>, summarise_replicates <span class="op">=</span> <span class="cn">FALSE</span> , show_row_names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="get_gene_expression_heatmap-5.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># repair gene names</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>,</span>
-<span class="r-in">genes <span class="op">=</span> <span class="va">genes</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, convert_zscore <span class="op">=</span> <span class="cn">TRUE</span>, summarise_replicates <span class="op">=</span> <span class="cn">FALSE</span>, show_row_names <span class="op">=</span> <span class="cn">TRUE</span>, repair_genes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># repair gene names</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">get_gene_expression_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"control"</span> ,<span class="st">"treatment1"</span> , <span class="st">"treatment2"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>genes <span class="op">=</span> <span class="va">genes</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, convert_zscore <span class="op">=</span> <span class="cn">TRUE</span>, summarise_replicates <span class="op">=</span> <span class="cn">FALSE</span>, show_row_names <span class="op">=</span> <span class="cn">TRUE</span>, repair_genes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="get_gene_expression_heatmap-6.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># fold change heatmap</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">get_fold_change_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span> , sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment2_VS_control"</span> ,<span class="st">"treatment1_VS_control"</span><span class="op">)</span> ,</span>
-<span class="r-in">genes <span class="op">=</span> <span class="va">genes</span> , cluster_columns <span class="op">=</span> <span class="cn">FALSE</span> , name <span class="op">=</span> <span class="st">"Log2FC"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># fold change heatmap</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">get_fold_change_heatmap</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span> , sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment2_VS_control"</span> ,<span class="st">"treatment1_VS_control"</span><span class="op">)</span> ,</span></span>
+<span class="r-in"><span>genes <span class="op">=</span> <span class="va">genes</span> , cluster_columns <span class="op">=</span> <span class="cn">FALSE</span> , name <span class="op">=</span> <span class="st">"Log2FC"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="get_gene_expression_heatmap-7.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -268,7 +313,7 @@ with all default parameters.</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
     </footer></div>

@@ -828,7 +828,7 @@ get_star_align_log_summary_plot <- function(x,is_paired_data = TRUE,
 }
 
 
-# plot diff genes counts
+# Plot diff genes counts
 
 #' Generate a barplot of DEG counts.
 #'

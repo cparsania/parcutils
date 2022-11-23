@@ -1182,6 +1182,7 @@
 #' res = .get_parcutils_object_example()
 #' .get_parcutils_obj_gene_names(x = res, query_genes= c("LSS", "GOLGA8S", "FXYD5", "CDC34"))
 #'
+#' @keywords internal
 .get_parcutils_obj_gene_names <- function(x, query_genes){
 
 

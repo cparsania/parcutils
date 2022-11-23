@@ -18,6 +18,7 @@ and visualizing complex RNA-seq studies.
 
 ``` r
 
+
 if(require("devtools") && require("BiocManager")){
   options(repos = BiocManager::repositories() )
   devtools::install_github("cparsania/parcutils")
@@ -35,26 +36,28 @@ if(require("devtools") && require("BiocManager")){
 #### Prepare a count table
 
 ``` r
+
 count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
 
 count_data <- readr::read_delim(count_file, delim = "\t")
 
 count_data 
 #> # A tibble: 5,000 × 10
-#>    gene_id        control_rep1 control_rep2 control_rep3 treat1_rep1 treat1_rep2
-#>    <chr>                 <dbl>        <dbl>        <dbl>       <dbl>       <dbl>
-#>  1 ENSG000001735…            0            0            0           0           0
-#>  2 ENSG000001063…            1            0            2           0           0
-#>  3 ENSG000001311…            2            0            2           0           0
-#>  4 ENSG000001543…          652          690          639         607         453
-#>  5 ENSG000001964…         3372         3631         3188        4644        3168
-#>  6 ENSG000001730…          694          784          829         974         580
-#>  7 ENSG000001405…           87           73           81         100          77
-#>  8 ENSG000001875…            4            4            2           0           5
-#>  9 ENSG000001392…         1374         1789         1564        1933        1459
-#> 10 ENSG000001658…         3639         4533         3921        3879        3500
-#> # … with 4,990 more rows, and 4 more variables: treat1_rep3 <dbl>,
-#> #   treat2_rep1 <dbl>, treat2_rep2 <dbl>, treat2_rep3 <dbl>
+#>    gene_id       contr…¹ contr…² contr…³ treat…⁴ treat…⁵ treat…⁶ treat…⁷ treat…⁸
+#>    <chr>           <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>
+#>  1 ENSG00000173…       0       0       0       0       0       0       0       0
+#>  2 ENSG00000106…       1       0       2       0       0       1       1       1
+#>  3 ENSG00000131…       2       0       2       0       0       1       1       1
+#>  4 ENSG00000154…     652     690     639     607     453     461     809     994
+#>  5 ENSG00000196…    3372    3631    3188    4644    3168    3514    4789    5466
+#>  6 ENSG00000173…     694     784     829     974     580     716     413     545
+#>  7 ENSG00000140…      87      73      81     100      77      72      63      87
+#>  8 ENSG00000187…       4       4       2       0       5       2       1       4
+#>  9 ENSG00000139…    1374    1789    1564    1933    1459    1584     482     729
+#> 10 ENSG00000165…    3639    4533    3921    3879    3500    3439    3324    4683
+#> # … with 4,990 more rows, 1 more variable: treat2_rep3 <dbl>, and abbreviated
+#> #   variable names ¹​control_rep1, ²​control_rep2, ³​control_rep3, ⁴​treat1_rep1,
+#> #   ⁵​treat1_rep2, ⁶​treat1_rep3, ⁷​treat2_rep1, ⁸​treat2_rep2
 ```
 
 #### Group replicates by samples
@@ -62,6 +65,7 @@ count_data
 To run DESeq2, replicates for each sample needs to be grouped.
 
 ``` r
+
 sample_info <- count_data %>% colnames() %>% .[-1]  %>%
  tibble::tibble(samples = . , groups = rep(c("control" ,"treatment1" , "treatment2") , 
                                            each = 3))
@@ -86,6 +90,7 @@ sample_info
 #### Run `DESeq2` for multiple differential gene comparison.
 
 ``` r
+
 res <- parcutils::run_deseq_analysis(counts = count_data ,
                          sample_info = sample_info,
                          column_geneid = "gene_id" ,
@@ -98,6 +103,7 @@ res <- parcutils::run_deseq_analysis(counts = count_data ,
 #### Let’s have a look in to `res`
 
 ``` r
+
 res
 #> ┌────────────────────────────┐
 #> │                            │
@@ -123,6 +129,7 @@ res
 from the column `comp`.
 
 ``` r
+
 res$de_comparisons
 #> [1] "treatment1_VS_control" "treatment2_VS_control"
 ```
@@ -134,6 +141,7 @@ For example, summary of differently expressed genes can be found from
 the column `deg_summmary`
 
 ``` r
+
 res$deg_summmary
 #> $treatment1_VS_control
 #> # A tibble: 3 × 2
@@ -158,26 +166,28 @@ the `res` .
 ## Get data from `res` using helper functions
 
 ``` r
+
 # get normalised gene expression value for all genes across all samples. 
 parcutils::get_normalised_expression_matrix(x = res, 
                                             samples = NULL,
                                             genes = NULL,
                                             summarise_replicates = FALSE)
 #> # A tibble: 4,034 × 10
-#>    gene_id         treat1_rep1 treat1_rep2 treat1_rep3 control_rep1 control_rep2
-#>    <chr>                 <dbl>       <dbl>       <dbl>        <dbl>        <dbl>
-#>  1 ENSG0000015434…      440.        461.       456.           694.        687.  
-#>  2 ENSG0000019641…     3370.       3222.      3478.          3591.       3616.  
-#>  3 ENSG0000017302…      707.        590.       709.           739.        781.  
-#>  4 ENSG0000014059…       72.6        78.3       71.3           92.7        72.7 
-#>  5 ENSG0000013926…     1403.       1484.      1568.          1463.       1781.  
-#>  6 ENSG0000016589…     2815.       3559.      3404.          3875.       4514.  
-#>  7 ENSG0000017945…    12679.      12542.     13690.         13257.      13358.  
-#>  8 ENSG0000018886…      461.        434.       459.           540.        592.  
-#>  9 ENSG0000024915…        0           2.03       0.990          0          11.0 
-#> 10 ENSG0000011085…        2.18        9.15       9.90          11.7         5.97
-#> # … with 4,024 more rows, and 4 more variables: control_rep3 <dbl>,
-#> #   treat2_rep1 <dbl>, treat2_rep2 <dbl>, treat2_rep3 <dbl>
+#>    gene_id       treat…¹ treat…² treat…³ contr…⁴ contr…⁵ contr…⁶ treat…⁷ treat…⁸
+#>    <chr>           <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>
+#>  1 ENSG00000154…  4.40e2  4.61e2 4.56e+2   694.   6.87e2  6.76e2  8.76e2  1.07e3
+#>  2 ENSG00000196…  3.37e3  3.22e3 3.48e+3  3591.   3.62e3  3.37e3  5.19e3  5.87e3
+#>  3 ENSG00000173…  7.07e2  5.90e2 7.09e+2   739.   7.81e2  8.77e2  4.47e2  5.85e2
+#>  4 ENSG00000140…  7.26e1  7.83e1 7.13e+1    92.7  7.27e1  8.57e1  6.82e1  9.34e1
+#>  5 ENSG00000139…  1.40e3  1.48e3 1.57e+3  1463.   1.78e3  1.66e3  5.22e2  7.82e2
+#>  6 ENSG00000165…  2.81e3  3.56e3 3.40e+3  3875.   4.51e3  4.15e3  3.60e3  5.03e3
+#>  7 ENSG00000179…  1.27e4  1.25e4 1.37e+4 13257.   1.34e4  1.40e4  1.08e4  1.51e4
+#>  8 ENSG00000188…  4.61e2  4.34e2 4.59e+2   540.   5.92e2  5.66e2  4.68e2  5.80e2
+#>  9 ENSG00000249…  0       2.03e0 9.90e-1     0    1.10e1  2.12e0  2.17e0  1.07e0
+#> 10 ENSG00000110…  2.18e0  9.15e0 9.90e+0    11.7  5.97e0  1.59e1  5.42e0  4.29e0
+#> # … with 4,024 more rows, 1 more variable: treat2_rep3 <dbl>, and abbreviated
+#> #   variable names ¹​treat1_rep1, ²​treat1_rep2, ³​treat1_rep3, ⁴​control_rep1,
+#> #   ⁵​control_rep2, ⁶​control_rep3, ⁷​treat2_rep1, ⁸​treat2_rep2
 
 # average gene expression values across relicates  
 parcutils::get_normalised_expression_matrix(x = res, 
@@ -298,6 +308,7 @@ parcutils::.group_replicates_by_sample(res)
 ### Visualize pairwise correlation between replicates
 
 ``` r
+
 parcutils::get_pairwise_corr_plot(res, samples =c("control" ,"treatment1"))
 #> $control
 ```
@@ -320,15 +331,35 @@ parcutils::get_corr_heatbox(x = res, show_corr_values = T, cluster_samples = F)
 ### Visualize samples by Principle Component Analysis (PCA)
 
 ``` r
+
 parcutils::get_pca_plot(x = res, 
                         samples  =c("control" ,"treatment1" ,"treatment2"))
 ```
 
 ![](man/figures/README-unnamed-chunk-14-1.png)<!-- -->
 
+### Counts of diff expressed genes
+
+``` r
+
+parcutils::get_diff_gene_count_barplot(x = res)
+```
+
+![](man/figures/README-unnamed-chunk-15-1.png)<!-- -->
+
+change color of the bars
+
+``` r
+
+parcutils::get_diff_gene_count_barplot(x = res, col_down = "green4")
+```
+
+![](man/figures/README-unnamed-chunk-16-1.png)<!-- -->
+
 ### Visualize differential expressed genes by volcano plot
 
 ``` r
+
 
 parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control",
                             col_up = "#a40000",
@@ -337,9 +368,10 @@ parcutils::get_volcano_plot(x = res, sample_comparison = "treatment2_VS_control"
                             col_other = "grey")
 ```
 
-![](man/figures/README-unnamed-chunk-15-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
 
 ``` r
+
 # change cutoffs 
 
 parcutils::get_volcano_plot(x = res, repair_genes = T,
@@ -351,11 +383,12 @@ parcutils::get_volcano_plot(x = res, repair_genes = T,
                             col_other = "grey")
 ```
 
-![](man/figures/README-unnamed-chunk-15-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-17-2.png)<!-- -->
 
 ### Visualize gene expression distribution using box plot
 
 ``` r
+
 # all replicates 
 parcutils::get_gene_expression_box_plot(x = res, 
                                         samples =c("control" ,"treatment1"), 
@@ -363,7 +396,7 @@ parcutils::get_gene_expression_box_plot(x = res,
                                         convert_log2 = T)
 ```
 
-![](man/figures/README-unnamed-chunk-16-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 # summarise  replicates 
@@ -373,11 +406,12 @@ parcutils::get_gene_expression_box_plot(x = res,
                                         convert_log2 = T)
 ```
 
-![](man/figures/README-unnamed-chunk-16-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-18-2.png)<!-- -->
 
 ### Visualize genes by heatmaps
 
 ``` r
+
 
 
 genes_for_hm = parcutils::get_genes_by_regulation(x = res,
@@ -400,9 +434,10 @@ hm1 <- parcutils::get_gene_expression_heatmap(x = res,
 ComplexHeatmap::draw(hm1)
 ```
 
-![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
+
 # Visualise  z-score and show all replicates.
 
 hm2 <- parcutils::get_gene_expression_heatmap(x = res, 
@@ -419,9 +454,10 @@ hm2 <- parcutils::get_gene_expression_heatmap(x = res,
 ComplexHeatmap::draw(hm2)
 ```
 
-![](man/figures/README-unnamed-chunk-17-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-19-2.png)<!-- -->
 
 ``` r
+
 # log2 FC heatamap
 hm3 <- parcutils::get_fold_change_heatmap(x = res, 
                                    sample_comparisons = res$de_comparisons, 
@@ -434,20 +470,22 @@ hm3 <- parcutils::get_fold_change_heatmap(x = res,
 ComplexHeatmap::draw(hm3)
 ```
 
-![](man/figures/README-unnamed-chunk-17-3.png)<!-- -->
+![](man/figures/README-unnamed-chunk-19-3.png)<!-- -->
 
 ### Visualize differential genes overlap between comparison
 
 ``` r
+
 us_plot <- parcutils::plot_deg_upsets(x = res, 
                                       sample_comparisons = res$de_comparisons)
 
 us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_plot %>% print()
 ```
 
-![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
+
 # get list of intersecting genes. 
 
 us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% print()
@@ -466,14 +504,16 @@ us_plot$treatment1_VS_control_AND_treatment2_VS_control$upset_intersects %>% pri
 ### Visualize common DE genes between comparison by scatter plot
 
 ``` r
+
 # show common up and down genes 
 parcutils::get_fold_change_scatter_plot(x = res, 
                                                    sample_comparisons = res$de_comparisons, point_size = 3,label_size = 3,repair_genes = T)
 ```
 
-![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
 
 ``` r
+
 # show common up and down genes 
 parcutils::get_fold_change_scatter_plot(x = res, 
                                         sample_comparisons = res$de_comparisons, 
@@ -482,9 +522,10 @@ parcutils::get_fold_change_scatter_plot(x = res,
                                         repair_genes = T)
 ```
 
-![](man/figures/README-unnamed-chunk-19-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-2.png)<!-- -->
 
 ``` r
+
 # show common up genes
 parcutils::get_fold_change_scatter_plot(x = res, 
                                         sample_comparisons = res$de_comparisons, 
@@ -495,9 +536,10 @@ parcutils::get_fold_change_scatter_plot(x = res,
                                         repair_genes = T)
 ```
 
-![](man/figures/README-unnamed-chunk-19-3.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-3.png)<!-- -->
 
 ``` r
+
 
 # show common down genes
 parcutils::get_fold_change_scatter_plot(x = res, 
@@ -509,11 +551,12 @@ parcutils::get_fold_change_scatter_plot(x = res,
                                         repair_genes = T)
 ```
 
-![](man/figures/README-unnamed-chunk-19-4.png)<!-- -->
+![](man/figures/README-unnamed-chunk-21-4.png)<!-- -->
 
 ### Visualize genes by line plot
 
 ``` r
+
 
 genes_for_lineplot = parcutils::get_genes_by_regulation(x = res,
                                                   sample_comparison = res$de_comparisons[[2]], 
@@ -526,9 +569,10 @@ parcutils::get_gene_expression_line_plot(x = res,
   ggplot2::theme(text = ggplot2::element_text(size = 15))
 ```
 
-![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
 
 ``` r
+
 
 # line plot of gene expression values with k-means clustering  
 
@@ -539,9 +583,10 @@ parcutils::get_gene_expression_line_plot(x = res,
   ggplot2::theme(text = ggplot2::element_text(size = 15))
 ```
 
-![](man/figures/README-unnamed-chunk-20-2.png)<!-- -->
+![](man/figures/README-unnamed-chunk-22-2.png)<!-- -->
 
 ``` r
+
 # line plot of gene expression values with k-means clustering  
 
 parcutils::get_gene_expression_line_plot(x = res, 
@@ -553,9 +598,10 @@ parcutils::get_gene_expression_line_plot(x = res,
                  axis.text.x = ggplot2::element_text(angle = 40,hjust = 0.8))
 ```
 
-![](man/figures/README-unnamed-chunk-20-3.png)<!-- -->
+![](man/figures/README-unnamed-chunk-22-3.png)<!-- -->
 
 ``` r
+
 # Fold change values 
 
 parcutils::get_fold_change_line_plot(x = res, 
@@ -569,7 +615,7 @@ parcutils::get_fold_change_line_plot(x = res,
                  axis.text.x = ggplot2::element_text(angle = 40,hjust = 0.8))
 ```
 
-![](man/figures/README-unnamed-chunk-20-4.png)<!-- -->
+![](man/figures/README-unnamed-chunk-22-4.png)<!-- -->
 
 ## Perform gene ontology analysis and visualization of all UP/DOWN genes from all comparisons in one go.
 
@@ -579,39 +625,20 @@ go_results <- parcutils::get_go_emap_plot(x = res)
 # GO results as a table 
 
 go_results$go_enrichment_output
-#> $treatment1_VS_control_down
-#> # A tibble: 15 × 9
-#>    ID     Description   GeneRatio BgRatio  pvalue p.adjust  qvalue geneID  Count
-#>    <chr>  <chr>         <chr>     <chr>     <dbl>    <dbl>   <dbl> <chr>   <int>
-#>  1 GO:00… regulation o… 4/25      31/3462 5.84e-5  0.00974 0.00897 YWHAQ/…     4
-#>  2 GO:00… protein inse… 3/25      13/3462 9.08e-5  0.00974 0.00897 YWHAQ/…     3
-#>  3 GO:00… positive reg… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3
-#>  4 GO:00… establishmen… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3
-#>  5 GO:00… mitochondria… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3
-#>  6 GO:19… regulation o… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3
-#>  7 GO:19… positive reg… 3/25      14/3462 1.15e-4  0.00974 0.00897 YWHAQ/…     3
-#>  8 GO:00… positive reg… 3/25      15/3462 1.43e-4  0.00974 0.00897 YWHAQ/…     3
-#>  9 GO:19… mitochondria… 3/25      15/3462 1.43e-4  0.00974 0.00897 YWHAQ/…     3
-#> 10 GO:19… positive reg… 3/25      15/3462 1.43e-4  0.00974 0.00897 YWHAQ/…     3
-#> 11 GO:00… protein inse… 3/25      19/3462 2.99e-4  0.0157  0.0144  YWHAQ/…     3
-#> 12 GO:00… apoptotic mi… 3/25      20/3462 3.50e-4  0.0170  0.0157  YWHAQ/…     3
-#> 13 GO:00… mitochondrio… 5/25      110/34… 9.45e-4  0.0429  0.0395  YWHAQ/…     5
-#> 14 GO:00… intracellula… 7/25      238/34… 1.09e-3  0.0465  0.0429  YWHAQ/…     7
-#> 15 GO:00… mitochondria… 3/25      30/3462 1.19e-3  0.0476  0.0438  YWHAQ/…     3
+#> list()
 
 # GO results as an emap plot 
 
 go_results$go_emap_plots
-#> $treatment1_VS_control_down
+#> NULL
 ```
-
-![](man/figures/README-unnamed-chunk-21-1.png)<!-- -->
 
 ## Other functions
 
 ### Alignment summary
 
 ``` r
+
 star_align_log_file <- system.file("extdata" , "a_Log.final.out" , package = "parcutils")
 
 x =  parcutils::get_star_align_log_summary(log_file = star_align_log_file)
@@ -649,6 +676,6 @@ parcutils::get_star_align_log_summary_plot(x = star_align_log_files,
                                 col_mapped_reads  = "blue") 
 ```
 
-![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-24-1.png)<!-- -->
 
 ## 

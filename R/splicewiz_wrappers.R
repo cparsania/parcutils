@@ -7,8 +7,10 @@
 #'
 #' @examples
 #' \dontrun{
-#'
+#' // to do
 #' }
+#'
+#' @keywords internal
 spliceWiz_plot_event_counts <- function(x){
 
   stopifnot("x must be the class of NxtSE" = is(x, "NxtSE"))

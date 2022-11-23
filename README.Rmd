@@ -194,6 +194,21 @@ parcutils::get_pca_plot(x = res,
 
 ```
 
+### Counts of diff expressed genes 
+
+```{r, fig.height=3, fig.width=6}
+
+parcutils::get_diff_gene_count_barplot(x = res)
+
+```
+
+change color of the bars
+
+```{r, fig.height=3, fig.width=6}
+
+parcutils::get_diff_gene_count_barplot(x = res, col_down = "green4")
+```
+
 ### Visualize differential expressed genes by volcano plot
 
 ```{r, fig.height=6, fig.width=5}

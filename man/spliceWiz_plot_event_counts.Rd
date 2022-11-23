@@ -17,6 +17,8 @@ Generate a barplot showing counts of splice events
 }
 \examples{
 \dontrun{
+// to do
+}
 
 }
-}
+\keyword{internal}
