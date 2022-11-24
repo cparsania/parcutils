@@ -30,6 +30,6 @@ a ggplot
 Generate a barplot of DEG counts.
 }
 \examples{
-res = .get_parcutils_object()
+res = .get_parcutils_object_example()
 get_diff_gene_count_barplot(res, font_size = 15)
 }

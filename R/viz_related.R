@@ -842,7 +842,7 @@ get_star_align_log_summary_plot <- function(x,is_paired_data = TRUE,
 #' @export
 #'
 #' @examples
-#' res = .get_parcutils_object()
+#' res = .get_parcutils_object_example()
 #' get_diff_gene_count_barplot(res, font_size = 15)
 get_diff_gene_count_barplot <- function(x,
                                         col_up="#a40000",
