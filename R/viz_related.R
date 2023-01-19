@@ -297,6 +297,8 @@ plot_regions_relative_to_reference <- function(query , reference){
 #' @param genes a character vector denoting genes to consider for PCA plot, default \code{NULL}. If set to NULL all genes are accounted.
 #' @param label_replicates logical, default FALSE, denoting whether to label each replicate in the plot.
 #' @param circle_size a numeric value,  default  10, denoting size of the circles in PCA plot.
+#' @param sample_colors a logical, default FALSE, denoting whether to shuffle colors of dots in PCA plot.
+#' @param sample.seed an integer, default 123, denoting a value for `set.seed()`.
 #'
 #' @return an object of ggplot2.
 #' @export
@@ -316,14 +318,18 @@ plot_regions_relative_to_reference <- function(query , reference){
 #'                          group_denominator = c("control"))
 #'
 #'
-#'  get_pca_plot(x = res) %>% print()
+#'  get_pca_plot(x = res,sample_colors = TRUE) %>% print()
+#'
+#'  # reproduce sampled colors with argument `sample.seed`
+#'  get_pca_plot(x = res,sample_colors = TRUE, sample.seed = 345) %>% print()
 #'
 #' # label replicates
 #'
-#' get_pca_plot(x = res, label_replicates =  TRUE)
+#' get_pca_plot(x = res, sample_colors = FALSE,label_replicates =  TRUE)
 #'
 get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10,
-                         label_replicates = FALSE){
+                         label_replicates = FALSE,
+                         sample_colors = FALSE, sample.seed = 123){
 
   # validate x
   .validate_parcutils_obj(x)
@@ -405,6 +411,7 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10,
 
   ## show replicates
   if(label_replicates){
+
     pca_plot <- pca_plot + ggrepel::geom_label_repel(ggplot2::aes(label = samples),max.overlaps = 100000)
   }
 
@@ -415,11 +422,18 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10,
     ggplot2::xlab(pc_prop_of_var[[rlang::as_label(x_pc)]]) +
     ggplot2::ylab(pc_prop_of_var[[rlang::as_label(y_pc)]])
 
-  # pca_plot
 
+  # define colors for dots in pca plot
+  pca_colors <- RColorBrewer::brewer.pal(n =12, name = "Paired")  # max 12 colors
+
+  if(sample_colors){
+    set.seed(sample.seed) # reproduce sampling output
+    pca_colors  <- pca_colors %>% sample()
+  }
+
+  # plot
   pca_plot <- pca_plot +
-    ggplot2::scale_fill_manual(values = MetBrewer::met.brewer(n = 6 ,
-                                                              name = "Austria")) +
+    ggplot2::scale_fill_manual(values = pca_colors) +
     ggplot2::guides(fill = ggplot2::guide_legend("Samples"))
 
 

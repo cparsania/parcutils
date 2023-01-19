@@ -9,7 +9,9 @@ get_pca_plot(
   samples = NULL,
   genes = NULL,
   circle_size = 10,
-  label_replicates = FALSE
+  label_replicates = FALSE,
+  sample_colors = FALSE,
+  sample.seed = 123
 )
 }
 \arguments{
@@ -22,6 +24,10 @@ get_pca_plot(
 \item{circle_size}{a numeric value,  default  10, denoting size of the circles in PCA plot.}
 
 \item{label_replicates}{logical, default FALSE, denoting whether to label each replicate in the plot.}
+
+\item{sample_colors}{a logical, default FALSE, denoting whether to shuffle colors of dots in PCA plot.}
+
+\item{sample.seed}{an integer, default 123, denoting a value for \code{set.seed()}.}
 }
 \value{
 an object of ggplot2.
@@ -44,10 +50,13 @@ res <- run_deseq_analysis(counts = count_data ,
                          group_denominator = c("control"))
 
 
- get_pca_plot(x = res) \%>\% print()
+ get_pca_plot(x = res,sample_colors = TRUE) \%>\% print()
+
+ # reproduce sampled colors with argument `sample.seed`
+ get_pca_plot(x = res,sample_colors = TRUE, sample.seed = 345) \%>\% print()
 
 # label replicates
 
-get_pca_plot(x = res, label_replicates =  TRUE)
+get_pca_plot(x = res, sample_colors = FALSE,label_replicates =  TRUE)
 
 }
