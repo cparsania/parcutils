@@ -347,6 +347,10 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10,
 
   norm_expr_mat <- parcutils::get_normalised_expression_matrix(x = x, samples = samples, genes = genes , summarise_replicates = FALSE)
 
+  # remove genes if values are 0 in all samples
+
+  norm_expr_mat <- norm_expr_mat %>% TidyWrappers::tbl_remove_rows_zero_all()
+
   # convert log2
 
   norm_expr_mat_log2 <- norm_expr_mat %>% dplyr::mutate_if(is.numeric, ~log2(. + 0.1))
