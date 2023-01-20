@@ -1474,4 +1474,22 @@ save_go_plots <- function(x , output_dir = ".",
 }
 
 
+#' Wrapper around ggsave.
+#' @description save a ggplot in a directory
+#' @param plot a ggplot
+#' @param path directory path excluding file name
+#' @param file_name a file name with extension
+#' @param height device height
+#' @param width device width
+#' @param ... other arguments pass to \ref[ggsave::ggsave()].
+#'
+#' @return
+#' @export
+#'
+ggsave2 <- function(plot,path, file_name, height = 5, width = 5,...){
 
+  ggsave(plot,
+         filename = fs::file_create(path, stringr::str_c(file_name)),
+         width = width, height = height,...)
+
+}
