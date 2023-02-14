@@ -33,6 +33,7 @@ reference:
       - get_gene_expression_line_plot
       - get_fold_change_line_plot
       - get_fold_change_scatter_plot
+      - plot_deg_venn
 
   - title: "IR related"
     contents:
@@ -50,4 +51,5 @@ reference:
       - get_intergenic_signals
       - named_group_split
       - sort_geom_box
+      - ggsave2
 
