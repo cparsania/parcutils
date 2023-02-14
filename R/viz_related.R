@@ -1493,3 +1493,62 @@ ggsave2 <- function(plot,path, file_name, height = 5, width = 5,...){
          width = width, height = height,...)
 
 }
+
+#' Generate a venn diagram showing overlap between DE genes.
+#'
+#' @param x an abject of class \code{parcutils}. This is an output of the function [parcutils::run_deseq_analysis()].
+#' @param sample_comparisons a character vector of length 2 denoting DE comparisons for which venn diagram to plot.
+#' @param regulation a character string from \code{up, down, both}. If \code{up} or \code{down} respective gene sets from the \code{sample_comparisons} will be used for venn diagram. If \code{both}, both \code{up} and \code{down}
+#' will be from each \code{sample_comparisons} will be used for venn diagram.
+#' @param fill_color an argument pass to the function [ggvenn::ggvenn].
+#' @param ... other arguments pass to the function [ggvenn::ggvenn]
+#'
+#' @return ggplot
+#' @export
+#' @importFrom ggvenn ggvenn
+#' @examples
+#' x <- parcutils:::.get_parcutils_object_example()
+#' sample_comparisons <- c("treatment1_VS_control","treatment2_VS_control")
+#' plot_deg_venn(x = x, sample_comparisons = sample_comparisons , regulation = "up")
+#' plot_deg_venn(x = x, sample_comparisons = sample_comparisons , regulation = "down")
+#' plot_deg_venn(x = x, sample_comparisons = sample_comparisons , regulation = "both")
+plot_deg_venn <- function(x, sample_comparisons, regulation = "up", fill_color = NULL,...){
+
+  # x <- parcutils:::.get_parcutils_object_example()
+  # sample_comparisons <- c("treatment1_VS_control","treatment2_VS_control")
+  # regulation = "up"
+
+  # validate x
+
+  stopifnot("x must be an object of class 'parcutils'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils"))
+
+
+  # validate sample_comparisons
+
+  stopifnot("sample_comparisons must be a character vector of length 2." = is.character(sample_comparisons) & length(sample_comparisons) > 1)
+
+  # all sample comparisons must present in x
+
+  if(!all(sample_comparisons %in% x$de_comparisons) ){
+    not_present <- sample_comparisons[!(sample_comparisons %in% x$de_comparisons)]
+    stop(glue::glue("Value {not_present} is not present in the x. Check x$de_comparisons to access all choices."))
+  }
+
+  if(is.null(fill_color)){
+    fill_color = c("blue", "yellow", "green", "red")
+  }
+
+  venn_data <- parcutils::get_genesets_by_regulation(x = x, regulation = regulation,sample_comparisons = sample_comparisons)
+  names(venn_data) <- stringr::str_replace(string = names(venn_data), pattern = "_VS_",replacement  = "\nVS\n")
+  pp <- ggvenn::ggvenn(data = venn_data,show_percentage = T,digits = 2,fill_color = fill_color,...)
+
+  return(pp)
+}
+
+
+
+
+
+
+
+

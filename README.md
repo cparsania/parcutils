@@ -633,6 +633,29 @@ go_results$go_emap_plots
 #> NULL
 ```
 
+## Show overlapping genes through VENN diagram
+
+``` r
+
+parcutils::plot_deg_venn(res, sample_comparisons = res$de_comparisons,regulation = "up")
+```
+
+![](man/figures/README-unnamed-chunk-24-1.png)<!-- -->
+
+``` r
+
+parcutils::plot_deg_venn(res, sample_comparisons = res$de_comparisons,regulation = "down")
+```
+
+![](man/figures/README-unnamed-chunk-24-2.png)<!-- -->
+
+``` r
+
+parcutils::plot_deg_venn(res, sample_comparisons = res$de_comparisons,regulation = "both")
+```
+
+![](man/figures/README-unnamed-chunk-24-3.png)<!-- -->
+
 ## Other functions
 
 ### Alignment summary
@@ -676,6 +699,6 @@ parcutils::get_star_align_log_summary_plot(x = star_align_log_files,
                                 col_mapped_reads  = "blue") 
 ```
 
-![](man/figures/README-unnamed-chunk-24-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-25-1.png)<!-- -->
 
 ## 
