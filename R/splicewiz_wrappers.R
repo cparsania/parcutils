@@ -165,5 +165,26 @@ get_diff_ase_heatmap <- function(se,
 
 
 
+#' Get gene names from spliceWiz event names
+#'
+#' @param x a character vector denoting EventNames of SpliceWiz.
+#'
+#' @return a character vector of gene names
+#' @export
+#'
+#' @examples
+#' se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)
+#' SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
+#' SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
+#' res_edgeR <- SpliceWiz::ASE_edgeR(se, "treatment", "A", "B", useQL = FALSE)
+#' get_genes_from_event_name(res_edgeR$EventName)
+get_genes_from_event_name <- function(x){
+
+  x %>% stringr::str_replace( pattern = ".*;(.*)-.*-.*", replacement = "\\1") %>%
+    stringr::str_replace(pattern = "\\/.*", replacement = "")
+}
+
+
+
 
 
