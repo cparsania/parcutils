@@ -53,3 +53,8 @@ reference:
       - sort_geom_box
       - ggsave2
 
+  - title: "SpliceWiz related"
+    contents:
+      - get_diff_ase_heatmap
+      - get_edger_diff_ase_event_names
+
