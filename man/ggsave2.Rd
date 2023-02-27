@@ -17,7 +17,7 @@ ggsave2(plot, path, file_name, height = 5, width = 5, ...)
 
 \item{width}{device width}
 
-\item{...}{other arguments pass to \ref\code{\link[ggsave:ggsave]{ggsave::ggsave()}}.}
+\item{...}{other arguments pass to \code{\link[ggsave:ggsave]{ggsave::ggsave()}}.}
 }
 \description{
 save a ggplot in a directory

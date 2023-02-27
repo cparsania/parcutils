@@ -1481,7 +1481,7 @@ save_go_plots <- function(x , output_dir = ".",
 #' @param file_name a file name with extension
 #' @param height device height
 #' @param width device width
-#' @param ... other arguments pass to \ref[ggsave::ggsave()].
+#' @param ... other arguments pass to [ggsave::ggsave()].
 #'
 #' @return
 #' @export
