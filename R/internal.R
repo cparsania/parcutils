@@ -1191,7 +1191,7 @@
 
   names(query_genes) <- query_genes
 
-  purrr::map(query_genes , ~which(stringr::str_detect(pattern = ..1,string = lookup_table))) %>%
+  purrr::map(query_genes , ~which(stringr::str_detect(pattern = glue::glue(".*:{..1}$"),string = lookup_table))) %>%
     tibble::enframe(value = "index") %>%
     tidyr::unnest(keep_empty = T) %>%
     dplyr::mutate(full_name = lookup_table[index]) %>%
