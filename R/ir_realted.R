@@ -26,7 +26,7 @@ names(retained_introns_files) <- stringr::str_extract(retained_introns_files,
 #'  + spliceexact
 #'  + irratio
 #'  + warnings
-#' @return
+#' @return an object of the class `irFinderSdata`.
 #' @export
 #'
 #' @examples

@@ -41,16 +41,16 @@
 #' the genes which have minimum counts 10 in at least 2 samples within a groups will be accounted for DEG. Rest will be filtered out prior to run DESeq.
 #' @param regul_based_upon one of the numeric choices  1, 2, or 3.
 #' ## if 1 ...
-#'  - Up : log2fc >= log2fc_cutoff & pvalue <= pvalue_cutoff
-#'  - Down : log2fc  <= (-1) * log2fc_cutoff & pvalue <= pvalue_cutoff
+#'  - Up : log2fc >= cutoff_lfc & pvalue <= cutoff_pval
+#'  - Down : log2fc  <= (-1) * cutoff_lfc & pvalue <= cutoff_pval
 #'  - Other : remaining genes
 #' ## if 2 ...
-#'  - Up : log2fc >= log2fc_cutoff & padj <= padj_cutoff
-#'  - Down : log2fc  <= (-1) * log2fc_cutoff & padj <= padj_cutoff
+#'  - Up : log2fc >= cutoff_lfc & padj <= cutoff_padj
+#'  - Down : log2fc  <= (-1) * cutoff_lfc & padj <= cutoff_padj
 #'  - Other : remaining genes
 #' ## if 3 ...
-#'  - Up : log2fc >= log2fc_cutoff & pvalue <= pvalue_cutoff & padj <= padj_cutoff
-#'  - Down : log2fc  <= (-1) * log2fc_cutoff pvalue <= pvalue_cutoff & padj <= padj_cutoff
+#'  - Up : log2fc >= cutoff_lfc & pvalue <= cutoff_pval & padj <= cutoff_padj
+#'  - Down : log2fc  <= (-1) * cutoff_lfc pvalue <= cutoff_pval & padj <= cutoff_padj
 #'  - Other : remaining genes
 #' @param cutoff_lfc minimal threshold for log2fold change, default 1 (2 fold).
 #' @param cutoff_pval minimal threshold for pvalue, default 0.05. P-value threshold will be applied only when

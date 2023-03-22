@@ -70,3 +70,43 @@ print.parcutils_ir <- function(object) {
   }
 
 }
+
+
+#' S3 print for object `parcutils_ase`
+#'
+#' @param object
+#'
+#' @return
+#' @export
+# print <- function(object) {
+#   UseMethod("print")
+# }
+#' @export print.parcutils_ase
+#' @export
+#' @keywords internal
+print.parcutils_ase <- function(object) {
+  if(TRUE){
+    cli::cat_boxx(cli::style_bold("Summary of ASE diff. analysis"))
+    cli::cat_line()
+    cli::cli_text("Total number of comparison{?s}: {length(object$de_comparisons)} \n")
+    cli::cli_text("Total number of ASE used for diff. analysis: {nrow(object$avg_psi[[1]][[1]])} \n")
+
+    cli::cat_line()
+    cli::cli_text(cli::style_bold(cli::col_br_cyan("Diff. ASE counts by comparison...")))
+    cli::cat_line()
+    for(i in object$de_comparisons){
+
+      n_up_ase <- parcutils::get_ASE_by_regulation(x = object,sample_comparisons = i, regulation = "up") %>% length()
+      n_down_ase <- parcutils::get_ASE_by_regulation(x = object,sample_comparisons = i, regulation = "down") %>% length()
+      cat(cli::style_italic(i) ,"\n")
+      cli::cat_bullet(cli::col_red(sprintf("number of up genes   : %d.", n_up_ase)))
+      cli::cat_bullet(cli::col_green(sprintf("number of down genes : %d.", n_down_ase)))
+      cli::cat_rule(width = 30)
+      cli::cat_line()
+    }
+
+  }
+
+}
+
+

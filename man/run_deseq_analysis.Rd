@@ -70,24 +70,24 @@ the genes which have minimum counts 10 in at least 2 samples within a groups wil
 \item{regul_based_upon}{one of the numeric choices  1, 2, or 3.
 \subsection{if 1 ...}{
 \itemize{
-\item Up : log2fc >= log2fc_cutoff & pvalue <= pvalue_cutoff
-\item Down : log2fc  <= (-1) * log2fc_cutoff & pvalue <= pvalue_cutoff
+\item Up : log2fc >= cutoff_lfc & pvalue <= cutoff_pval
+\item Down : log2fc  <= (-1) * cutoff_lfc & pvalue <= cutoff_pval
 \item Other : remaining genes
 }
 }
 
 \subsection{if 2 ...}{
 \itemize{
-\item Up : log2fc >= log2fc_cutoff & padj <= padj_cutoff
-\item Down : log2fc  <= (-1) * log2fc_cutoff & padj <= padj_cutoff
+\item Up : log2fc >= cutoff_lfc & padj <= cutoff_padj
+\item Down : log2fc  <= (-1) * cutoff_lfc & padj <= cutoff_padj
 \item Other : remaining genes
 }
 }
 
 \subsection{if 3 ...}{
 \itemize{
-\item Up : log2fc >= log2fc_cutoff & pvalue <= pvalue_cutoff & padj <= padj_cutoff
-\item Down : log2fc  <= (-1) * log2fc_cutoff pvalue <= pvalue_cutoff & padj <= padj_cutoff
+\item Up : log2fc >= cutoff_lfc & pvalue <= cutoff_pval & padj <= cutoff_padj
+\item Down : log2fc  <= (-1) * cutoff_lfc pvalue <= cutoff_pval & padj <= cutoff_padj
 \item Other : remaining genes
 }
 }}

@@ -55,7 +55,12 @@ reference:
 
   - title: "SpliceWiz related"
     contents:
-      - get_diff_ase_heatmap
+      - get_splicewiz_event_counts
+      - run_ase_diff_analysis
       - get_edger_diff_ase_event_names
+      - get_splicewiz_ase_heatmap
       - get_genes_from_event_name
+      - event_region_to_granges
+      - get_ASEsets_by_regulation
+      - get_ase_volcano_plot
 

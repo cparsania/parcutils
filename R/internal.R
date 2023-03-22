@@ -757,7 +757,6 @@
 #'
 #' @param x
 #'
-#' @return
 #' @export
 #' @keywords internal
 .validate_parcutils_ir_object <- function(x) {
@@ -886,7 +885,7 @@
 #' @param min_counts a numeric value
 #' @param min_replicates a numeric value
 #'
-#' @return
+#' @return a tibble.
 #' @export
 #'
 #' @keywords internal

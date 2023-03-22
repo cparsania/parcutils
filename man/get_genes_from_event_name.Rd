@@ -2,7 +2,7 @@
 % Please edit documentation in R/splicewiz_wrappers.R
 \name{get_genes_from_event_name}
 \alias{get_genes_from_event_name}
-\title{Get gene names from spliceWiz event names}
+\title{Get gene names from spliceWiz's EventName column.}
 \usage{
 get_genes_from_event_name(x)
 }
@@ -13,7 +13,7 @@ get_genes_from_event_name(x)
 a character vector of gene names
 }
 \description{
-Get gene names from spliceWiz event names
+Get gene names from spliceWiz's EventName column.
 }
 \examples{
 se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)

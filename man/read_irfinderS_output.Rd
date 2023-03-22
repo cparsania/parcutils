@@ -28,6 +28,9 @@ read_irfinderS_output(files, add_prefix_chr = TRUE, remove_prefix_chr = FALSE)
 \item warnings
 }}
 }
+\value{
+an object of the class \code{irFinderSdata}.
+}
 \description{
 Read IR-finderS output
 }
