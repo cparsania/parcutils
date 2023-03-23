@@ -99,12 +99,12 @@ run_ase_diff_analysis <- function(x, test_nom ,test_denom, test_factor = "condit
   res_ase_diff_tibble <- purrr::map(names(res_ase_diff_raw), ~ res_ase_diff_raw[[..1]] %>% tibble::as_tibble())
   names(res_ase_diff_tibble) <- names(res_ase_diff_raw)
 
-  res_ase_diff_tibble <- purrr::map(res_ase_diff_tibble , ~.fix_splicewiz_res_edger_columns(..1) %>%
+  res_ase_diff_tibble <- purrr::map(res_ase_diff_tibble , ~.fix_ASE_diff_rslt_columns(..1) %>%
     dplyr::select(c("event_name","event_type","event_region"), dplyr::contains("avg_psi"), log2FoldChange,pvalue, padj))
 
   # get matrix of AVG_PSI for each sample into the comparison
 
-  avg_psi <- purrr::map(res_ase_diff_raw , ~..1 %>% .fix_splicewiz_res_edger_columns()  %>% dplyr::select(event_name, event_type, event_region, dplyr::contains("avg_psi")))
+  avg_psi <- purrr::map(res_ase_diff_raw , ~..1 %>% .fix_ASE_diff_rslt_columns()  %>% dplyr::select(event_name, event_type, event_region, dplyr::contains("avg_psi")))
 
   # mark diff regulation "Up" "Down" and "Other" in the res_ase_diff_tibble
 
@@ -355,7 +355,7 @@ event_region_to_granges <- function(event_region, prefix = ""){
 #' \dontrun{
 #' // to do
 #' }
-.fix_splicewiz_res_edger_columns <- function(x){
+.fix_ASE_diff_rslt_columns <- function(x){
 
   x %>% tibble::as_tibble() %>%
     dplyr::rename(c("event_name" = "EventName", "event_type" = "EventType" , "event_region" = "EventRegion", "log2FoldChange" = "logFC", "pvalue" ="PValue", "padj" = "FDR", "delta_psi" = "deltaPSI")) %>%
@@ -748,3 +748,81 @@ get_ase_volcano_plot <- function(x,
 .validate_parcutils_ase_obj <- function(x){
     stopifnot("x must be an object of class 'parcutils_ase'. Usually x is derived by parcutils::run_ase_diff_analysis()." = is(x, "parcutils_ase"))
 }
+
+
+
+#' Annotate event names to event length, seq and GC.
+#'
+#' @param se an object of class NxtSE.
+#' @param event_names a character vector denoting valid event names.
+#' @param org a character string "hs" or "mm".
+#'
+#' @return GenomicRanges.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # // to do
+#' }
+get_event_annotations <- function(se, event_names, org = "hs"){
+
+  match.arg(org, choices = c("hs","mm"), several.ok = FALSE)
+
+  # select org.
+  if(org == "hs"){
+    require(BSgenome.Hsapiens.UCSC.hg38)
+    bsg = BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38
+  } else if (org =="mm") {
+    require(BSgenome.Mmusculus.UCSC.mm10)
+    bsg = BSgenome.Mmusculus.UCSC.mm10::BSgenome.Mmusculus.UCSC.mm10
+  }
+
+  # subset data of interest.
+  oo <- se@elementMetadata %>%
+    tibble::as_tibble() %>%
+    dplyr::filter(EventName %in% event_names) %>%
+    dplyr::select(event_name = EventName, event_type = EventType, event_region = EventRegion) %>%
+    dplyr::filter(event_name %in% event_names)
+
+  # convert GRanges.
+
+  oo_gr <- event_region_to_coordinate(oo$event_region) %>%
+    plyranges::as_granges() %>%
+    parcutils:::.map_granges_metadata(bs_genome_object = bsg)
+
+  return(oo_gr)
+
+}
+
+
+
+#' Convert event regions to genomic co-ordinates.
+#'
+#' @param event_region a character vector denoting valid event regions.
+#'
+#' @return a tibble.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'  # // to do
+#' }
+#'
+event_region_to_coordinate <- function(event_region){
+
+  col_seqnames = glue::glue("seqnames")
+  col_start = glue::glue("start")
+  col_end = glue::glue("end")
+  col_strand = glue::glue("strand")
+
+  tibble::tibble(event_region = event_region) %>%
+    dplyr::mutate(!!col_seqnames := stringr::str_replace(event_region, ":.*","")) %>%
+    dplyr::mutate(!!col_seqnames := stringr::str_c(!!rlang::sym(col_seqnames),sep = "")) %>%
+    dplyr::mutate(!!col_start:= stringr::str_replace(event_region, ".*:(\\d+)-.*","\\1") %>%
+                    as.numeric()) %>%
+    dplyr::mutate(!!col_end := stringr::str_replace(event_region, ".*:(\\d+)-(\\d+)\\/.*","\\2") %>% as.numeric()) %>%
+    dplyr::mutate(!!col_strand := stringr::str_replace(event_region, ".*:(\\d+)-(\\d+)\\/(.*)","\\3"))
+
+}
+
+

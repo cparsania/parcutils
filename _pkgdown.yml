@@ -53,6 +53,8 @@ reference:
       - event_region_to_granges
       - get_ASEsets_by_regulation
       - get_ase_volcano_plot
+      - event_region_to_coordinate
+      - get_event_annotations
 
 # figures:
 #   dev: ragg::agg_png
