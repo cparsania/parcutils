@@ -52,6 +52,7 @@
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">sample_comparisons</span>,</span>
 <span>  regulation <span class="op">=</span> <span class="st">"both"</span>,</span>
+<span>  event_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  simplify <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -77,6 +78,11 @@
 </ul></dd>
 
 
+<dt>event_type</dt>
+<dd><p>a character string denoting event type for which one of the <code>up</code>, <code>down</code>, <code>both</code>, <code>other</code> or <code>all</code> events to be returned based.
+Choices are: IR, SE, AFE, ALE, A3SS, A5SS and MXE. Default NULL, uses all event types.</p></dd>
+
+
 <dt>simplify</dt>
 <dd><p>logical, default FALSE, if TRUE returns result in a dataframe format.</p></dd>
 
@@ -99,8 +105,8 @@
 <span class="r-in"><span><span class="fu">SpliceWiz</span><span class="fu">::</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">replicate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P"</span>,<span class="st">"Q"</span>,<span class="st">"R"</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="run_ase_diff_analysis.html">run_ase_diff_analysis</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">se</span>, test_factor <span class="op">=</span> <span class="st">"treatment"</span>, test_nom <span class="op">=</span> <span class="st">"A"</span> ,test_denom <span class="op">=</span> <span class="st">"B"</span>,  IRmode <span class="op">=</span><span class="st">"annotated"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mar 23 12:18:19 Performing edgeR contrast for included / excluded counts separately</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mar 23 12:18:22 Performing edgeR contrast for included / excluded counts together</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mar 23 14:49:39 Performing edgeR contrast for included / excluded counts separately</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mar 23 14:49:41 Performing edgeR contrast for included / excluded counts together</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get both up and down regulated genes</span></span></span>
 <span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A_VS_B"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
@@ -144,13 +150,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Simplify output for multiple sample comparisons</span></span></span>
-<span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, regul<span class="op">=</span> <span class="st">"up"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   sample_comparisons ase                                               regul</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                             <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A_VS_B             A3SS:TP53-201-exon2;TP53-205-exon2                up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A_VS_B             NSUN5/ENST00000252594_Intron2/clean               up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A_VS_B             MXE:TRA2B-novelTr015-exon2;TRA2B-novelTr014-exon2 up   </span>
+<span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, regul<span class="op">=</span> <span class="st">"both"</span>,event_type <span class="op">=</span> <span class="st">"SE"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 3 variables: sample_comparisons &lt;chr&gt;, ase &lt;int&gt;, regul &lt;fct&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get genesets by regulation. It uses sample comparison and regulation to name each output geneset.</span></span></span>

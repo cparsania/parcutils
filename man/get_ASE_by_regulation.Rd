@@ -9,6 +9,7 @@ get_ASE_by_regulation(
   x,
   sample_comparisons,
   regulation = "both",
+  event_type = NULL,
   simplify = FALSE
 )
 
@@ -27,6 +28,9 @@ get_ASEsets_by_regulation(x, sample_comparisons, regulation = "both")
 \item \code{other} : returns ASE other than up and down regulated ASE.
 \item \code{all} : returns all ASE.
 }}
+
+\item{event_type}{a character string denoting event type for which one of the \code{up}, \code{down}, \code{both}, \code{other} or \code{all} events to be returned based.
+Choices are: IR, SE, AFE, ALE, A3SS, A5SS and MXE. Default NULL, uses all event types.}
 
 \item{simplify}{logical, default FALSE, if TRUE returns result in a dataframe format.}
 }
@@ -59,7 +63,7 @@ get_ASE_by_regulation(x = res, sample_comparisons = c("A_VS_B") , regul = "down"
 get_ASE_by_regulation(x = res, sample_comparisons = c("A_VS_B") , regul = "other") \%>\% head()
 
 # Simplify output for multiple sample comparisons
-get_ASE_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify = TRUE, regul= "up")
+get_ASE_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify = TRUE, regul= "both",event_type = "SE")
 
 
 # get genesets by regulation. It uses sample comparison and regulation to name each output geneset.

@@ -489,7 +489,10 @@ event_region_to_granges <- function(event_region, prefix = ""){
 #'  + `both` : returns all up and down regulated ASE.
 #'  + `other` : returns ASE other than up and down regulated ASE.
 #'  + `all` : returns all ASE.
+#' @param event_type a character string denoting event type for which one of the `up`, `down`, `both`, `other` or `all` events to be returned based.
+#' Choices are: IR, SE, AFE, ALE, A3SS, A5SS and MXE. Default NULL, uses all event types.
 #' @param simplify logical, default FALSE, if TRUE returns result in a dataframe format.
+#'
 #' @return a list or dataframe.
 #' @export
 #'
@@ -513,14 +516,14 @@ event_region_to_granges <- function(event_region, prefix = ""){
 #' get_ASE_by_regulation(x = res, sample_comparisons = c("A_VS_B") , regul = "other") %>% head()
 #'
 #' # Simplify output for multiple sample comparisons
-#' get_ASE_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify = TRUE, regul= "up")
+#' get_ASE_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify = TRUE, regul= "both",event_type = "SE")
 #'
 #'
 #' # get genesets by regulation. It uses sample comparison and regulation to name each output geneset.
 #'
 #' get_ASEsets_by_regulation(x = res, sample_comparisons = "A_VS_B", regul = "both")
 #'
-get_ASE_by_regulation <- function(x, sample_comparisons , regulation = "both" , simplify = FALSE  ) {
+get_ASE_by_regulation <- function(x, sample_comparisons , regulation = "both", event_type = NULL , simplify = FALSE  ) {
 
   # validate x.
   stopifnot("x must be an object of class 'parcutils_ase'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils_ase"))
@@ -542,10 +545,16 @@ get_ASE_by_regulation <- function(x, sample_comparisons , regulation = "both" , 
     return(rslt)
   }
 
+  # subset required data
+  dd <- x$res_ase_diff_tibble_annot[[sample_comparisons]]
+  if(!is.null(event_type)){
+    dd %<>% dplyr::filter(event_type == !!event_type)
+  }
+
   # split by column regul.
   # NOTE: do not group by column name instead use index. The reason is because if the column name of column 'regul' change in future it will break this code.
 
-  ase_by_comp <- x$res_ase_diff_tibble_annot[[sample_comparisons]] %>%
+  ase_by_comp <-  dd %>%
     dplyr::select(1, dplyr::last_col())
 
   ase_by_comp <- ase_by_comp %>%
