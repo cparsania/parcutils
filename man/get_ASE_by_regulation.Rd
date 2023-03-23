@@ -44,7 +44,7 @@ se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)
 SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
 SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
 
-res <- run_splicewiz_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated")
+res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated")
 
 # get both up and down regulated genes
 get_ASE_by_regulation(x = res, sample_comparisons = c("A_VS_B")) \%>\% head()

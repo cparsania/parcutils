@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{}
 }
+\value{
+print default
+}
 \description{
 S3 print for object \code{parcutils_ase}
 }

@@ -35,17 +35,6 @@ reference:
       - get_fold_change_scatter_plot
       - plot_deg_venn
 
-  - title: "IR related"
-    contents:
-      - read_irfinderS_output
-      - run_deseq_analysis_ir
-      - annotate_retained_introns
-      - get_ir_counts
-      - map_intron_meta_data
-      - get_intron_master_list
-      - select_cols_irfinderS_output
-      - save_de_results
-
   - title: "Others"
     contents:
       - get_intergenic_signals
@@ -55,12 +44,24 @@ reference:
 
   - title: "SpliceWiz related"
     contents:
-      - get_splicewiz_event_counts
+      - get_ASE_counts_barplot
       - run_ase_diff_analysis
-      - get_edger_diff_ase_event_names
-      - get_splicewiz_ase_heatmap
+      - get_diff_ASE_count_barplot
+      - get_ASE_data_matrix
+      - get_ase_data_matrix_heatmap
       - get_genes_from_event_name
       - event_region_to_granges
       - get_ASEsets_by_regulation
       - get_ase_volcano_plot
 
+# figures:
+#   dev: ragg::agg_png
+#   dpi: 96
+#   dev.args: []
+#   fig.ext: png
+#   fig.width: 7.2916667
+#   fig.height: ~
+#   fig.retina: 2
+#   fig.asp: 1.618
+#   bg: NA
+#   other.parameters: []

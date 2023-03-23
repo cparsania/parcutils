@@ -1278,7 +1278,7 @@ get_fold_change_line_plot <- function(x,
 #' @param color_terms_by a character string, default \code{"p.adjust"}, denoting a variable to color gene ontology terms.
 #'
 #' @importFrom writexl write_xlsx
-#' @return
+#' @return An EMAP plot.
 #' @export
 #'
 #' @examples
@@ -1455,7 +1455,7 @@ save_go_data <- function(x , output_dir = ".", output_file_name = "go_outout"  )
 #' @param height plot height in inch, default 10.
 #' @param width plot width in inch, default 10.
 #' \code{treatment_VS_control_up_go_plot.pdf}
-#' @return
+#' @return It saves file into a dir.
 #' @export
 save_go_plots <- function(x , output_dir = ".",
                           output_file_suffix = "go_plot",
@@ -1483,7 +1483,7 @@ save_go_plots <- function(x , output_dir = ".",
 #' @param width device width
 #' @param ... other arguments pass to [ggplot2::ggsave()].
 #'
-#' @return
+#' @return save a plot in a directory.
 #' @export
 #'
 ggsave2 <- function(plot,path, file_name, height = 5, width = 5,...){

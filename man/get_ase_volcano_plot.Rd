@@ -87,7 +87,6 @@ if one gene symbol assinged to more than one events, even names will be used ins
 }
 }
 \examples{
-
 se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)
 SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
 SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)

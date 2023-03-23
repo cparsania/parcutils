@@ -2,7 +2,7 @@
 % Please edit documentation in R/splicewiz_wrappers.R
 \name{run_ase_diff_analysis}
 \alias{run_ase_diff_analysis}
-\title{Perform ase diff analysis using edgeR for multiple comparison.}
+\title{Perform ASE diff analysis using edgeR.}
 \usage{
 run_ase_diff_analysis(
   x,
@@ -63,7 +63,7 @@ Usually the "treatment" condition is used in nominator and "control" is used in 
 an object of class parcutils_se.
 }
 \description{
-Perform ase diff analysis using edgeR for multiple comparison.
+Perform ASE diff analysis using edgeR.
 }
 \examples{
 se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)

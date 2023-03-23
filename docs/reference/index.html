@@ -189,57 +189,6 @@
         </dt>
         <dd>Generate a venn diagram showing overlap between DE genes.</dd>
       </dl></div><div class="section level2">
-      <h2 id="ir-related">IR related<a class="anchor" aria-label="anchor" href="#ir-related"></a></h2>
-      
-      
-
-      
-    </div><div id="" class="section level2">
-      
-      
-      
-
-      <dl><dt>
-          
-          <code><a href="read_irfinderS_output.html">read_irfinderS_output()</a></code> 
-        </dt>
-        <dd>Read IR-finderS output</dd>
-      </dl><dl><dt>
-          
-          <code><a href="run_deseq_analysis_ir.html">run_deseq_analysis_ir()</a></code> 
-        </dt>
-        <dd>Run DEseq2 for retained introns.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="annotate_retained_introns.html">annotate_retained_introns()</a></code> 
-        </dt>
-        <dd>Annotate introns.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_ir_counts.html">get_ir_counts()</a></code> 
-        </dt>
-        <dd>Prepare a intron reads count matrix.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="map_intron_meta_data.html">map_intron_meta_data()</a></code> 
-        </dt>
-        <dd>Map metadata to irfinder-s output</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_intron_master_list.html">get_intron_master_list()</a></code> 
-        </dt>
-        <dd>Prepare a master list of introns</dd>
-      </dl><dl><dt>
-          
-          <code><a href="select_cols_irfinderS_output.html">select_cols_irfinderS_output()</a></code> 
-        </dt>
-        <dd>Subset columns from IRfinder-S output</dd>
-      </dl><dl><dt>
-          
-          <code><a href="save_de_results.html">save_de_results()</a></code> 
-        </dt>
-        <dd>Save differential expression results in an excel file.</dd>
-      </dl></div><div class="section level2">
       <h2 id="others">Others<a class="anchor" aria-label="anchor" href="#others"></a></h2>
       
       
@@ -284,24 +233,29 @@ ref: https://github.com/tidyverse/dplyr/issues/4223</dd>
 
       <dl><dt>
           
-          <code><a href="get_splicewiz_event_counts.html">get_splicewiz_event_counts()</a></code> 
+          <code><a href="get_ASE_counts_barplot.html">get_ASE_counts_barplot()</a></code> 
         </dt>
         <dd>Generate a barplot showing counts of alternate splice events from the object NxtSe.</dd>
       </dl><dl><dt>
           
           <code><a href="run_ase_diff_analysis.html">run_ase_diff_analysis()</a></code> 
         </dt>
-        <dd>Perform ase diff analysis using edgeR for multiple comparison.</dd>
+        <dd>Perform ASE diff analysis using edgeR.</dd>
       </dl><dl><dt>
           
-          <code><a href="get_edger_diff_ase_event_names.html">get_edger_diff_ase_event_names()</a></code> 
+          <code><a href="get_diff_ASE_count_barplot.html">get_diff_ASE_count_barplot()</a></code> 
         </dt>
-        <dd>Get diff event names from SpliceWiZ edger diff results</dd>
+        <dd>Generate a barplot of diff ASE counts.</dd>
       </dl><dl><dt>
           
-          <code><a href="get_splicewiz_ase_heatmap.html">get_splicewiz_ase_heatmap()</a></code> 
+          <code><a href="get_ASE_data_matrix.html">get_ASE_data_matrix()</a></code> 
         </dt>
-        <dd>Generate a heatmap for SpliceWiz splice events</dd>
+        <dd>Get a data matrix (PSI, logit, z-score) for a given ASE</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_ase_data_matrix_heatmap.html">get_ase_data_matrix_heatmap()</a></code> 
+        </dt>
+        <dd>Generate a heatmap for a given list of ASE.</dd>
       </dl><dl><dt>
           
           <code><a href="get_genes_from_event_name.html">get_genes_from_event_name()</a></code> 

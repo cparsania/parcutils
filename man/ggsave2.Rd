@@ -19,6 +19,9 @@ ggsave2(plot, path, file_name, height = 5, width = 5, ...)
 
 \item{...}{other arguments pass to \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}}.}
 }
+\value{
+save a plot in a directory.
+}
 \description{
 save a ggplot in a directory
 }

@@ -2,7 +2,7 @@
 #'
 #' @param object
 #'
-#' @return
+#' @return print default
 #' @export
 # print <- function(object) {
 #   UseMethod("print")
@@ -42,7 +42,7 @@ print.parcutils <- function(object) {
 #'
 #' @param object
 #'
-#' @return
+#' @return print default
 #' @export
 # print <- function(object) {
 #   UseMethod("print")
@@ -76,7 +76,7 @@ print.parcutils_ir <- function(object) {
 #'
 #' @param object
 #'
-#' @return
+#' @return print default
 #' @export
 # print <- function(object) {
 #   UseMethod("print")
@@ -108,5 +108,4 @@ print.parcutils_ase <- function(object) {
   }
 
 }
-
 

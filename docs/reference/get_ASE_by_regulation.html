@@ -98,23 +98,18 @@
 <span class="r-in"><span><span class="fu">SpliceWiz</span><span class="fu">::</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">treatment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">SpliceWiz</span><span class="fu">::</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">replicate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P"</span>,<span class="st">"Q"</span>,<span class="st">"R"</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">run_splicewiz_diff_analysis</span><span class="op">(</span>x <span class="op">=</span> <span class="va">se</span>, test_factor <span class="op">=</span> <span class="st">"treatment"</span>, test_nom <span class="op">=</span> <span class="st">"A"</span> ,test_denom <span class="op">=</span> <span class="st">"B"</span>,  IRmode <span class="op">=</span><span class="st">"annotated"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in run_splicewiz_diff_analysis(x = se, test_factor = "treatment",     test_nom = "A", test_denom = "B", IRmode = "annotated"):</span> could not find function "run_splicewiz_diff_analysis"</span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="run_ase_diff_analysis.html">run_ase_diff_analysis</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">se</span>, test_factor <span class="op">=</span> <span class="st">"treatment"</span>, test_nom <span class="op">=</span> <span class="st">"A"</span> ,test_denom <span class="op">=</span> <span class="st">"B"</span>,  IRmode <span class="op">=</span><span class="st">"annotated"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mar 23 12:18:19 Performing edgeR contrast for included / excluded counts separately</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Mar 23 12:18:22 Performing edgeR contrast for included / excluded counts together</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get both up and down regulated genes</span></span></span>
 <span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A_VS_B"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      AFE:TRA2B-215-exon1;TRA2B-203-exon1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        SE:TRA2B-205-exon2;TRA2B-203-int1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SE:TRA2B-novelTr014-exon2;TRA2B-214-int2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SE:SRSF3-203-exon5;SRSF3-novelTr003-int1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     A5SS:SRSF2-202-exon1;SRSF2-205-exon1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SE:TRA2B-205-exon4;TRA2B-novelTr003-int1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                A3SS:TP53-201-exon2;TP53-205-exon2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               NSUN5/ENST00000252594_Intron2/clean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> MXE:TRA2B-novelTr015-exon2;TRA2B-novelTr014-exon2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get up genes only</span></span></span>
@@ -125,130 +120,46 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MXE:TRA2B-novelTr015-exon2;TRA2B-novelTr014-exon2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              A3SS:TRA2B-208-exon3;TRA2B-205-exon4 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       A5SS:TRA2B-214-exon2;TRA2B-novelTr008-exon1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              A3SS:SRSF2-205-exon2;SRSF2-207-exon2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get down genes only</span></span></span>
 <span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A_VS_B"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"down"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      AFE:TRA2B-215-exon1;TRA2B-203-exon1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        SE:TRA2B-205-exon2;TRA2B-203-int1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SE:TRA2B-novelTr014-exon2;TRA2B-214-int2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SE:SRSF3-203-exon5;SRSF3-novelTr003-int1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     A5SS:SRSF2-202-exon1;SRSF2-205-exon1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SE:TRA2B-205-exon4;TRA2B-novelTr003-int1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> factor(0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get genes other than up and down</span></span></span>
 <span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A_VS_B"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"other"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SRSF2/ENST00000585202_Intron3/known-exon </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      AFE:TRA2B-215-exon1;TRA2B-203-exon1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                    other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        SE:TRA2B-205-exon7;TRA2B-201-int3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     A3SS:TRA2B-208-exon3;TRA2B-205-exon4 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                    other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      TRA2A/ENST00000297071_Intron7/clean </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        SE:TRA2B-205-exon2;TRA2B-203-int1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                    other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        SE:TRA2B-206-exon2;TRA2B-205-int1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SE:TRA2B-novelTr014-exon2;TRA2B-214-int2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                    other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      AFE:TRA2B-211-exon1;TRA2B-205-exon1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SE:SRSF3-203-exon5;SRSF3-novelTr003-int1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                    other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        SE:SRSF3-203-exon4;SRSF3-202-int3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     A5SS:SRSF2-202-exon1;SRSF2-205-exon1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                    other </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Simplify output for multiple sample comparisons</span></span></span>
 <span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, regul<span class="op">=</span> <span class="st">"up"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 27 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    sample_comparisons ase                                               regul</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                             <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> A_VS_B             A3SS:TP53-201-exon2;TP53-205-exon2                up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> A_VS_B             NSUN5/ENST00000252594_Intron2/clean               up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> A_VS_B             MXE:TRA2B-novelTr015-exon2;TRA2B-novelTr014-exon2 up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> A_VS_B             A3SS:TRA2B-208-exon3;TRA2B-205-exon4              up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> A_VS_B             A5SS:TRA2B-214-exon2;TRA2B-novelTr008-exon1       up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> A_VS_B             A3SS:SRSF2-205-exon2;SRSF2-207-exon2              up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> A_VS_B             A3SS:NSUN5-201-exon3;NSUN5-203-exon3              up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> A_VS_B             A5SS:SRSF3-202-exon5;SRSF3-novelTr007-exon1       up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> A_VS_B             A3SS:SRSF2-206-exon2;SRSF2-novelTr003-exon2       up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> A_VS_B             SE:TP53-206-exon10;TP53-201-int9                  up   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 17 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sample_comparisons ase                                               regul</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                             <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> A_VS_B             A3SS:TP53-201-exon2;TP53-205-exon2                up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> A_VS_B             NSUN5/ENST00000252594_Intron2/clean               up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> A_VS_B             MXE:TRA2B-novelTr015-exon2;TRA2B-novelTr014-exon2 up   </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get genesets by regulation. It uses sample comparison and regulation to name each output geneset.</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">get_ASEsets_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="st">"A_VS_B"</span>, regul <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $A_VS_B_down</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "AFE:TRA2B-215-exon1;TRA2B-203-exon1"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "SE:TRA2B-205-exon2;TRA2B-203-int1"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "SE:TRA2B-novelTr014-exon2;TRA2B-214-int2"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "SE:SRSF3-203-exon5;SRSF3-novelTr003-int1"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "A5SS:SRSF2-202-exon1;SRSF2-205-exon1"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "SE:TRA2B-205-exon4;TRA2B-novelTr003-int1"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "A3SS:SRSF2-novelTr003-exon2;SRSF2-202-exon3"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "SE:TRA2A-201-exon6;TRA2A-novelTr001-int1"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "SE:NSUN5-206-exon5;NSUN5-novelTr001-int1"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "SE:NSUN5-201-exon6;NSUN5-novelTr002-int1"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "SRSF1/ENST00000584773_Intron4/known-exon"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "SE:TRA2B-208-exon3;TRA2B-novelTr003-int1"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "A3SS:TRA2A-novelTr001-exon2;TRA2A-novelTr005-exon2"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [14] "A3SS:SRSF1-201-exon4;SRSF1-novelTr001-exon2"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "SE:SRSF1-207-exon3;SRSF1-novelTr001-int1"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "A5SS:TRA2A-novelTr003-exon1;TRA2A-202-exon3"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "SE:SRSF1-208-exon4;SRSF1-novelTr001-int1"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [18] "A5SS:SRSF1-206-exon1;SRSF1-201-exon1"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "A5SS:TRA2A-novelTr003-exon1;TRA2A-203-exon2"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [20] "A5SS:SRSF2-211-exon1;SRSF2-202-exon2"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "A5SS:TRA2A-208-exon2;TRA2A-202-exon3"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [22] "TRA2B/ENST00000453386_Intron4/clean"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [23] "A5SS:SRSF2-211-exon1;SRSF2-206-exon2"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [24] "SE:SRSF3-204-exon3;SRSF3-202-int2"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] "SE:TRA2A-201-exon4;TRA2A-novelTr002-int1"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [26] "SE:TRA2A-212-exon2;TRA2A-201-int1"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [27] "AFE:TRA2B-214-exon1;TRA2B-202-exon1"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [28] "A3SS:TRA2A-201-exon6;TRA2A-novelTr006-exon2"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29] "A5SS:TRA2A-novelTr004-exon1;TRA2A-203-exon2"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [30] "A5SS:TRA2A-novelTr003-exon1;TRA2A-novelTr004-exon1"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [31] "ALE:TP53-217-exon2;TP53-202-exon9"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [32] "SE:TP53-201-exon4;TP53-214-int3"                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] "A3SS:TP53-201-exon5;TP53-218-exon5"                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $A_VS_B_up</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "A3SS:TP53-201-exon2;TP53-205-exon2"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "NSUN5/ENST00000252594_Intron2/clean"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "MXE:TRA2B-novelTr015-exon2;TRA2B-novelTr014-exon2"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "A3SS:TRA2B-208-exon3;TRA2B-205-exon4"             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "A5SS:TRA2B-214-exon2;TRA2B-novelTr008-exon1"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "A3SS:SRSF2-205-exon2;SRSF2-207-exon2"             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "A3SS:NSUN5-201-exon3;NSUN5-203-exon3"             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "A5SS:SRSF3-202-exon5;SRSF3-novelTr007-exon1"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "A3SS:SRSF2-206-exon2;SRSF2-novelTr003-exon2"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "SE:TP53-206-exon10;TP53-201-int9"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "SE:TP53-201-exon10;TP53-217-int1"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "SE:TP53-204-exon10;TP53-201-int9"                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "A5SS:SRSF2-201-exon1;SRSF2-207-exon1"             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [14] "A5SS:SRSF2-novelTr001-exon1;SRSF2-209-exon1"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "TP53/ENST00000269305_Intron2/known-exon"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "A5SS:TRA2A-202-exon3;TRA2A-novelTr004-exon1"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "SE:SRSF2-novelTr004-exon2;SRSF2-209-int1"         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [18] "A5SS:TRA2A-208-exon2;TRA2A-novelTr003-exon1"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "SE:SRSF3-202-exon5;SRSF3-novelTr004-int1"         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [20] "MXE:SRSF3-novelTr008-exon2;SRSF3-204-exon3"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "A5SS:SRSF1-207-exon3;SRSF1-208-exon4"             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [22] "A3SS:SRSF3-201-exon4;SRSF3-novelTr002-exon2"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [23] "SE:SRSF1-201-exon2;SRSF1-novelTr004-int1"         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [24] "A5SS:SRSF1-novelTr003-exon1;SRSF1-201-exon3"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] "A5SS:SRSF1-207-exon3;SRSF1-novelTr002-exon1"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [26] "SE:TP53-207-exon2;TP53-201-int1"                  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [27] "AFE:TP53-211-exon1;TP53-201-exon1"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "A3SS:TP53-201-exon2;TP53-205-exon2"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "NSUN5/ENST00000252594_Intron2/clean"              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "MXE:TRA2B-novelTr015-exon2;TRA2B-novelTr014-exon2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

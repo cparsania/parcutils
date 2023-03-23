@@ -1,5 +1,5 @@
 #' Generate a barplot showing counts of alternate splice events from the object NxtSe.
-#'
+#' @description This plot is useful to show counts of filtered spliced events once spliceWiz filters are applied.
 #' @param x an object of class \code{NxtSE}. Usually \code{se} or \code{se.filtered}.
 #' @param elem_text_size an integer denoting size of the various text elements in the plot.
 #' @param text_count_size an integer denoting size of the counts mentioned above each bar.
@@ -9,11 +9,11 @@
 #'
 #' @examples
 #' se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)
-#' get_splicewiz_event_counts(se, elem_text_size = 15, text_count_size = 4)
+#' get_ASE_counts_barplot(se, elem_text_size = 15, text_count_size = 4)
 #'
 #'
 #' @keywords internal
-get_splicewiz_event_counts <- function(x, elem_text_size = 15, text_count_size = 10){
+get_ASE_counts_barplot <- function(x, elem_text_size = 15, text_count_size = 10){
 
   stopifnot("x must be the class of NxtSE" = is(x, "NxtSE"))
   gp <- x@elementMetadata %>%
@@ -37,7 +37,7 @@ get_splicewiz_event_counts <- function(x, elem_text_size = 15, text_count_size =
 
 
 
-#' Perform ase diff analysis using edgeR for multiple comparison.
+#' Perform ASE diff analysis using edgeR.
 #'
 #' @param x an object of class \code{NxtSe}.
 #' @param test_factor refer to the argument \code{test_factor} in [SpliceWiz::ASE_edgeR()].
@@ -83,7 +83,7 @@ run_ase_diff_analysis <- function(x, test_nom ,test_denom, test_factor = "condit
   args = c(...)
 
   # run edger.
-  res_edger  <- purrr::map2(test_nom, test_denom , ~ {
+  res_ase_diff_raw  <- purrr::map2(test_nom, test_denom , ~ {
     rlang::inject(SpliceWiz::ASE_edgeR(se=x,
                                        test_factor = test_factor,
                                        test_nom = ..1 ,
@@ -92,40 +92,40 @@ run_ase_diff_analysis <- function(x, test_nom ,test_denom, test_factor = "condit
   )
 
   # assign names to each comparison
-  names(res_edger) <- stringr::str_c(test_nom, test_denom,sep = "_VS_")
+  names(res_ase_diff_raw) <- stringr::str_c(test_nom, test_denom,sep = "_VS_")
 
   # convert edger result into the tibble and fix column names
 
-  res_edger_tbl <- purrr::map(names(res_edger), ~ res_edger[[..1]] %>% tibble::as_tibble())
-  names(res_edger_tbl) <- names(res_edger)
+  res_ase_diff_tibble <- purrr::map(names(res_ase_diff_raw), ~ res_ase_diff_raw[[..1]] %>% tibble::as_tibble())
+  names(res_ase_diff_tibble) <- names(res_ase_diff_raw)
 
-  res_edger_tbl <- purrr::map(res_edger_tbl , ~.fix_splicewiz_res_edger_columns(..1) %>%
+  res_ase_diff_tibble <- purrr::map(res_ase_diff_tibble , ~.fix_splicewiz_res_edger_columns(..1) %>%
     dplyr::select(c("event_name","event_type","event_region"), dplyr::contains("avg_psi"), log2FoldChange,pvalue, padj))
 
   # get matrix of AVG_PSI for each sample into the comparison
 
-  avg_psi <- purrr::map(res_edger , ~..1 %>% .fix_splicewiz_res_edger_columns()  %>% dplyr::select(event_name, event_type, event_region, dplyr::contains("avg_psi")))
+  avg_psi <- purrr::map(res_ase_diff_raw , ~..1 %>% .fix_splicewiz_res_edger_columns()  %>% dplyr::select(event_name, event_type, event_region, dplyr::contains("avg_psi")))
 
-  # mark diff regulation "Up" "Down" and "Other" in the res_edger_tbl.
+  # mark diff regulation "Up" "Down" and "Other" in the res_ase_diff_tibble
 
-  res_edger_tbl_de <- purrr::map(res_edger_tbl, ~ .categorize_diff_ase(..1,log2fc_cutoff = cutoff_lfc, pval_cutoff = cutoff_pval, padj_cutoff = cutoff_padj, regul_based_upon = regul_based_upon))
+  res_ase_diff_tibble_annot <- purrr::map(res_ase_diff_tibble, ~ .categorize_diff_ase(..1,log2fc_cutoff = cutoff_lfc, pval_cutoff = cutoff_pval, padj_cutoff = cutoff_padj, regul_based_upon = regul_based_upon))
 
   # get diff ase counts
 
-  res_edger_de_summary <-   purrr::map(res_edger_tbl_de , ~ ..1 %>%
+  res_ase_diff_summary <-   purrr::map(res_ase_diff_tibble_annot , ~ ..1 %>%
                                          dplyr::group_by(regul) %>%
                                          dplyr::tally() ,.id = "cond")
 
   # Combine everything into a tibble and identify it as an object of class "parcutils_ase".
 
-  ret_obj <- tibble::tibble(de_comparisons = names(res_edger)) %>%
+  ret_obj <- tibble::tibble(de_comparisons = names(res_ase_diff_raw)) %>%
     dplyr::mutate(numerator = stringr::str_replace(de_comparisons, pattern = "_VS.*", replacement = "")) %>%
     dplyr::mutate(denominator = stringr::str_replace(de_comparisons, pattern = ".*VS_", replacement = "")) %>%
     dplyr::mutate(avg_psi = avg_psi) %>%
-    dplyr::mutate(res_edger = res_edger) %>%
-    dplyr::mutate(res_edger_tibble = res_edger_tbl) %>%
-    dplyr::mutate(res_edger_tibble_de = res_edger_tbl_de) %>%
-    dplyr::mutate(res_edger_de_summary = res_edger_de_summary)
+    dplyr::mutate(res_ase_diff_raw = res_ase_diff_raw) %>%
+    dplyr::mutate(res_ase_diff_tibble = res_ase_diff_tibble) %>%
+    dplyr::mutate(res_ase_diff_tibble_annot = res_ase_diff_tibble_annot) %>%
+    dplyr::mutate(res_ase_diff_summary = res_ase_diff_summary)
 
 
   class(ret_obj) <- c("parcutils_ase" , class(ret_obj))
@@ -135,61 +135,79 @@ run_ase_diff_analysis <- function(x, test_nom ,test_denom, test_factor = "condit
 }
 
 
-
-#' Get diff event names from SpliceWiZ edger diff results
+#' Generate a barplot of diff ASE counts.
 #'
-#' @param res_edger an output of [SpliceWiz::ASE_edgeR()]
-#' @param event_type a character string from one of the followings: SE,A5SS, A3SS, MXE, I,AFE, ALE. Default SE
-#' @param padj_cutoff a double denoting cutoff value of padj (FDR). Default 0.05
-#' @param log2fc_cutoff a double denoting cutoff value of log2FC (logFC). Default 0.6
+#' @param x an object of class parcutils_ase.
+#' @param col_up a character string, default `#a40000`, denoting valid a color name for "Up" regulated genes.
+#' @param col_down a character string, default `#16317d`, denoting valid a color name "Down" regulated genes.
+#' @param font_size a numeric, default 12, denoting font size in the plot.
+#' @param show_counts a logical, default `TRUE`, denoting whether to show counts on each bar.
 #'
-#' @return a character vector
+#' @return a bar plot.
 #' @export
 #'
 #' @examples
-#'
 #' se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)
 #' SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
 #' SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
-#' require("edgeR")
-#' res_edgeR <- SpliceWiz::ASE_edgeR(se, "treatment", "A", "B", useQL = FALSE)
-#' res_edgeR_QL <- SpliceWiz::ASE_edgeR(se, "treatment", "A", "B", useQL = TRUE)
-#' get_edger_diff_ase_event_names(res_edgeR,padj_cutoff= 1)
-get_edger_diff_ase_event_names <- function(res_edger,
-                                           event_type = "SE",
-                                           padj_cutoff= 0.05,
-                                           log2fc_cutoff = 0.6){
+#' res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
+#' get_diff_ASE_count_barplot(res)
+get_diff_ASE_count_barplot <- function(x,
+                                       col_up="#a40000",
+                                       col_down="#16317d",
+                                       font_size = 12,
+                                       show_counts = TRUE){
 
-  res_edger %>%
-    dplyr::filter(EventType == !!event_type) %>%
-    dplyr::filter((logFC <= -(log2fc_cutoff) | logFC >= log2fc_cutoff) &
-                    FDR <= padj_cutoff) %>% dplyr::pull(EventName)
+  .validate_parcutils_ase_obj(x)
 
+  gp <- x$res_ase_diff_summary %>%
+    tibble::enframe(name = "comparison" ,
+                    value = "deg_count") %>%
+    tidyr::unnest(cols = "deg_count") %>%
+    dplyr::filter(regul != "other") %>%
+    dplyr::mutate(regul = forcats::fct_relevel(regul, c("Up","Down"))) %>%
+    ggplot2::ggplot(ggplot2::aes(x = regul, y = n , fill = regul)) +
+    ggplot2::facet_wrap(~comparison) +
+    ggplot2::geom_bar(stat = "identity", position = "dodge") +
+    ggplot2::theme_bw() +
+    ggplot2::scale_fill_manual(breaks = c("Up","Down"),
+                               values = c(col_up,col_down) ) +
+    ggplot2::theme(text = ggplot2::element_text(size = font_size)) +
+    ggplot2::xlab("Regulation") +
+    ggplot2::ylab("Counts") +
+    ggplot2::guides(fill =  ggplot2::guide_legend("Regulation"))
 
+  if(show_counts){
+    gp <- gp + ggplot2::geom_text(ggplot2::aes(label = n),
+                                  inherit.aes = T,
+                                  position = position_dodge(width = 0.9),
+                                  size = font_size/3, vjust = 0.05, col = "black")
+  }
+
+  return(gp)
 }
 
 
-
-#' Get an input matrix for diff ASE heatmap
+#' Get a data matrix (PSI, logit, z-score) for a given ASE
 #'
 #' @param se an object of class NxtSE.
 #' @param event_names a character vector denoting valid ASE names to plot in the heatmap.
 #' @param samples a character vector denoting valid sample names to plot in the heatmap.
 #' @param replicates logical, default TRUE, denoting whether to show sample replicates or not.
 #' @param method a character string denoting a method for data value. Can be one of the "PSI", "logit" or "Z-Score"
-#' @param column_condtion a name of column in se storing condition. Deafault: "condition"
+#' @param column_condtion a name of column in se storing condition. Default: "condition"
 #'
 #' @return a data matrix
 #' @export
-#' @keywords internal
 #' @examples
 #' se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)
 #' SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
 #' SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
 #' res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
 #' event_names = get_ASEsets_by_regulation(x = res, sample_comparisons = "A_VS_B", regul = "all") %>% unlist()
-#' .get_ase_heatmap_data(se, event_names , samples = c("A", "B"), column_condition ="treatment")
-.get_ase_heatmap_data <- function(se , event_names,samples,replicates=TRUE, method ="PSI", column_condition ="condition"){
+#' get_ASE_data_matrix(se, event_names , samples = c("A", "B"), column_condition ="treatment")
+#'
+get_ASE_data_matrix <- function(se , event_names,samples,replicates=TRUE, method ="PSI", column_condition ="condition"){
 
   samples_repli <- SpliceWiz::colData(se) %>%
     as.data.frame() %>%
@@ -200,20 +218,24 @@ get_edger_diff_ase_event_names <- function(res_edger,
   data_matrix <- SpliceWiz::makeMatrix(se = se,
                                        event_list = event_names,
                                        sample_list = samples_repli,
-                                       method = method)
+                                       method = method) %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column(var = "event_name") %>%
+    tibble::tibble()
+
 
   return(data_matrix)
 }
 
 
 
-#' Generate a heatmap for SpliceWiz splice events
+#' Generate a heatmap for a given list of ASE.
 #'
 #' @param se an object of class NxtSE.
-#' @param event_names a character vector denoting valid spliceWiz event names
-#' @param samples a character vector denoting valid sample names
-#' @param column_condition a name of column in se storing condition. Deafault: "condition"
-#' @param method one of the character strings: "Z-score", "PSI" ,"logit"
+#' @param event_names a character vector denoting valid spliceWiz event names.
+#' @param samples a character vector denoting valid sample names.
+#' @param column_condition a name of column in se storing condition. Deafault: "condition".
+#' @param method one of the character strings: "Z-score", "PSI" ,"logit".
 #' @param show_replicates logical, default TRUE, denoting whether to show sample replicates or not.
 #' @param show_row_names logical, whether to show row names in the heatmap.
 #' @param cluster_rows logical, whether to clusters rows in the heatmap.
@@ -232,9 +254,9 @@ get_edger_diff_ase_event_names <- function(res_edger,
 #' res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
 #' event_names = get_ASEsets_by_regulation(x = res, sample_comparisons = "A_VS_B", regul = "all") %>% unlist()
 #'
-#' get_splicewiz_ase_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment")
-#' get_splicewiz_ase_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment",method = "Z-score", cluster_rows = TRUE)
-get_splicewiz_ase_heatmap <- function(se,
+#' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment")
+#' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment",method = "Z-score", cluster_rows = TRUE)
+get_ase_data_matrix_heatmap <- function(se,
                                  event_names,
                                  samples,
                                  column_condition = "condition",
@@ -247,15 +269,14 @@ get_splicewiz_ase_heatmap <- function(se,
                                  show_row_dend = FALSE,...){
 
 
-  dat <- .get_ase_heatmap_data(se = se,
+  dat <- get_ASE_data_matrix(se = se,
                                event_names = event_names ,
                                column_condition = column_condition,
                                samples = samples,method = method)
 
-  dat <- dat %>% as.data.frame() %>% tibble::rownames_to_column() %>%
-    tibble::as_tibble() %>%
+  dat <- dat %>%
     TidyWrappers::tbl_remove_rows_NA_any() %>% as.data.frame() %>%
-    tibble::column_to_rownames("rowname")
+    tibble::column_to_rownames("event_name")
 
   ComplexHeatmap::Heatmap(dat, show_row_names = show_row_names,
                           cluster_rows = cluster_rows,
@@ -476,7 +497,7 @@ event_region_to_granges <- function(event_region, prefix = ""){
 #' SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
 #' SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
 #'
-#' res <- run_splicewiz_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated")
+#' res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated")
 #'
 #' # get both up and down regulated genes
 #' get_ASE_by_regulation(x = res, sample_comparisons = c("A_VS_B")) %>% head()
@@ -523,7 +544,7 @@ get_ASE_by_regulation <- function(x, sample_comparisons , regulation = "both" , 
   # split by column regul.
   # NOTE: do not group by column name instead use index. The reason is because if the column name of column 'regul' change in future it will break this code.
 
-  ase_by_comp <- x$res_edger_tibble_de[[sample_comparisons]] %>%
+  ase_by_comp <- x$res_ase_diff_tibble_annot[[sample_comparisons]] %>%
     dplyr::select(1, dplyr::last_col())
 
   ase_by_comp <- ase_by_comp %>%
@@ -622,7 +643,6 @@ get_ASEsets_by_regulation <- function(x, sample_comparisons, regulation = "both"
 #' @export
 #'
 #' @examples
-#'
 #' se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)
 #' SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
 #' SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
@@ -672,7 +692,7 @@ get_ase_volcano_plot <- function(x,
   # prepare volcano plots
 
   # filter by sample_comparison
-  volcano_data <- x$res_edger_tibble[[sample_comparison]] %>%dplyr::select(event_name, log2FoldChange , pvalue, event_type)
+  volcano_data <- x$res_ase_diff_tibble[[sample_comparison]] %>%dplyr::select(event_name, log2FoldChange , pvalue, event_type)
 
 
   # Fix ASE names. It gives gene names if it's unique. Otherwise event names will be returned.
