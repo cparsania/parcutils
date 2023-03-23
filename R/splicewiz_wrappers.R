@@ -113,8 +113,8 @@ run_ase_diff_analysis <- function(x, test_nom ,test_denom, test_factor = "condit
   # get diff ase counts
 
   res_ase_diff_summary <-   purrr::map(res_ase_diff_tibble_annot , ~ ..1 %>%
-                                         dplyr::group_by(regul) %>%
-                                         dplyr::tally() ,.id = "cond")
+                                         dplyr::group_by(event_type,regul) %>%
+                                         dplyr::tally() %>% dplyr::ungroup() ,.id = "cond")
 
   # Combine everything into a tibble and identify it as an object of class "parcutils_ase".
 
@@ -142,6 +142,7 @@ run_ase_diff_analysis <- function(x, test_nom ,test_denom, test_factor = "condit
 #' @param col_down a character string, default `#16317d`, denoting valid a color name "Down" regulated genes.
 #' @param font_size a numeric, default 12, denoting font size in the plot.
 #' @param show_counts a logical, default `TRUE`, denoting whether to show counts on each bar.
+#' @param ... Other arguments pass to the function [ggplot2::facet_grid()]
 #'
 #' @return a bar plot.
 #' @export
@@ -156,7 +157,7 @@ get_diff_ASE_count_barplot <- function(x,
                                        col_up="#a40000",
                                        col_down="#16317d",
                                        font_size = 12,
-                                       show_counts = TRUE){
+                                       show_counts = TRUE, ...){
 
   .validate_parcutils_ase_obj(x)
 
@@ -167,7 +168,7 @@ get_diff_ASE_count_barplot <- function(x,
     dplyr::filter(regul != "other") %>%
     dplyr::mutate(regul = forcats::fct_relevel(regul, c("Up","Down"))) %>%
     ggplot2::ggplot(ggplot2::aes(x = regul, y = n , fill = regul)) +
-    ggplot2::facet_wrap(~comparison) +
+    ggplot2::facet_grid(comparison ~ event_type, ...) +
     ggplot2::geom_bar(stat = "identity", position = "dodge") +
     ggplot2::theme_bw() +
     ggplot2::scale_fill_manual(breaks = c("Up","Down"),

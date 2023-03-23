@@ -9,7 +9,8 @@ get_diff_ASE_count_barplot(
   col_up = "#a40000",
   col_down = "#16317d",
   font_size = 12,
-  show_counts = TRUE
+  show_counts = TRUE,
+  ...
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ get_diff_ASE_count_barplot(
 \item{font_size}{a numeric, default 12, denoting font size in the plot.}
 
 \item{show_counts}{a logical, default \code{TRUE}, denoting whether to show counts on each bar.}
+
+\item{...}{Other arguments pass to the function \code{\link[ggplot2:facet_grid]{ggplot2::facet_grid()}}}
 }
 \value{
 a bar plot.
