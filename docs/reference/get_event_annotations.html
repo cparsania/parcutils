@@ -48,7 +48,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_event_annotations</span><span class="op">(</span><span class="va">se</span>, <span class="va">event_names</span>, org <span class="op">=</span> <span class="st">"hs"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_event_annotations</span><span class="op">(</span><span class="va">se</span>, <span class="va">event_names</span>, org <span class="op">=</span> <span class="st">"hs"</span>, prefix <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -63,6 +63,10 @@
 
 <dt>org</dt>
 <dd><p>a character string "hs" or "mm".</p></dd>
+
+
+<dt>prefix</dt>
+<dd><p>a character string, usually "chr", to append in the chromosome names. This is useful when event names are without "chr" prefix while BSgenome contains "chr".</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -4,7 +4,7 @@
 \alias{get_event_annotations}
 \title{Annotate event names to event length, seq and GC.}
 \usage{
-get_event_annotations(se, event_names, org = "hs")
+get_event_annotations(se, event_names, org = "hs", prefix = "")
 }
 \arguments{
 \item{se}{an object of class NxtSE.}
@@ -12,6 +12,8 @@ get_event_annotations(se, event_names, org = "hs")
 \item{event_names}{a character vector denoting valid event names.}
 
 \item{org}{a character string "hs" or "mm".}
+
+\item{prefix}{a character string, usually "chr", to append in the chromosome names. This is useful when event names are without "chr" prefix while BSgenome contains "chr".}
 }
 \value{
 GenomicRanges.

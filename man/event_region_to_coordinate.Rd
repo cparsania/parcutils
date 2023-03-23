@@ -4,10 +4,12 @@
 \alias{event_region_to_coordinate}
 \title{Convert event regions to genomic co-ordinates.}
 \usage{
-event_region_to_coordinate(event_region)
+event_region_to_coordinate(event_region, prefix = "")
 }
 \arguments{
 \item{event_region}{a character vector denoting valid event regions.}
+
+\item{prefix}{a character string, usually "chr", to append in the chromosome names. This is useful when event names are without "chr" prefix while BSgenome contains "chr".}
 }
 \value{
 a tibble.

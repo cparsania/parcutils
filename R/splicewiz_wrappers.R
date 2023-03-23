@@ -756,6 +756,7 @@ get_ase_volcano_plot <- function(x,
 #' @param se an object of class NxtSE.
 #' @param event_names a character vector denoting valid event names.
 #' @param org a character string "hs" or "mm".
+#' @param prefix a character string, usually "chr", to append in the chromosome names. This is useful when event names are without "chr" prefix while BSgenome contains "chr".
 #'
 #' @return GenomicRanges.
 #' @export
@@ -764,7 +765,7 @@ get_ase_volcano_plot <- function(x,
 #' \dontrun{
 #' # // to do
 #' }
-get_event_annotations <- function(se, event_names, org = "hs"){
+get_event_annotations <- function(se, event_names, org = "hs",prefix = ""){
 
   match.arg(org, choices = c("hs","mm"), several.ok = FALSE)
 
@@ -786,7 +787,7 @@ get_event_annotations <- function(se, event_names, org = "hs"){
 
   # convert GRanges.
 
-  oo_gr <- event_region_to_coordinate(oo$event_region) %>%
+  oo_gr <- event_region_to_coordinate(oo$event_region, prefix = prefix) %>%
     plyranges::as_granges() %>%
     parcutils:::.map_granges_metadata(bs_genome_object = bsg)
 
@@ -799,6 +800,7 @@ get_event_annotations <- function(se, event_names, org = "hs"){
 #' Convert event regions to genomic co-ordinates.
 #'
 #' @param event_region a character vector denoting valid event regions.
+#' @param prefix a character string, usually "chr", to append in the chromosome names. This is useful when event names are without "chr" prefix while BSgenome contains "chr".
 #'
 #' @return a tibble.
 #' @export
@@ -808,7 +810,7 @@ get_event_annotations <- function(se, event_names, org = "hs"){
 #'  # // to do
 #' }
 #'
-event_region_to_coordinate <- function(event_region){
+event_region_to_coordinate <- function(event_region, prefix = ""){
 
   col_seqnames = glue::glue("seqnames")
   col_start = glue::glue("start")
@@ -817,7 +819,7 @@ event_region_to_coordinate <- function(event_region){
 
   tibble::tibble(event_region = event_region) %>%
     dplyr::mutate(!!col_seqnames := stringr::str_replace(event_region, ":.*","")) %>%
-    dplyr::mutate(!!col_seqnames := stringr::str_c(!!rlang::sym(col_seqnames),sep = "")) %>%
+    dplyr::mutate(!!col_seqnames := stringr::str_c(prefix, !!rlang::sym(col_seqnames),sep = "")) %>%
     dplyr::mutate(!!col_start:= stringr::str_replace(event_region, ".*:(\\d+)-.*","\\1") %>%
                     as.numeric()) %>%
     dplyr::mutate(!!col_end := stringr::str_replace(event_region, ".*:(\\d+)-(\\d+)\\/.*","\\2") %>% as.numeric()) %>%
