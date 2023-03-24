@@ -791,6 +791,8 @@ get_event_annotations <- function(se, event_names, org = "hs",prefix = ""){
     plyranges::as_granges() %>%
     parcutils:::.map_granges_metadata(bs_genome_object = bsg)
 
+  oo_gr$event_name <- oo$event_name
+
   return(oo_gr)
 
 }
