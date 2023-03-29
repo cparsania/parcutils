@@ -295,7 +295,7 @@ get_ase_data_matrix_heatmap <- function(se,
                               column_condition = column_condition,
                                samples = samples,method = method)
 
-  dat <- dat %>% dplyr::select(samples) %>%
+  dat <- dat %>% dplyr::select(event_name,samples) %>%
     TidyWrappers::tbl_remove_rows_NA_any() %>% as.data.frame() %>%
     tibble::column_to_rownames("event_name")
 
