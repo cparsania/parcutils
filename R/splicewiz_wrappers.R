@@ -812,10 +812,11 @@ get_event_annotations <- function(se, event_names, org = "hs",prefix = ""){
   # convert GRanges.
 
   oo_gr <- event_region_to_coordinate(oo$event_region, prefix = prefix) %>%
-    plyranges::as_granges() %>%
-    parcutils:::.map_granges_metadata(bs_genome_object = bsg)
+    plyranges::as_granges()
 
   oo_gr$event_name <- oo$event_name
+
+  oo_gr %<>% parcutils:::.map_granges_metadata(bs_genome_object = bsg)
 
   return(oo_gr)
 

@@ -519,13 +519,13 @@
 
   # check if seqlevels of two objects matches.
 
-  not_found <- seqlevels(x)[!seqlevels(x) %in% seqlevels(bs_genome_object)]
+  not_found <- GenomeInfoDb::seqlevels(x)[!GenomeInfoDb::seqlevels(x) %in% GenomeInfoDb::seqlevels(bs_genome_object)]
 
   if(length(not_found)>0){
     cli::cli_warn("seqlevel{?s}  {.emph {cli::col_red({not_found})}} {?is/are} not present in the BSgenome.\nASE belongs to {?this/these} level{?s} will be discarded.")
   }
 
-  x <- x[!GenomeInfoDb::seqlevels(x) %in% not_found]
+  x <- x %>% tibble::as_tibble() %>% dplyr::filter(!(seqnames %in% not_found)) %>% plyranges::as_granges()
 
   if(length(x) == 0){
     stop("No ASE have common seqlevels with bs_genome_object.")
