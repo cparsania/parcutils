@@ -22,7 +22,11 @@ GenomicRanges.
 Annotate event names to event length, seq and GC.
 }
 \examples{
-\dontrun{
-# // to do
-}
+se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)
+SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
+SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
+res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_pval = 1, regul_based_upon = 1)
+q_events <- get_ASE_by_regulation(res, sample_comparisons = "A_VS_B",regulation = "both") \%>\% names()
+get_event_annotations(se = se, event_names = q_events)
+
 }

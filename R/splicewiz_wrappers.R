@@ -273,7 +273,7 @@ get_ASE_data_matrix <- function(se , event_names,samples,summarise_groups=TRUE,s
 #'
 #' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment", summarise_groups = FALSE )
 #' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment", summarise_groups = TRUE )
-#' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("P" ,"Q","R"), column_condition    = "replicate",method = "Z-score", cluster_rows = TRUE)
+#' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("P" ,"R","Q"), column_condition    = "replicate",method = "Z-score", cluster_rows = TRUE)
 #'
 get_ase_data_matrix_heatmap <- function(se,
                                  event_names,
@@ -782,9 +782,13 @@ get_ase_volcano_plot <- function(x,
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # // to do
-#' }
+#' se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)
+#' SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
+#' SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
+#' res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_pval = 1, regul_based_upon = 1)
+#' q_events <- get_ASE_by_regulation(res, sample_comparisons = "A_VS_B",regulation = "both") %>% names()
+#' get_event_annotations(se = se, event_names = q_events)
+#'
 get_event_annotations <- function(se, event_names, org = "hs",prefix = ""){
 
   match.arg(org, choices = c("hs","mm"), several.ok = FALSE)

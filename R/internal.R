@@ -503,7 +503,7 @@
 
 
 
-#' Map metadata (GC, length and seq) to GRanges object
+#' Map metadata (GC, length and seq) to GRanges object.
 #'
 #' @param x an object of class GRanges
 #' @param bs_genome_object an object of class BSgenome, default \code{BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38}
@@ -516,6 +516,20 @@
 
   stopifnot("x must be the object of class GRanges" = is(x, "GRanges"))
   stopifnot("bs_genome_object must be an object of class BSgenome" = is(bs_genome_object, "BSgenome"))
+
+  # check if seqlevels of two objects matches.
+
+  not_found <- seqlevels(x)[!seqlevels(x) %in% seqlevels(bs_genome_object)]
+
+  if(length(not_found)>0){
+    cli::cli_warn("seqlevel{?s}  {.emph {cli::col_red({not_found})}} {?is/are} not present in the BSgenome.\nASE belongs to {?this/these} level{?s} will be discarded.")
+  }
+
+  x <- x[!GenomeInfoDb::seqlevels(x) %in% not_found]
+
+  if(length(x) == 0){
+    stop("No ASE have common seqlevels with bs_genome_object.")
+  }
 
   x <- x %>%
     # add sequence for each intron

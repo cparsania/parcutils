@@ -2,7 +2,7 @@
 % Please edit documentation in R/internal.R
 \name{.map_granges_metadata}
 \alias{.map_granges_metadata}
-\title{Map metadata (GC, length and seq) to GRanges object}
+\title{Map metadata (GC, length and seq) to GRanges object.}
 \usage{
 .map_granges_metadata(
   x,
@@ -18,6 +18,6 @@
 a dataframe.
 }
 \description{
-Map metadata (GC, length and seq) to GRanges object
+Map metadata (GC, length and seq) to GRanges object.
 }
 \keyword{internal}

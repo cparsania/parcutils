@@ -62,6 +62,6 @@ event_names = get_ASEsets_by_regulation(x = res, sample_comparisons = "A_VS_B", 
 
 get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment", summarise_groups = FALSE )
 get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment", summarise_groups = TRUE )
-get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("P" ,"Q","R"), column_condition    = "replicate",method = "Z-score", cluster_rows = TRUE)
+get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("P" ,"R","Q"), column_condition    = "replicate",method = "Z-score", cluster_rows = TRUE)
 
 }
