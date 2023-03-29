@@ -10,7 +10,8 @@ get_ase_data_matrix_heatmap(
   samples,
   column_condition = "condition",
   method = "PSI",
-  show_replicates = TRUE,
+  summarise_groups = TRUE,
+  summarise_groups_by = "mean",
   show_row_names = FALSE,
   cluster_rows = FALSE,
   cluster_columns = FALSE,
@@ -30,7 +31,9 @@ get_ase_data_matrix_heatmap(
 
 \item{method}{one of the character strings: "Z-score", "PSI" ,"logit".}
 
-\item{show_replicates}{logical, default TRUE, denoting whether to show sample replicates or not.}
+\item{summarise_groups}{pass to \code{summarise_groups} of \code{\link[=get_ASE_data_matrix]{get_ASE_data_matrix()}}.}
+
+\item{summarise_groups_by}{pass to \code{summarise_groups_by} of \code{\link[=get_ASE_data_matrix]{get_ASE_data_matrix()}}.}
 
 \item{show_row_names}{logical, whether to show row names in the heatmap.}
 
@@ -57,6 +60,8 @@ SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
 res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
 event_names = get_ASEsets_by_regulation(x = res, sample_comparisons = "A_VS_B", regul = "all") \%>\% unlist()
 
-get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment")
-get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment",method = "Z-score", cluster_rows = TRUE)
+get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment", summarise_groups = FALSE )
+get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment", summarise_groups = TRUE )
+get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("P" ,"Q","R"), column_condition    = "replicate",method = "Z-score", cluster_rows = TRUE)
+
 }

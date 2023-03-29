@@ -8,7 +8,8 @@ get_ASE_data_matrix(
   se,
   event_names,
   samples,
-  replicates = TRUE,
+  summarise_groups = TRUE,
+  summarise_groups_by = "mean",
   method = "PSI",
   column_condition = "condition"
 )
@@ -20,11 +21,13 @@ get_ASE_data_matrix(
 
 \item{samples}{a character vector denoting valid sample names to plot in the heatmap.}
 
-\item{replicates}{logical, default TRUE, denoting whether to show sample replicates or not.}
+\item{summarise_groups}{logical, denoting whether to summaries groups (replicates mostly), default \code{TRUE}.}
 
-\item{method}{a character string denoting a method for data value. Can be one of the "PSI", "logit" or "Z-Score"}
+\item{summarise_groups_by}{a character string denoting a method to summaries groups. Can be one of the \code{mean} or \code{median}.}
 
-\item{column_condtion}{a name of column in se storing condition. Default: "condition"}
+\item{method}{a character string denoting a method for data value. Can be one of the "PSI", "logit" or "Z-Score".}
+
+\item{column_condition}{a character string denoting a condition column from \code{se} to select samples. Same column will also be used to group and summaries samples.}
 }
 \value{
 a data matrix
@@ -39,5 +42,6 @@ SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
 res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
 event_names = get_ASEsets_by_regulation(x = res, sample_comparisons = "A_VS_B", regul = "all") \%>\% unlist()
 get_ASE_data_matrix(se, event_names , samples = c("A", "B"), column_condition ="treatment")
+get_ASE_data_matrix(se, event_names , samples = c("P", "Q","R"), column_condition ="replicate")
 
 }

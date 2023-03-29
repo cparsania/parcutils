@@ -194,9 +194,10 @@ get_diff_ASE_count_barplot <- function(x,
 #' @param se an object of class NxtSE.
 #' @param event_names a character vector denoting valid ASE names to plot in the heatmap.
 #' @param samples a character vector denoting valid sample names to plot in the heatmap.
-#' @param replicates logical, default TRUE, denoting whether to show sample replicates or not.
-#' @param method a character string denoting a method for data value. Can be one of the "PSI", "logit" or "Z-Score"
-#' @param column_condtion a name of column in se storing condition. Default: "condition"
+#' @param summarise_groups logical, denoting whether to summaries groups (replicates mostly), default `TRUE`.
+#' @param summarise_groups_by a character string denoting a method to summaries groups. Can be one of the `mean` or `median`.
+#' @param column_condition a character string denoting a condition column from `se` to select samples. Same column will also be used to group and summaries samples.
+#' @param method a character string denoting a method for data value. Can be one of the "PSI", "logit" or "Z-Score".
 #'
 #' @return a data matrix
 #' @export
@@ -207,23 +208,37 @@ get_diff_ASE_count_barplot <- function(x,
 #' res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
 #' event_names = get_ASEsets_by_regulation(x = res, sample_comparisons = "A_VS_B", regul = "all") %>% unlist()
 #' get_ASE_data_matrix(se, event_names , samples = c("A", "B"), column_condition ="treatment")
+#' get_ASE_data_matrix(se, event_names , samples = c("P", "Q","R"), column_condition ="replicate")
 #'
-get_ASE_data_matrix <- function(se , event_names,samples,replicates=TRUE, method ="PSI", column_condition ="condition"){
+get_ASE_data_matrix <- function(se , event_names,samples,summarise_groups=TRUE,summarise_groups_by = "mean", method ="PSI", column_condition ="condition"){
 
+  match.arg(arg = summarise_groups_by, choices = c("mean","median"))
+
+  # sample groups
   samples_repli <- SpliceWiz::colData(se) %>%
     as.data.frame() %>%
     tibble::rownames_to_column(var = "samples") %>%
-    dplyr::filter(!!rlang::sym(column_condition) %in% !!samples) %>%
-    dplyr::pull(samples)
+    dplyr::filter(!!rlang::sym(column_condition) %in% !!samples)
 
+  # data matrix
   data_matrix <- SpliceWiz::makeMatrix(se = se,
                                        event_list = event_names,
-                                       sample_list = samples_repli,
+                                       sample_list = samples_repli$samples,
                                        method = method) %>%
     as.data.frame() %>%
     tibble::rownames_to_column(var = "event_name") %>%
     tibble::tibble()
 
+  # summaries replicates
+  if(summarise_groups){
+    data_matrix <- data_matrix %>%
+      tidyr::pivot_longer(cols = -event_name, names_to = "samples", values_to = "value") %>%
+      dplyr::left_join(samples_repli, by = c("samples")) %>%
+      dplyr::group_by(event_name,!!rlang::sym(column_condition)) %>%
+      dplyr::summarise_at("value", summarise_groups_by) %>%
+      tidyr::pivot_wider(id_cols = event_name, names_from = !!rlang::sym(column_condition), values_from = "value") %>%
+      dplyr::ungroup()
+  }
 
   return(data_matrix)
 }
@@ -237,13 +252,14 @@ get_ASE_data_matrix <- function(se , event_names,samples,replicates=TRUE, method
 #' @param samples a character vector denoting valid sample names.
 #' @param column_condition a name of column in se storing condition. Deafault: "condition".
 #' @param method one of the character strings: "Z-score", "PSI" ,"logit".
-#' @param show_replicates logical, default TRUE, denoting whether to show sample replicates or not.
 #' @param show_row_names logical, whether to show row names in the heatmap.
 #' @param cluster_rows logical, whether to clusters rows in the heatmap.
 #' @param cluster_columns logical, whether to cluster column in the heatmap or not.
 #' @param show_column_dend logical, whether to show column dendrogram in the heatmap or not.
 #' @param show_row_dend logical, whether to show row dendrogram in the heatmap or not.
 #' @param ... other parameters to pass [ComplexHeatmap::Heatmap()]
+#' @param summarise_groups pass to `summarise_groups` of [parcutils::get_ASE_data_matrix()].
+#' @param summarise_groups_by pass to `summarise_groups_by` of [parcutils::get_ASE_data_matrix()].
 #'
 #' @return a heatmap
 #' @export
@@ -255,14 +271,17 @@ get_ASE_data_matrix <- function(se , event_names,samples,replicates=TRUE, method
 #' res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
 #' event_names = get_ASEsets_by_regulation(x = res, sample_comparisons = "A_VS_B", regul = "all") %>% unlist()
 #'
-#' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment")
-#' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment",method = "Z-score", cluster_rows = TRUE)
+#' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment", summarise_groups = FALSE )
+#' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment", summarise_groups = TRUE )
+#' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("P" ,"Q","R"), column_condition    = "replicate",method = "Z-score", cluster_rows = TRUE)
+#'
 get_ase_data_matrix_heatmap <- function(se,
                                  event_names,
                                  samples,
                                  column_condition = "condition",
                                  method = "PSI",
-                                 show_replicates=TRUE, # not implemented yet
+                                 summarise_groups=TRUE,
+                                 summarise_groups_by = "mean",
                                  show_row_names = FALSE,
                                  cluster_rows = FALSE,
                                  cluster_columns = FALSE,
@@ -271,8 +290,9 @@ get_ase_data_matrix_heatmap <- function(se,
 
 
   dat <- get_ASE_data_matrix(se = se,
-                               event_names = event_names ,
-                               column_condition = column_condition,
+                               event_names = event_names ,summarise_groups = summarise_groups,
+                             summarise_groups_by = summarise_groups_by,
+                              column_condition = column_condition,
                                samples = samples,method = method)
 
   dat <- dat %>%
