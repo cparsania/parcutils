@@ -13,14 +13,16 @@ run_ase_diff_analysis(
   cutoff_pval = 0.05,
   cutoff_padj = 0.01,
   regul_based_upon = 1,
+  n_thread = 1,
   ...
 )
 }
 \arguments{
 \item{x}{an object of class \code{NxtSe}.}
 
-\item{test_nom, test_denom}{A pair of vectors, usually the same length, denoting nominator and denominator conditions to test for differential ASE, respectively.
-Usually the "treatment" condition is used in nominator and "control" is used in the denominator.}
+\item{test_nom}{// TO DO}
+
+\item{test_denom}{// TO DO}
 
 \item{test_factor}{refer to the argument \code{test_factor} in \code{\link[SpliceWiz:ASE-methods]{SpliceWiz::ASE_edgeR()}}.}
 
@@ -56,6 +58,8 @@ Usually the "treatment" condition is used in nominator and "control" is used in 
 \item Other : remaining genes
 }
 }}
+
+\item{n_thread}{an integer, default 1,  denoting number of threads to use for multitasking.}
 
 \item{...}{Other parameters passed to \code{\link[SpliceWiz:ASE-methods]{SpliceWiz::ASE_edgeR()}}.}
 }

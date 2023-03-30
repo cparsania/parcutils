@@ -41,8 +41,6 @@ get_ASE_counts_barplot <- function(x, elem_text_size = 15, text_count_size = 10)
 #'
 #' @param x an object of class \code{NxtSe}.
 #' @param test_factor refer to the argument \code{test_factor} in [SpliceWiz::ASE_edgeR()].
-#' @param test_nom,test_denom A pair of vectors, usually the same length, denoting nominator and denominator conditions to test for differential ASE, respectively.
-#' Usually the "treatment" condition is used in nominator and "control" is used in the denominator.
 #' @param regul_based_upon one of the numeric choices  1, 2, or 3. Default 1 i.e. categorized diff. ASE by pvalue and log2fc.
 #' ## if 1 ...
 #'  - Up : log2fc >= cutoff_lfc & pvalue <= cutoff_pval
@@ -62,6 +60,9 @@ get_ASE_counts_barplot <- function(x, elem_text_size = 15, text_count_size = 10)
 #' @param cutoff_padj minimal threshold for Padj, default 0.01. Padj threshold will be applied only when
 #'  `regul_based_upon` is either 2 or 3.
 #' @param ... Other parameters passed to [SpliceWiz::ASE_edgeR()].
+#' @param test_nom  // TO DO
+#' @param test_denom // TO DO
+#' @param n_thread an integer, default 1,  denoting number of threads to use for multitasking.
 #'
 #' @return an object of class parcutils_se.
 #' @export
@@ -77,13 +78,15 @@ get_ASE_counts_barplot <- function(x, elem_text_size = 15, text_count_size = 10)
 #' run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated")
 #' run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
 #'
-run_ase_diff_analysis <- function(x, test_nom ,test_denom, test_factor = "condition",cutoff_lfc = 1, cutoff_pval = 0.05 , cutoff_padj= 0.01, regul_based_upon = 1, ...){
+run_ase_diff_analysis <- function(x, test_nom ,test_denom, test_factor = "condition",cutoff_lfc = 1, cutoff_pval = 0.05 , cutoff_padj= 0.01, regul_based_upon = 1, n_thread = 1, ...){
 
   # get all ... arguments
   args = c(...)
 
+  future::plan(multisession, workers = n_thread)
+
   # run edger.
-  res_ase_diff_raw  <- purrr::map2(test_nom, test_denom , ~ {
+  res_ase_diff_raw  <- furrr::future_map2(test_nom, test_denom , ~ {
     rlang::inject(SpliceWiz::ASE_edgeR(se=x,
                                        test_factor = test_factor,
                                        test_nom = ..1 ,
