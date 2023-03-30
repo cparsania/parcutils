@@ -76,14 +76,14 @@ get_ASE_counts_barplot <- function(x, elem_text_size = 15, text_count_size = 10)
 #' SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
 #' SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
 #' run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated")
-#' run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
+#' run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2, n_thread = 2  )
 #'
 run_ase_diff_analysis <- function(x, test_nom ,test_denom, test_factor = "condition",cutoff_lfc = 1, cutoff_pval = 0.05 , cutoff_padj= 0.01, regul_based_upon = 1, n_thread = 1, ...){
 
   # get all ... arguments
   args = c(...)
 
-  future::plan(multisession, workers = n_thread)
+  future::plan(future::multisession(), workers = n_thread)
 
   # run edger.
   res_ase_diff_raw  <- furrr::future_map2(test_nom, test_denom , ~ {
