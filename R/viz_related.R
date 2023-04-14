@@ -428,7 +428,9 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10,
 
 
   # define colors for dots in pca plot
-  pca_colors <- RColorBrewer::brewer.pal(n =12, name = "Paired")  # max 12 colors
+  #pca_colors <- RColorBrewer::brewer.pal(n =12, name = "Paired")  # max 12 colors
+  qual_col_pals = RColorBrewer::brewer.pal.info[RColorBrewer::brewer.pal.info$category == 'qual',]
+  pca_colors = unlist(mapply(RColorBrewer::brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
 
   if(sample_colors){
     set.seed(sample.seed) # reproduce sampling output

@@ -74,6 +74,6 @@ se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)
 SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
 SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
 run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated")
-run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
+run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2, n_thread = 2  )
 
 }
