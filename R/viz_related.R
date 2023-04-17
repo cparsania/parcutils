@@ -878,6 +878,7 @@ get_diff_gene_count_barplot <- function(x,
     tidyr::unnest(cols = "deg_count") %>%
     dplyr::filter(regul != "other") %>%
     dplyr::mutate(regul = forcats::fct_relevel(regul, c("Up","Down"))) %>%
+    dplyr::mutate(comparison = forcats::fct_relevel(comparison, x$de_comparisons)) %>%
     ggplot2::ggplot(ggplot2::aes(x = regul, y = n , fill = regul)) +
     ggplot2::facet_wrap(~comparison) +
     ggplot2::geom_bar(stat = "identity", position = "dodge") +
