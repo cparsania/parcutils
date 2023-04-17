@@ -410,8 +410,8 @@ get_pca_plot <- function(x, samples = NULL, genes = NULL, circle_size = 10,
   # pca plot
 
   pca_plot <- pr_comps_tbl %>%
-    dplyr::arrange(groups, "stringr::str_sort", numeric = T) %>%
-    dplyr::mutate(groups, factor(groups,ordered = T)) %>%
+    #dplyr::arrange(groups, "stringr::str_sort", numeric = T,decreasing = F) %>%
+    dplyr::mutate(groups = factor(groups,groups %>% unique() %>% stringr::str_sort(numeric = T))) %>%
     ggplot2::ggplot(ggplot2::aes(x = !!x_pc, y = !!y_pc)) +
     ggplot2::geom_point(ggplot2::aes(fill = groups),size = circle_size, pch=21)
 
