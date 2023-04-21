@@ -30,7 +30,7 @@ get_ase_volcano_plot(
 )
 }
 \arguments{
-\item{x}{an abject of class "parcutils". This is an output of the function \code{\link[=run_ase_diff_analysis]{run_ase_diff_analysis()}}.}
+\item{x}{an abject of class "parcutils_ase". This is an output of the function \code{\link[=run_ase_diff_analysis]{run_ase_diff_analysis()}}.}
 
 \item{sample_comparison}{a character string denoting a valid differential ASE comparison. Possible comparisons can be found from x$de_comparisons.}
 
