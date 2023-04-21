@@ -514,7 +514,7 @@ event_region_to_granges <- function(event_region, prefix = ""){
 #'  + `other` : returns ASE other than up and down regulated ASE.
 #'  + `all` : returns all ASE.
 #' @param event_type a character string denoting event type for which one of the `up`, `down`, `both`, `other` or `all` events to be returned based.
-#' Choices are: IR, SE, AFE, ALE, A3SS, A5SS and MXE. Default NULL, uses all event types.
+#' Choices are: `IR`, `SE`, `AFE`, `ALE`, `A3SS`, `A5SS` and `MXE.` Default NULL, uses all event types.
 #' @param simplify logical, default FALSE, if TRUE returns result in a dataframe format.
 #'
 #' @return a list or dataframe.
@@ -525,22 +525,22 @@ event_region_to_granges <- function(event_region, prefix = ""){
 #' SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
 #' SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
 #'
-#' res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated")
+#' res <- run_ase_diff_analysis(x = se, test_factor = "replicate", test_nom = c("P","Q","R") ,test_denom = c("Q","R","P"),  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_pval = 1, regul_based_upon = 1)
 #'
 #' # get both up and down regulated genes
-#' get_ASE_by_regulation(x = res, sample_comparisons = c("A_VS_B")) %>% head()
+#' get_ASE_by_regulation(x = res, sample_comparisons = c("P_VS_Q")) %>% head()
 #'
 #' # get up genes only
-#' get_ASE_by_regulation(x = res, sample_comparisons = c("A_VS_B") , regul = "up") %>% head()
+#' get_ASE_by_regulation(x = res, sample_comparisons = c("P_VS_Q") , regul = "up") %>% head()
 #'
-#' # get down genes only
-#' get_ASE_by_regulation(x = res, sample_comparisons = c("A_VS_B") , regul = "down") %>% head()
+#' # get SE events
+#' get_ASE_by_regulation(x = res, sample_comparisons = c("P_VS_Q") , regul = "down",event_type = "SE") %>% head()
 #'
 #' # get genes other than up and down
 #' get_ASE_by_regulation(x = res, sample_comparisons = c("A_VS_B") , regul = "other") %>% head()
 #'
 #' # Simplify output for multiple sample comparisons
-#' get_ASE_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify = TRUE, regul= "both",event_type = "SE")
+#' get_ASE_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify = TRUE, regul= "both",event_type = "IR")
 #'
 #'
 #' # get genesets by regulation. It uses sample comparison and regulation to name each output geneset.
@@ -564,7 +564,7 @@ get_ASE_by_regulation <- function(x, sample_comparisons , regulation = "both", e
   # if length of  sample_comparisons > 1, use this function recursively
   if(length(sample_comparisons) > 1){
     rslt <- purrr::map(sample_comparisons,
-                       ~get_ASE_by_regulation(x = x,sample_comparisons = ..1,regulation = regulation , simplify = simplify))
+                       ~get_ASE_by_regulation(x = x,sample_comparisons = ..1,regulation = regulation , simplify = simplify, event_type = event_type))
     names(rslt) <- sample_comparisons
     return(rslt)
   }
@@ -630,12 +630,22 @@ get_ASE_by_regulation <- function(x, sample_comparisons , regulation = "both", e
 
 #' @rdname get_ASE_by_regulation
 #' @export
-get_ASEsets_by_regulation <- function(x, sample_comparisons, regulation = "both" ){
+get_ASEsets_by_regulation <- function(x, sample_comparisons, regulation = "both", event_type = NULL ){
 
 
   ase <- get_ASE_by_regulation(x, sample_comparisons = sample_comparisons,
                                    regulation = regulation,
-                                   simplify = TRUE)
+                                    simplify = TRUE,event_type = event_type)
+
+  # give warning for the comparison to be discarded.
+
+  discarded_comparisons <- purrr::discard(ase , ~nrow(..1) > 0) %>% names()
+  if(length(discarded_comparisons)>0){
+    cli::cli_alert_warning("No events found in th{?is/ese} comparsion{?s}: {discarded_comparisons}.")
+  }
+
+  # keep only if a given comparison contains at least a single event.
+  ase <- purrr::keep(ase , ~nrow(..1) > 0)
 
   ase_sets <- dplyr::bind_rows(ase) %>%
     dplyr::mutate(ase_set_name = stringr::str_c(sample_comparisons, regul , sep = "_")) %>%
@@ -648,7 +658,7 @@ get_ASEsets_by_regulation <- function(x, sample_comparisons, regulation = "both"
 
 #' Generate a volcano plot for diff. ASE.
 #'
-#' @param x an abject of class "parcutils". This is an output of the function [parcutils::run_ase_diff_analysis()].
+#' @param x an abject of class "parcutils_ase". This is an output of the function [parcutils::run_ase_diff_analysis()].
 #' @param sample_comparison a character string denoting a valid differential ASE comparison. Possible comparisons can be found from x$de_comparisons.
 #' @param log2fc_cutoff a numeric value denoting logFC cutoff for volcano plot. Default 1.
 #' @param pval_cutoff a numeric value denoting pvalue cutoff for volcano plot. Default 0.05.
@@ -856,6 +866,73 @@ event_region_to_coordinate <- function(event_region, prefix = ""){
     dplyr::mutate(!!col_end := stringr::str_replace(event_region, ".*:(\\d+)-(\\d+)\\/.*","\\2") %>% as.numeric()) %>%
     dplyr::mutate(!!col_strand := stringr::str_replace(event_region, ".*:(\\d+)-(\\d+)\\/(.*)","\\3"))
 
+}
+
+#' Plot a venn diagram for diff ASE (using event names or gene names) between multiple comparison.
+#'
+#' @param x an abject of class "parcutils_ase". This is an output of the function [parcutils::run_ase_diff_analysis()].
+#' @param sample_comparisons a character vector denoting  sample comparisons for which ASE to be obtained.
+#' @param regulation a character string, default \code{both}. Values can be one of the \code{up}, \code{down}, \code{both}, \code{other}, \code{all}.
+#' @param fill_color an argument pass to the function [ggvenn::ggvenn].
+#' @param event_type a character string denoting event type for which one of the `up`, `down`, `both`, `other` or `all` events to be returned based.
+#' Choices are: `IR`, `SE`, `AFE`, `ALE`, `A3SS`, `A5SS` and `MXE.` Default NULL, uses all event types.
+#' @param ovelap_genes logical, default `TRUE`, instead of event_names, overlap gene names.
+#' @param ... other arguments pass to the function [ggvenn::ggvenn]
+#'
+#'
+#' @return a venn diagram
+#' @export
+#'
+#' @examples
+#'
+#' se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)
+#' SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
+#' SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
+#' res <- run_ase_diff_analysis(x = se, test_factor = "replicate", test_nom = c("P","Q","R") ,test_denom = c("Q","R","P"),  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_pval = 1, regul_based_upon = 1)
+#' plot_deASE_venn(x = res, sample_comparisons = c("P_VS_Q","Q_VS_R","R_VS_P"),  event_type = "SE", regulation = "both", ovelap_genes = TRUE)
+#' plot_deASE_venn(x = res, sample_comparisons = c("P_VS_Q","Q_VS_R","R_VS_P"),  event_type = "SE", regulation = "up", ovelap_genes = TRUE)
+#' plot_deASE_venn(x = res, sample_comparisons = c("P_VS_Q","Q_VS_R","R_VS_P"),  event_type = "A3SS", regulation = "both", ovelap_genes = TRUE)
+#'
+plot_deASE_venn <- function(x, sample_comparisons, regulation = "both", fill_color = NULL, event_type = NULL,ovelap_genes = TRUE,...){
+
+  # validate x
+
+  stopifnot("x must be an object of class 'parcutils_ase'. Usually x is derived by parcutils::run_ase_diff_analysis()." = is(x, "parcutils_ase"))
+
+
+  # validate sample_comparisons
+  stopifnot("sample_comparisons must be a character vector of length > 1" = is.character(sample_comparisons) & length(sample_comparisons) > 1)
+
+  rlang::arg_match(arg = regulation , values = c("up", "down", "both", "other", "all"),multiple = FALSE, error_arg = "regulation")
+  rlang::arg_match(arg = event_type , values = c("IR", "SE", "AFE", "ALE", "A3SS", "A5SS", 'MXE'), multiple = FALSE, error_arg = "regulation")
+
+  # all sample comparisons must present in x
+
+  if(!all(sample_comparisons %in% x$de_comparisons) ){
+    not_present <- sample_comparisons[!(sample_comparisons %in% x$de_comparisons)]
+    stop(cli::cli_abort("Value{?s} {not_present} {?is/are} not present in the x. Check x$de_comparisons to access all choices."))
+  }
+
+  if(is.null(fill_color)){
+    fill_color = c("blue", "yellow", "green", "red")
+  }
+
+  venn_data <- parcutils::get_ASEsets_by_regulation(x = x, regulation = regulation,sample_comparisons = sample_comparisons,event_type = event_type)
+
+  # ggvenn can only plot maximum 4 sets.
+  if(length(venn_data)>4) {
+    discarded_sets <- venn_data[5:length(venn_data)] %>% names()
+    cli::cli_alert_warning("Maximum 4 sets can be included in the venn diagram. Th{?is/ese} set{?s} won't be included: {discarded_sets}")
+    venn_data <- venn_data[1:4]
+  }
+
+  if(ovelap_genes) {
+    venn_data <- purrr::map(venn_data, ~get_genes_from_event_name(..1))
+  }
+  names(venn_data) <- stringr::str_wrap(stringr::str_replace_all(string = names(venn_data), pattern = "_",replacement  = " "),width = 6)
+  pp <- ggvenn::ggvenn(data = venn_data,show_percentage = T,digits = 2,fill_color = fill_color,...)
+
+  return(pp)
 }
 
 
