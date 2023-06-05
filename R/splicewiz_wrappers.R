@@ -68,7 +68,6 @@ get_ASE_counts_barplot <- function(x, elem_text_size = 15, text_count_size = 10)
 #' @export
 #' @importFrom rlang inject
 #' @importFrom purrr map2
-#' @importFrom SpliceWiz ASE_edgeR
 #' @importFrom stringr str_c
 #' @importFrom rlang `!!!`
 #' @examples
@@ -904,7 +903,7 @@ plot_deASE_venn <- function(x, sample_comparisons, regulation = "both", fill_col
   stopifnot("sample_comparisons must be a character vector of length > 1" = is.character(sample_comparisons) & length(sample_comparisons) > 1)
 
   rlang::arg_match(arg = regulation , values = c("up", "down", "both", "other", "all"),multiple = FALSE, error_arg = "regulation")
-  rlang::arg_match(arg = event_type , values = c("IR", "SE", "AFE", "ALE", "A3SS", "A5SS", 'MXE'), multiple = FALSE, error_arg = "regulation")
+  rlang::arg_match(arg = event_type , values = c("IR", "SE", "AFE", "ALE", "A3SS", "A5SS", 'MXE'), multiple = FALSE, error_arg = "event_type")
 
   # all sample comparisons must present in x
 
