@@ -214,7 +214,7 @@ get_five_prime_flank_motif <- function(x,
   for_motif <- list(as.character(target_seq))
 
   m1 <- ggplot2::ggplot() + ggseqlogo::geom_logo(for_motif) +
-    theme_bw() + scale_x_continuous(breaks = 1:(extend*2), labels = c(-(extend):-1,1:extend))
+    ggplot2::theme_bw() + ggplot2::scale_x_continuous(breaks = 1:(extend*2), labels = c(-(extend):-1,1:extend))
 
   return(list(logo= m1, seq = for_motif))
 
@@ -237,7 +237,7 @@ get_five_prime_flank_motif <- function(x,
 #'
 #' }
 #'
-get_thee_prime_flank_motif <-  function(x,
+get_three_prime_flank_motif <-  function(x,
                                         y = BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38 ,
                                         extend = 30){
 
@@ -260,7 +260,7 @@ get_thee_prime_flank_motif <-  function(x,
   for_motif <- list(as.character(target_seq))
 
   m1 <- ggplot2::ggplot() + ggseqlogo::geom_logo(for_motif) +
-    theme_bw() + scale_x_continuous(breaks = 1:(extend*2), labels = c(-(extend):-1,1:extend))
+    ggplot2::theme_bw() + ggplot2::scale_x_continuous(breaks = 1:(extend*2), labels = c(-(extend):-1,1:extend))
 
   return(list(logo= m1, seq = for_motif))
 
