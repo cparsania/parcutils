@@ -56,7 +56,12 @@
 <span>  simplify <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_ASEsets_by_regulation</span><span class="op">(</span><span class="va">x</span>, <span class="va">sample_comparisons</span>, regulation <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">get_ASEsets_by_regulation</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">sample_comparisons</span>,</span>
+<span>  regulation <span class="op">=</span> <span class="st">"both"</span>,</span>
+<span>  event_type <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -80,7 +85,7 @@
 
 <dt>event_type</dt>
 <dd><p>a character string denoting event type for which one of the <code>up</code>, <code>down</code>, <code>both</code>, <code>other</code> or <code>all</code> events to be returned based.
-Choices are: IR, SE, AFE, ALE, A3SS, A5SS and MXE. Default NULL, uses all event types.</p></dd>
+Choices are: <code>IR</code>, <code>SE</code>, <code>AFE</code>, <code>ALE</code>, <code>A3SS</code>, <code>A5SS</code> and <code>MXE.</code> Default NULL, uses all event types.</p></dd>
 
 
 <dt>simplify</dt>
@@ -104,65 +109,114 @@ Choices are: IR, SE, AFE, ALE, A3SS, A5SS and MXE. Default NULL, uses all event 
 <span class="r-in"><span><span class="fu">SpliceWiz</span><span class="fu">::</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">treatment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">SpliceWiz</span><span class="fu">::</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">replicate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P"</span>,<span class="st">"Q"</span>,<span class="st">"R"</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="run_ase_diff_analysis.html">run_ase_diff_analysis</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">se</span>, test_factor <span class="op">=</span> <span class="st">"treatment"</span>, test_nom <span class="op">=</span> <span class="st">"A"</span> ,test_denom <span class="op">=</span> <span class="st">"B"</span>,  IRmode <span class="op">=</span><span class="st">"annotated"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mar 23 14:49:39 Performing edgeR contrast for included / excluded counts separately</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mar 23 14:49:41 Performing edgeR contrast for included / excluded counts together</span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="run_ase_diff_analysis.html">run_ase_diff_analysis</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">se</span>, test_factor <span class="op">=</span> <span class="st">"replicate"</span>, test_nom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P"</span>,<span class="st">"Q"</span>,<span class="st">"R"</span><span class="op">)</span> ,test_denom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Q"</span>,<span class="st">"R"</span>,<span class="st">"P"</span><span class="op">)</span>,  IRmode <span class="op">=</span><span class="st">"annotated"</span>,  cutoff_lfc <span class="op">=</span> <span class="fl">0.6</span>, cutoff_pval <span class="op">=</span> <span class="fl">1</span>, regul_based_upon <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘purrr’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:magrittr’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     set_names</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Aug 16 11:35:06 Performing edgeR contrast for included / excluded counts separately</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Aug 16 11:35:08 Performing edgeR contrast for included / excluded counts together</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Aug 16 11:35:12 Performing edgeR contrast for included / excluded counts separately</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Aug 16 11:35:13 Performing edgeR contrast for included / excluded counts together</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Aug 16 11:35:17 Performing edgeR contrast for included / excluded counts separately</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Aug 16 11:35:18 Performing edgeR contrast for included / excluded counts together</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get both up and down regulated genes</span></span></span>
-<span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A_VS_B"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                A3SS:TP53-201-exon2;TP53-205-exon2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               NSUN5/ENST00000252594_Intron2/clean </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
+<span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P_VS_Q"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          SE:SRSF3-202-exon5;SRSF3-novelTr004-int1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                              down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          SE:TRA2B-205-exon4;TRA2B-novelTr003-int1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                              down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          SE:TRA2B-208-exon3;TRA2B-novelTr003-int1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                              down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       A5SS:TRA2A-202-exon3;TRA2A-novelTr004-exon1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                              down </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MXE:TRA2B-novelTr015-exon2;TRA2B-novelTr014-exon2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                              down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              A3SS:NSUN5-201-exon3;NSUN5-203-exon3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                              down </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get up genes only</span></span></span>
-<span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A_VS_B"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"up"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                A3SS:TP53-201-exon2;TP53-205-exon2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               NSUN5/ENST00000252594_Intron2/clean </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> MXE:TRA2B-novelTr015-exon2;TRA2B-novelTr014-exon2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                up </span>
+<span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P_VS_Q"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"up"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A3SS:SRSF2-novelTr002-exon2;SRSF2-209-exon2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                          up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    SE:TRA2B-novelTr014-exon2;TRA2B-214-int2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                          up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    SE:SRSF2-novelTr004-exon2;SRSF2-209-int1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                          up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            SE:TP53-201-exon10;TP53-217-int1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                          up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> A5SS:SRSF2-novelTr001-exon1;SRSF2-209-exon1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                          up </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    SE:SRSF1-201-exon2;SRSF1-novelTr004-int1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                          up </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># get down genes only</span></span></span>
-<span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A_VS_B"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"down"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> factor(0)</span>
+<span class="r-in"><span><span class="co"># get SE events</span></span></span>
+<span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P_VS_Q"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"down"</span>,event_type <span class="op">=</span> <span class="st">"SE"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SE:SRSF3-202-exon5;SRSF3-novelTr004-int1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SE:TRA2B-205-exon4;TRA2B-novelTr003-int1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SE:TRA2B-208-exon3;TRA2B-novelTr003-int1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        SE:SRSF3-204-exon3;SRSF3-202-int2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        SE:SRSF3-203-exon4;SRSF3-202-int3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        SE:TRA2B-205-exon7;TRA2B-201-int3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     down </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get genes other than up and down</span></span></span>
 <span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A_VS_B"</span><span class="op">)</span> , regul <span class="op">=</span> <span class="st">"other"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      AFE:TRA2B-215-exon1;TRA2B-203-exon1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                    other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     A3SS:TRA2B-208-exon3;TRA2B-205-exon4 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                    other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        SE:TRA2B-205-exon2;TRA2B-203-int1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                    other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SE:TRA2B-novelTr014-exon2;TRA2B-214-int2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                    other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SE:SRSF3-203-exon5;SRSF3-novelTr003-int1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                    other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     A5SS:SRSF2-202-exon1;SRSF2-205-exon1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                    other </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Levels: up down other</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in UseMethod("select"):</span> no applicable method for 'select' applied to an object of class "NULL"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Simplify output for multiple sample comparisons</span></span></span>
-<span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, regul<span class="op">=</span> <span class="st">"both"</span>,event_type <span class="op">=</span> <span class="st">"SE"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 3 variables: sample_comparisons &lt;chr&gt;, ase &lt;int&gt;, regul &lt;fct&gt;</span></span>
+<span class="r-in"><span><span class="fu">get_ASE_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">de_comparisons</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, regul<span class="op">=</span> <span class="st">"both"</span>,event_type <span class="op">=</span> <span class="st">"IR"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $P_VS_Q</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sample_comparisons ase                                      regul</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> P_VS_Q             SRSF1/ENST00000258962_Intron3/known-exon down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> P_VS_Q             TP53/ENST00000269305_Intron2/known-exon  down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> P_VS_Q             SRSF2/ENST00000585202_Intron3/known-exon up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> P_VS_Q             SRSF1/ENST00000581979_Intron3/known-exon up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> P_VS_Q             SRSF1/ENST00000584773_Intron4/known-exon up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $Q_VS_R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 8 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sample_comparisons ase                                      regul</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Q_VS_R             SRSF1/ENST00000581979_Intron3/known-exon down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Q_VS_R             SRSF1/ENST00000584773_Intron4/known-exon down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Q_VS_R             TRA2B/ENST00000453386_Intron4/clean      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Q_VS_R             SRSF1/ENST00000258962_Intron3/known-exon up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Q_VS_R             NSUN5/ENST00000252594_Intron2/clean      up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Q_VS_R             SRSF3/ENST00000373715_Intron5/clean      up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> Q_VS_R             NSUN5/ENST00000438747_Intron9/known-exon up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> Q_VS_R             TP53/ENST00000269305_Intron2/known-exon  up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $R_VS_P</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sample_comparisons ase                                      regul</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> R_VS_P             SRSF3/ENST00000373715_Intron5/clean      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> R_VS_P             SRSF1/ENST00000258962_Intron3/known-exon down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> R_VS_P             SRSF2/ENST00000585202_Intron3/known-exon down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> R_VS_P             NSUN5/ENST00000252594_Intron2/clean      down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> R_VS_P             NSUN5/ENST00000438747_Intron9/known-exon down </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> R_VS_P             SRSF1/ENST00000581979_Intron3/known-exon up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> R_VS_P             SRSF1/ENST00000584773_Intron4/known-exon up   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get genesets by regulation. It uses sample comparison and regulation to name each output geneset.</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">get_ASEsets_by_regulation</span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="st">"A_VS_B"</span>, regul <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $A_VS_B_up</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "A3SS:TP53-201-exon2;TP53-205-exon2"               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "NSUN5/ENST00000252594_Intron2/clean"              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "MXE:TRA2B-novelTr015-exon2;TRA2B-novelTr014-exon2"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in UseMethod("select"):</span> no applicable method for 'select' applied to an object of class "NULL"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

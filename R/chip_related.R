@@ -171,3 +171,97 @@ get_chip_signal_over_control_heatmap <- function(path_control_bw,
   return(hm)
 
 }
+
+
+
+#' Get a seqlogo for flanking region across five prime end of the genomic range.
+#' @description given an object of  `GenomicRanges` the function generates a seqlogo
+#' of the region flanked around five prime end.
+#' @param x an object of the class GenomicRanges
+#' @param y an object of class BSgenome, default `BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38`
+#' @param extend an integer, default 30, denoting number of basepairs to extend from five prime end of the range.
+#'
+#' @return a list containing ggseqlogo and sequences used to generate the logo.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'
+#' }
+#'
+get_five_prime_flank_motif <- function(x,
+                                       y = BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38 ,
+                                       extend = 30){
+
+  if(!isClass(x,"GenomicRanges")){
+    stop("x must a GenomicRanges object.")
+  }
+
+  stopifnot("'extend' must be an integer." = is.numeric(extend))
+
+
+  # anchor 5 end and extend to the length 'l'
+  extend_five_end <-  plyranges::mutate(plyranges::anchor_5p(x),width = extend)
+
+  # anchor 3 end and extend to the length 'l'
+
+  extend_three_end <- plyranges::stretch(plyranges::anchor_3p(extend_five_end),extend = extend)
+  target_seq <- parcutils:::.map_granges_metadata(extend_three_end,
+                                                  bs_genome_object = y) %>% .$seq
+
+  #names(target_seq) <- extend_three_end$event_name
+
+  for_motif <- list(as.character(target_seq))
+
+  m1 <- ggplot2::ggplot() + ggseqlogo::geom_logo(for_motif) +
+    theme_bw() + scale_x_continuous(breaks = 1:(extend*2), labels = c(-(extend):-1,1:extend))
+
+  return(list(logo= m1, seq = for_motif))
+
+}
+
+
+
+#' Get a seqlogo for flanking region across three prime end of the genomic range.
+#' @description given an object of  `GenomicRanges` the function generates a seqlogo
+#' of the region flanked around three prime end.
+#' @param x an object of the class GenomicRanges
+#' @param y an object of class BSgenome, default `BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38`
+#' @param extend an integer, default 30, denoting number of basepairs to extend from three prime end of the range.
+#'
+#' @return a list containing ggseqlogo and sequences used to generate the logo.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'
+#' }
+#'
+get_thee_prime_flank_motif <-  function(x,
+                                        y = BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38 ,
+                                        extend = 30){
+
+  if(!isClass(x,"GenomicRanges")){
+    stop("x must a GenomicRanges object.")
+  }
+
+  stopifnot("'extend' must be an integer." = is.numeric(extend))
+
+  # anchor 5 end and extend to the length 'l'
+  extend_five_end <-  plyranges::mutate(plyranges::anchor_3p(x),width = extend)
+
+  # anchor 3 end and extend to the length 'l'
+
+  extend_three_end <- plyranges::stretch(plyranges::anchor_5p(extend_five_end),extend = extend)
+  target_seq <- parcutils:::.map_granges_metadata(extend_three_end, bs_genome_object = y) %>% .$seq
+
+  #names(target_seq) <- extend_three_end$event_name
+
+  for_motif <- list(as.character(target_seq))
+
+  m1 <- ggplot2::ggplot() + ggseqlogo::geom_logo(for_motif) +
+    theme_bw() + scale_x_continuous(breaks = 1:(extend*2), labels = c(-(extend):-1,1:extend))
+
+  return(list(logo= m1, seq = for_motif))
+
+}

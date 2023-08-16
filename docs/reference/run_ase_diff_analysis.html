@@ -141,9 +141,44 @@
 <span class="r-in"><span><span class="fu">SpliceWiz</span><span class="fu">::</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">treatment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">SpliceWiz</span><span class="fu">::</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">replicate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P"</span>,<span class="st">"Q"</span>,<span class="st">"R"</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">run_ase_diff_analysis</span><span class="op">(</span>x <span class="op">=</span> <span class="va">se</span>, test_factor <span class="op">=</span> <span class="st">"treatment"</span>, test_nom <span class="op">=</span> <span class="st">"A"</span> ,test_denom <span class="op">=</span> <span class="st">"B"</span>,  IRmode <span class="op">=</span><span class="st">"annotated"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(first, envir = parent.frame(), enclos = baseenv()):</span> object 'multisession' not found</span>
-<span class="r-in"><span><span class="fu">run_ase_diff_analysis</span><span class="op">(</span>x <span class="op">=</span> <span class="va">se</span>, test_factor <span class="op">=</span> <span class="st">"treatment"</span>, test_nom <span class="op">=</span> <span class="st">"A"</span> ,test_denom <span class="op">=</span> <span class="st">"B"</span>,  IRmode <span class="op">=</span><span class="st">"annotated"</span>,  cutoff_lfc <span class="op">=</span> <span class="fl">0.6</span>, cutoff_padj <span class="op">=</span> <span class="fl">1</span>, regul_based_upon <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(first, envir = parent.frame(), enclos = baseenv()):</span> object 'multisession' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Aug 16 11:35:53 Performing edgeR contrast for included / excluded counts separately</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Aug 16 11:35:55 Performing edgeR contrast for included / excluded counts together</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ┌───────────────────────────────────┐</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> │                                   │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> │   <span style="font-weight: bold;">Summary of ASE diff. analysis</span>   │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> │                                   │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> └───────────────────────────────────┘</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total number of comparison: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total number of ASE used for diff. analysis:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #55FFFF; font-weight: bold;">Diff. ASE counts by comparison...</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">A_VS_B</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #BB0000;">number of up genes   : 3.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #00BB00;">number of down genes : 0.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ──────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">run_ase_diff_analysis</span><span class="op">(</span>x <span class="op">=</span> <span class="va">se</span>, test_factor <span class="op">=</span> <span class="st">"treatment"</span>, test_nom <span class="op">=</span> <span class="st">"A"</span> ,test_denom <span class="op">=</span> <span class="st">"B"</span>,  IRmode <span class="op">=</span><span class="st">"annotated"</span>,  cutoff_lfc <span class="op">=</span> <span class="fl">0.6</span>, cutoff_padj <span class="op">=</span> <span class="fl">1</span>, regul_based_upon <span class="op">=</span> <span class="fl">2</span>, n_thread <span class="op">=</span> <span class="fl">2</span>  <span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Aug 16 11:36:15 Performing edgeR contrast for included / excluded counts separately</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Aug 16 11:36:17 Performing edgeR contrast for included / excluded counts together</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>UNRELIABLE VALUE: Future (‘&lt;none&gt;’) unexpectedly generated random numbers without specifying argument 'seed'. There is a risk that those random numbers are not statistically sound and the overall results might be invalid. To fix this, specify 'seed=TRUE'. This ensures that proper, parallel-safe random numbers are produced via the L'Ecuyer-CMRG method. To disable this check, use 'seed=NULL', or set option 'future.rng.onMisuse' to "ignore".</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ┌───────────────────────────────────┐</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> │                                   │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> │   <span style="font-weight: bold;">Summary of ASE diff. analysis</span>   │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> │                                   │</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> └───────────────────────────────────┘</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total number of comparison: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Total number of ASE used for diff. analysis:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #55FFFF; font-weight: bold;">Diff. ASE counts by comparison...</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="font-style: italic;">A_VS_B</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #BB0000;">number of up genes   : 27.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • <span style="color: #00BB00;">number of down genes : 33.</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ──────────────────────────────</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

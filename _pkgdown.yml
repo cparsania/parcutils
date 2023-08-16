@@ -55,6 +55,14 @@ reference:
       - get_ase_volcano_plot
       - event_region_to_coordinate
       - get_event_annotations
+      - plot_deASE_venn
+
+  - title: "ChIP related"
+    contents:
+    - get_chip_signal_heatmap
+    - get_chip_signal_over_control_heatmap
+    - get_five_prime_flank_motif
+    - get_thee_prime_flank_motif
 
 # figures:
 #   dev: ragg::agg_png
