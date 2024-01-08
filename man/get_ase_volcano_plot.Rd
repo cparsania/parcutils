@@ -7,6 +7,7 @@
 get_ase_volcano_plot(
   x,
   sample_comparison,
+  event_type = "IR",
   log2fc_cutoff = 1,
   pval_cutoff = 0.05,
   ASE_to_display = NULL,
@@ -33,6 +34,8 @@ get_ase_volcano_plot(
 \item{x}{an abject of class "parcutils_ase". This is an output of the function \code{\link[=run_ase_diff_analysis]{run_ase_diff_analysis()}}.}
 
 \item{sample_comparison}{a character string denoting a valid differential ASE comparison. Possible comparisons can be found from x$de_comparisons.}
+
+\item{event_type}{a character string, default "IR" denoting valid event_type to display in the volcano plot. Values could be one of the "IR","SE","AFE","ALE","MXE","A3SS","A5SS".}
 
 \item{log2fc_cutoff}{a numeric value denoting logFC cutoff for volcano plot. Default 1.}
 

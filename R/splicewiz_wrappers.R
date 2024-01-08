@@ -326,10 +326,12 @@ get_ase_data_matrix_heatmap <- function(se,
 #' SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
 #' res_edgeR <- SpliceWiz::ASE_edgeR(se, "treatment", "A", "B", useQL = FALSE)
 #' get_genes_from_event_name(res_edgeR$EventName)
-get_genes_from_event_name <- function(x){
+get_genes_from_event_name <- function(x ){
 
-  x %>% stringr::str_replace( pattern = ".*;(.*)-.*-.*", replacement = "\\1") %>%
-    stringr::str_replace(pattern = "\\/.*", replacement = "")
+ x %>% stringr::str_replace( pattern = ".*;(.*)-.*-.*", replacement = "\\1") %>%
+   stringr::str_replace(pattern = "\\/.*", replacement = "")
+
+
 }
 
 
@@ -678,7 +680,9 @@ get_ASEsets_by_regulation <- function(x, sample_comparisons, regulation = "both"
 #' @param facet_drop pass to the argument `drop` of [ggplot2::facet_wrap()].
 #' @param facet_dir pass to the argument `dir` of [ggplot2::facet_wrap()].
 #' @param facet_strip.position pass to the argument `position` of [ggplot2::facet_wrap()].
+#' @param event_type a character string, default "IR" denoting valid event_type to display in the volcano plot. Values could be one of the "IR","SE","AFE","ALE","MXE","A3SS","A5SS".
 #' @param ... other parameters to be passed to [EnhancedVolcano::EnhancedVolcano()].
+#'
 #' @details
 #' + repair_ASE: Internally event names are taken from SpliceWiz. When repair_genes is set to TRUE the string corresponding to gene symbol will be extracted.
 #'  if one gene symbol assinged to more than one events, even names will be used instead of gene symbol (usually the case). This is useful when gene names to be revealed in the volcano plot.
@@ -699,6 +703,7 @@ get_ASEsets_by_regulation <- function(x, sample_comparisons, regulation = "both"
 #' get_ase_volcano_plot(res,  sample_comparison = res$de_comparisons[1], pval_cutoff = 1,ASE_to_display = "") %>% print()
 get_ase_volcano_plot <- function(x,
          sample_comparison,
+         event_type = "IR",
          log2fc_cutoff = 1,
          pval_cutoff = 0.05,
          ASE_to_display = NULL,
@@ -735,7 +740,8 @@ get_ase_volcano_plot <- function(x,
   # prepare volcano plots
 
   # filter by sample_comparison
-  volcano_data <- x$res_ase_diff_tibble[[sample_comparison]] %>%dplyr::select(event_name, log2FoldChange , pvalue, event_type)
+  volcano_data <- x$res_ase_diff_tibble[[sample_comparison]] %>%
+    dplyr::filter(event_type %in% !!rlang::enquo(event_type)) %>%dplyr::select(event_name, log2FoldChange , pvalue, event_type)
 
 
   # Fix ASE names. It gives gene names if it's unique. Otherwise event names will be returned.
@@ -768,7 +774,9 @@ get_ase_volcano_plot <- function(x,
   if(facet_event_type){
     pp <- pp + ggplot2::facet_wrap(~event_type,
                              nrow = facte_nrow,
-                             scales = facet_scale, ncol = facet_ncol, shrink = facet_shrink,labeller = facet_labeller,as.table = facet_as.table,
+                             scales = facet_scale,
+                             ncol = facet_ncol,
+                             shrink = facet_shrink,labeller = facet_labeller,as.table = facet_as.table,
                              drop = facet_drop, dir = facet_dir,strip.position =  facet_strip.position)
   }
 
