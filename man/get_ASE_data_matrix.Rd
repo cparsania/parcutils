@@ -11,7 +11,10 @@ get_ASE_data_matrix(
   summarise_groups = TRUE,
   summarise_groups_by = "mean",
   method = "PSI",
-  column_condition = "condition"
+  column_condition = "condition",
+  depth_threshold = 10,
+  logit_max = 5,
+  na.percent.max = 0.1
 )
 }
 \arguments{
@@ -28,6 +31,12 @@ get_ASE_data_matrix(
 \item{method}{a character string denoting a method for data value. Can be one of the "PSI", "logit" or "Z-Score".}
 
 \item{column_condition}{a character string denoting a condition column from \code{se} to select samples. Same column will also be used to group and summaries samples.}
+
+\item{depth_threshold}{default 10, refer \code{depth_threshold} of \code{\link[SpliceWiz:make_plot_data]{SpliceWiz::makeMatrix()}}}
+
+\item{logit_max}{default 5, refer \code{logit_max} of \code{\link[SpliceWiz:make_plot_data]{SpliceWiz::makeMatrix()}}}
+
+\item{na.percent.max}{default 0.1, refer \code{na.percent.max} of \code{\link[SpliceWiz:make_plot_data]{SpliceWiz::makeMatrix()}}}
 }
 \value{
 a data matrix

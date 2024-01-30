@@ -201,6 +201,9 @@ get_diff_ASE_count_barplot <- function(x,
 #' @param summarise_groups_by a character string denoting a method to summaries groups. Can be one of the `mean` or `median`.
 #' @param column_condition a character string denoting a condition column from `se` to select samples. Same column will also be used to group and summaries samples.
 #' @param method a character string denoting a method for data value. Can be one of the "PSI", "logit" or "Z-Score".
+#' @param depth_threshold default 10, refer `depth_threshold` of [SpliceWiz::makeMatrix()]
+#' @param logit_max default 5, refer `logit_max` of [SpliceWiz::makeMatrix()]
+#' @param na.percent.max default 0.1, refer `na.percent.max` of [SpliceWiz::makeMatrix()]
 #'
 #' @return a data matrix
 #' @export
@@ -213,7 +216,13 @@ get_diff_ASE_count_barplot <- function(x,
 #' get_ASE_data_matrix(se, event_names , samples = c("A", "B"), column_condition ="treatment")
 #' get_ASE_data_matrix(se, event_names , samples = c("P", "Q","R"), column_condition ="replicate")
 #'
-get_ASE_data_matrix <- function(se , event_names,samples,summarise_groups=TRUE,summarise_groups_by = "mean", method ="PSI", column_condition ="condition"){
+get_ASE_data_matrix <- function(se , event_names,samples,summarise_groups=TRUE,
+                                summarise_groups_by = "mean",
+                                method ="PSI", column_condition ="condition",
+                                depth_threshold = 10,
+                                logit_max = 5,
+                                na.percent.max = 0.1
+                                ){
 
   match.arg(arg = summarise_groups_by, choices = c("mean","median"))
 
@@ -227,7 +236,9 @@ get_ASE_data_matrix <- function(se , event_names,samples,summarise_groups=TRUE,s
   data_matrix <- SpliceWiz::makeMatrix(se = se,
                                        event_list = event_names,
                                        sample_list = samples_repli$samples,
-                                       method = method) %>%
+                                       method = method,
+                                       depth_threshold=depth_threshold,logit_max =logit_max,
+                                       na.percent.max= na.percent.max) %>%
     as.data.frame() %>%
     tibble::rownames_to_column(var = "event_name") %>%
     tibble::tibble()

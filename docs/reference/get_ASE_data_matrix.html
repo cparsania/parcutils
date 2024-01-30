@@ -55,7 +55,10 @@
 <span>  summarise_groups <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  summarise_groups_by <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"PSI"</span>,</span>
-<span>  column_condition <span class="op">=</span> <span class="st">"condition"</span></span>
+<span>  column_condition <span class="op">=</span> <span class="st">"condition"</span>,</span>
+<span>  depth_threshold <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  logit_max <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  na.percent.max <span class="op">=</span> <span class="fl">0.1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -88,6 +91,18 @@
 <dt>column_condition</dt>
 <dd><p>a character string denoting a condition column from <code>se</code> to select samples. Same column will also be used to group and summaries samples.</p></dd>
 
+
+<dt>depth_threshold</dt>
+<dd><p>default 10, refer <code>depth_threshold</code> of <code><a href="https://rdrr.io/pkg/SpliceWiz/man/make_plot_data.html" class="external-link">SpliceWiz::makeMatrix()</a></code></p></dd>
+
+
+<dt>logit_max</dt>
+<dd><p>default 5, refer <code>logit_max</code> of <code><a href="https://rdrr.io/pkg/SpliceWiz/man/make_plot_data.html" class="external-link">SpliceWiz::makeMatrix()</a></code></p></dd>
+
+
+<dt>na.percent.max</dt>
+<dd><p>default 0.1, refer <code>na.percent.max</code> of <code><a href="https://rdrr.io/pkg/SpliceWiz/man/make_plot_data.html" class="external-link">SpliceWiz::makeMatrix()</a></code></p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -102,39 +117,23 @@
 <span class="r-in"><span><span class="fu">SpliceWiz</span><span class="fu">::</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">treatment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">SpliceWiz</span><span class="fu">::</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">replicate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P"</span>,<span class="st">"Q"</span>,<span class="st">"R"</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="run_ase_diff_analysis.html">run_ase_diff_analysis</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">se</span>, test_factor <span class="op">=</span> <span class="st">"treatment"</span>, test_nom <span class="op">=</span> <span class="st">"A"</span> ,test_denom <span class="op">=</span> <span class="st">"B"</span>,  IRmode <span class="op">=</span><span class="st">"annotated"</span>,  cutoff_lfc <span class="op">=</span> <span class="fl">0.6</span>, cutoff_padj <span class="op">=</span> <span class="fl">1</span>, regul_based_upon <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mar 29 12:40:36 Performing edgeR contrast for included / excluded counts separately</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Mar 29 12:40:37 Performing edgeR contrast for included / excluded counts together</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘purrr’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:magrittr’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     set_names</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Jan 30 16:07:56 Performing edgeR contrast for included / excluded counts separately</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Jan 30 16:07:58 Performing edgeR contrast for included / excluded counts together</span>
 <span class="r-in"><span><span class="va">event_names</span> <span class="op">=</span> <span class="fu"><a href="get_ASE_by_regulation.html">get_ASEsets_by_regulation</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">res</span>, sample_comparisons <span class="op">=</span> <span class="st">"A_VS_B"</span>, regul <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in purrr::discard(ase, ~nrow(..1) &gt; 0):</span> <span style="color: #00BBBB;">ℹ</span> In index: 1.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> With name: sample_comparisons.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error:</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> `.p()` must return a single `TRUE` or `FALSE`, not an empty logical</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>   vector.</span>
 <span class="r-in"><span><span class="fu">get_ASE_data_matrix</span><span class="op">(</span><span class="va">se</span>, <span class="va">event_names</span> , samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span>, column_condition <span class="op">=</span><span class="st">"treatment"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 99 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    event_name                                       A      B</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> A3SS:NSUN5-201-exon3;NSUN5-203-exon3        1      0.996 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> A3SS:NSUN5-201-exon7;NSUN5-206-exon6        0.879  0.908 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> A3SS:NSUN5-201-exon8;NSUN5-novelTr003-exon2 0.953  0.958 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> A3SS:NSUN5-204-exon10;NSUN5-202-exon10      0.955  0.941 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> A3SS:SRSF1-201-exon4;SRSF1-novelTr001-exon2 0.766  0.877 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> A3SS:SRSF1-204-exon4;SRSF1-203-exon2        0.963  0.916 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> A3SS:SRSF2-202-exon2;SRSF2-201-exon2        0.988  0.989 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> A3SS:SRSF2-206-exon2;SRSF2-202-exon3        0.165  0.159 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> A3SS:SRSF2-206-exon2;SRSF2-novelTr003-exon2 0.988  0.981 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> A3SS:SRSF2-novelTr002-exon2;SRSF2-209-exon2 0.053<span style="text-decoration: underline;">0</span> 0.059<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 89 more rows</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in event_list %in% rownames(se):</span> object 'event_names' not found</span>
 <span class="r-in"><span><span class="fu">get_ASE_data_matrix</span><span class="op">(</span><span class="va">se</span>, <span class="va">event_names</span> , samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"P"</span>, <span class="st">"Q"</span>,<span class="st">"R"</span><span class="op">)</span>, column_condition <span class="op">=</span><span class="st">"replicate"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 99 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    event_name                                       P       Q      R</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> A3SS:NSUN5-201-exon3;NSUN5-203-exon3        0.997  1       0.997 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> A3SS:NSUN5-201-exon7;NSUN5-206-exon6        0.836  0.911   0.933 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> A3SS:NSUN5-201-exon8;NSUN5-novelTr003-exon2 0.929  0.979   0.959 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> A3SS:NSUN5-204-exon10;NSUN5-202-exon10      0.954  0.957   0.933 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> A3SS:SRSF1-201-exon4;SRSF1-novelTr001-exon2 0.807  0.738   0.920 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> A3SS:SRSF1-204-exon4;SRSF1-203-exon2        0.970  0.984   0.865 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> A3SS:SRSF2-202-exon2;SRSF2-201-exon2        0.984  0.988   0.993 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> A3SS:SRSF2-206-exon2;SRSF2-202-exon3        0.158  0.219   0.110 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> A3SS:SRSF2-206-exon2;SRSF2-novelTr003-exon2 0.987  0.996   0.971 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> A3SS:SRSF2-novelTr002-exon2;SRSF2-209-exon2 0.095<span style="text-decoration: underline;">4</span> 0.008<span style="text-decoration: underline;">64</span> 0.064<span style="text-decoration: underline;">9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 89 more rows</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in event_list %in% rownames(se):</span> object 'event_names' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
