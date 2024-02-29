@@ -95,6 +95,8 @@ get_chip_signal_heatmap <- function(path_to_bw_file ,
 #' @param smooth pass to the same argument of [EnrichedHeatmap::normalizeToMatrix()].
 #' @param ... other arguments pass to the function [EnrichedHeatmap::EnrichedHeatmap()].
 #' @return an object of the class Heatmap from the package ComplexHeatmap.
+#' @import ComplexHeatmap
+#' @import EnrichedHeatmap
 #' @export
 #'
 #' @examples

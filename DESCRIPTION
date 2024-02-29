@@ -45,7 +45,10 @@ Imports:
     clusterProfiler,
     enrichplot,
     ggrepel,
-    ggvenn
+    ggvenn,
+    EnrichedHeatmap,
+    org.Mm.eg.db,
+    msigdbr
 Depends: 
     magrittr,
     ggplot2

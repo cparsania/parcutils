@@ -86,6 +86,7 @@
 #' comparison for each row.
 #' @export
 #' @importFrom tidyselect everything
+#' @import DESeq2
 #' @examples
 #'
 #' count_file <- system.file("extdata","toy_counts.txt" , package = "parcutils")
@@ -1489,7 +1490,81 @@ get_fold_change_scatter_plot <- function(x,
 # }
 
 
+#' Perform GSEA analysis.
+#' @description This is a wrapper around [clusterProfiler::GSEA()] to perform GSEA analysis for a given set of genes.
+#' @param gene_list a named numeric vector. Values in the vector will be used to rank the genes in GSEA analysis. Values can be normalised expression, log2FC, test statistics etc. Vector names denots gene names.
+#' @param from_type a character string, default "SYMBOL", denotes type of gene identifier. Possible values could be one of those available as keys of OrgDB object.
+#' @param orgdb an object of the class OrgDB. Default org.Mm.eg.db::org.Mm.eg.db
+#' @param msigdb_category a character string, default "H", denoting one of the nine catagories of geneList given in the msigdb. Possible values are: "H","C1","C2","C3","C4","C5","C6","C7", and "C8".
+#' @param species a character string denoting name of the species. Default "Mus musculus". Possible values can be found via the function [msigdbr::msigdbr_species()].
+#' @param ... other arguments to be passed to [clusterProfiler::GSEA()].
+#'
+#' @return an output of [clusterProfiler::GSEA()]
+#' @import clusterProfiler
+#' @import msigdbr
+#' @import org.Mm.eg.db
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'
+#' }
+gsea_analysis <- function(gene_list, from_type = "SYMBOL",
+                          orgdb = org.Mm.eg.db::org.Mm.eg.db,
+                          msigdb_category = "H", species = "Mus musculus",...){
 
+  # validate gene list. It must be a named numeric list. Values are to rank the genes and names are the gene names.
+
+  if( !all(rlang::is_double(gene_list) , rlang::is_named(gene_list)) ){
+    cli::cli_abort("{.arg gene_list} must be a {.cls numeric} and named vector.")
+  }
+
+  # validate argument from_type
+  rlang::arg_match0(from_type, AnnotationDbi::keytypes(org.Mm.eg.db))
+
+  # validate orgDb object
+  stopifnot(`orgdb must be an object of class 'OrgDb'.` = is(orgdb, "OrgDb"))
+
+  # validate argument species.
+  rlang::arg_match0(species, values = msigdbr::msigdbr_species() %>% .$species_name)
+
+  # validate mssigdb category
+  rlang::arg_match0(msigdb_category, c("H",paste("C",1:8, sep = "")))
+
+
+  from_type_quo <- rlang::enquo(from_type)
+
+  # arrange input gene list
+  gene_list <- gene_list[order(gene_list,decreasing = T)]
+
+  # Convert input gene id(default SYMBOL) into desired format(default ENTREZ).
+
+  symb_to_entrez <- clusterProfiler::bitr(names(gene_list) %>%
+                                            stringr::str_replace(".*:",""),
+                                          OrgDb = orgdb, fromType=from_type,
+                                          toType="ENTREZID") %>% tibble::as_tibble()
+
+  # add given matrix value to above dataframe
+  symb_to_entrez <- symb_to_entrez %>%
+    dplyr::left_join(tibble::tibble(!!from_type_quo := names(gene_list),
+                                    rank_val = gene_list),by = from_type)
+
+  # arrange by rank value
+  symb_to_entrez %<>% dplyr::arrange(-rank_val)
+
+  # prepare target geneset from msigdbr
+
+  hallmark_t2g  <- msigdbr::msigdbr(species= species,
+                                    category = msigdb_category) %>%
+    dplyr::select(gs_name, entrez_gene)
+
+  # perform GSEA
+
+  gseq_rslt <- clusterProfiler::GSEA(geneList = magrittr::set_names(symb_to_entrez$rank_val,value = symb_to_entrez$ENTREZID) , TERM2GENE = hallmark_t2g, eps = 1e-100, ...)
+
+  return(gseq_rslt)
+
+}
 
 
 
