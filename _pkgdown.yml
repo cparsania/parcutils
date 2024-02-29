@@ -13,6 +13,7 @@ reference:
       - get_go_emap_plot
       - save_go_data
       - save_go_plots
+      - gsea_analysis
 
   - title: "Visualization related"
     contents:
