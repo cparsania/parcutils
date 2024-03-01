@@ -90,8 +90,7 @@ run_ase_diff_analysis <- function(x, test_nom ,test_denom, test_factor = "condit
                                        test_factor = test_factor,
                                        test_nom = ..1 ,
                                        test_denom = ..2, !!! args))
-  }
-  )
+  },.options =  furrr::furrr_options(seed = T),.progress = T)
 
   # assign names to each comparison
   names(res_ase_diff_raw) <- stringr::str_c(test_nom, test_denom,sep = "_VS_")
