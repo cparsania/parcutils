@@ -14,8 +14,8 @@
 #' @param column_title pass to the same argument of [EnrichedHeatmap::EnrichedHeatmap()].
 #' @param axis_name pass to the same argument of [EnrichedHeatmap::EnrichedHeatmap()].
 #' @param top_annotation pass to the same argument of [EnrichedHeatmap::EnrichedHeatmap()].
-#' @param ...
-#' @return
+#' @param ... Other arguments pass to  [EnrichedHeatmap::EnrichedHeatmap()].
+#' @return an output of the function [EnrichedHeatmap::EnrichedHeatmap()].
 #' @export
 #'
 #' @examples

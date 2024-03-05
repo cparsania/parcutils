@@ -48,6 +48,11 @@ get_chip_signal_heatmap(
 \item{axis_name}{pass to the same argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
 
 \item{top_annotation}{pass to the same argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
+
+\item{...}{Other arguments pass to  \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
+}
+\value{
+an output of the function \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.
 }
 \description{
 Generate a ChIP signal heatmap for a given sample.

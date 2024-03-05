@@ -144,6 +144,8 @@ run_ase_diff_analysis <- function(x, test_nom ,test_denom, test_factor = "condit
 #' @param font_size a numeric, default 12, denoting font size in the plot.
 #' @param show_counts a logical, default `TRUE`, denoting whether to show counts on each bar.
 #' @param ... Other arguments pass to the function [ggplot2::facet_grid()]
+#' @param event_type a character vector or a string denoting type of events to plot. Default NULL, includes all.
+#' @param sample_comparisons a character vector or a string denoting sample comparisons to plot. Default NULL, includes all.
 #'
 #' @return a bar plot.
 #' @export
@@ -151,22 +153,46 @@ run_ase_diff_analysis <- function(x, test_nom ,test_denom, test_factor = "condit
 #' @examples
 #' se <- SpliceWiz::SpliceWiz_example_NxtSE(novelSplicing = TRUE)
 #' SpliceWiz::colData(se)$treatment <- rep(c("A", "B"), each = 3)
-#' SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
 #' res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
-#' get_diff_ASE_count_barplot(res)
+#' SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
+#' get_diff_ASE_count_barplot(res, event_type = c("IR") )
 get_diff_ASE_count_barplot <- function(x,
                                        col_up="#a40000",
                                        col_down="#16317d",
                                        font_size = 12,
+                                       event_type = NULL,
+                                       sample_comparisons = NULL,
                                        show_counts = TRUE, ...){
 
   .validate_parcutils_ase_obj(x)
+
+  # event_type can be NULL (default) or one of the below.
+  if(!is.null(event_type)){
+    rlang::arg_match(arg = event_type,
+                      values = c("IR","MXE","SE","A5SS","A3SS","AFE","ALE","RI"),
+                     multiple = T)
+  }
+
+  # sample_comparisons can be NULL (default) or one of the below.
+  if(!is.null(sample_comparisons)){
+    rlang::arg_match(arg = sample_comparisons,values = x$de_comparisons,multiple = T)
+  }
+
+  sample_comparisons = rlang::enquo(sample_comparisons)
+  event_type = rlang::enquo(event_type)
+
 
   gp <- x$res_ase_diff_summary %>%
     tibble::enframe(name = "comparison" ,
                     value = "deg_count") %>%
     tidyr::unnest(cols = "deg_count") %>%
     dplyr::filter(regul != "other") %>%
+
+    #filter by sample comparison
+    dplyr::filter(purrr::map_lgl(.$comparison,~data.table::fifelse(is.null(!!sample_comparisons), TRUE,c(..1 %in% !!sample_comparisons )))) %>%
+
+    #filter by regulation
+    dplyr::filter(purrr::map_lgl(.$event_type,~data.table::fifelse(is.null(!!event_type), TRUE,c(..1 %in% !!event_type )))) %>%
     dplyr::mutate(regul = forcats::fct_relevel(regul, c("Up","Down"))) %>%
     dplyr::mutate(comparison = forcats::fct_relevel(comparison, x$de_comparisons)) %>%
     ggplot2::ggplot(ggplot2::aes(x = regul, y = n , fill = regul)) +
