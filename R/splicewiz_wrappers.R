@@ -241,7 +241,10 @@ get_diff_ASE_count_barplot <- function(x,
 #' get_ASE_data_matrix(se, event_names , samples = c("A", "B"), column_condition ="treatment")
 #' get_ASE_data_matrix(se, event_names , samples = c("P", "Q","R"), column_condition ="replicate")
 #'
-get_ASE_data_matrix <- function(se , event_names,samples,summarise_groups=TRUE,
+get_ASE_data_matrix <- function(se ,
+                                event_names,
+                                samples,
+                                summarise_groups=TRUE,
                                 summarise_groups_by = "mean",
                                 method ="PSI", column_condition ="condition",
                                 depth_threshold = 10,
@@ -250,6 +253,8 @@ get_ASE_data_matrix <- function(se , event_names,samples,summarise_groups=TRUE,
                                 ){
 
   match.arg(arg = summarise_groups_by, choices = c("mean","median"))
+  stopifnot(isTRUE(summarise_groups))
+
 
   # sample groups
   samples_repli <- SpliceWiz::colData(se) %>%
@@ -310,13 +315,13 @@ get_ASE_data_matrix <- function(se , event_names,samples,summarise_groups=TRUE,
 #' res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
 #' event_names = get_ASEsets_by_regulation(x = res, sample_comparisons = "A_VS_B", regul = "all") %>% unlist()
 #'
-#' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment", summarise_groups = FALSE )
+#' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition = "treatment", summarise_groups = FALSE )
 #' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment", summarise_groups = TRUE )
 #' get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("P" ,"R","Q"), column_condition    = "replicate",method = "Z-score", cluster_rows = TRUE)
-#'
-get_ase_data_matrix_heatmap <- function(se,
-                                 event_names,
-                                 samples,
+#' get_ASE_data_matrix(se, event_names , samples = c("A", "B"), column_condition ="treatment")
+get_ase_data_matrix_heatmap <- function(se ,
+                                 event_names ,
+                                 samples ,
                                  column_condition = "condition",
                                  method = "PSI",
                                  summarise_groups=TRUE,
@@ -328,21 +333,24 @@ get_ase_data_matrix_heatmap <- function(se,
                                  show_row_dend = FALSE,...){
 
 
-  dat <- get_ASE_data_matrix(se = se,
-                               event_names = event_names ,summarise_groups = summarise_groups,
-                             summarise_groups_by = summarise_groups_by,
-                              column_condition = column_condition,
-                               samples = samples,method = method)
 
-  dat <- dat %>% dplyr::select(event_name,samples) %>%
+  dat <- get_ASE_data_matrix(se = se,
+                             event_names = event_names ,
+                             summarise_groups = summarise_groups,
+                             summarise_groups_by = summarise_groups_by,
+                             column_condition = column_condition,
+                             samples = samples,method = method)
+
+  dat <- dat %>% dplyr::select(event_name,!!samples) %>%
     TidyWrappers::tbl_remove_rows_NA_any() %>% as.data.frame() %>%
     tibble::column_to_rownames("event_name")
+
 
   ComplexHeatmap::Heatmap(dat, show_row_names = show_row_names,
                           cluster_rows = cluster_rows,
                           show_column_dend = show_column_dend,
                           cluster_columns = cluster_columns,
-                          show_row_dend = show_row_dend, ...)
+                          show_row_dend = show_row_dend,...)
 
 
 }
@@ -574,7 +582,7 @@ event_region_to_granges <- function(event_region, prefix = ""){
 #' get_ASE_by_regulation(x = res, sample_comparisons = c("P_VS_Q") , regul = "down",event_type = "SE") %>% head()
 #'
 #' # get genes other than up and down
-#' get_ASE_by_regulation(x = res, sample_comparisons = c("A_VS_B") , regul = "other") %>% head()
+#' get_ASE_by_regulation(x = res, sample_comparisons = c("P_VS_Q") , regul = "other") %>% head()
 #'
 #' # Simplify output for multiple sample comparisons
 #' get_ASE_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify = TRUE, regul= "both",event_type = "IR")
@@ -582,9 +590,13 @@ event_region_to_granges <- function(event_region, prefix = ""){
 #'
 #' # get genesets by regulation. It uses sample comparison and regulation to name each output geneset.
 #'
-#' get_ASEsets_by_regulation(x = res, sample_comparisons = "A_VS_B", regul = "both")
+#' get_ASEsets_by_regulation(x = res, sample_comparisons = "P_VS_Q", regul = "both")
 #'
-get_ASE_by_regulation <- function(x, sample_comparisons , regulation = "both", event_type = NULL , simplify = FALSE  ) {
+get_ASE_by_regulation <- function(x ,
+                                  sample_comparisons,
+                                  regulation = "both",
+                                  event_type = NULL ,
+                                  simplify = FALSE  ) {
 
   # validate x.
   stopifnot("x must be an object of class 'parcutils_ase'. Usually x is derived by parcutils::run_deseq_analysis()." = is(x, "parcutils_ase"))
@@ -670,9 +682,16 @@ get_ASE_by_regulation <- function(x, sample_comparisons , regulation = "both", e
 get_ASEsets_by_regulation <- function(x, sample_comparisons, regulation = "both", event_type = NULL ){
 
 
-  ase <- get_ASE_by_regulation(x, sample_comparisons = sample_comparisons,
+  ase <- get_ASE_by_regulation(x , sample_comparisons = sample_comparisons,
                                    regulation = regulation,
                                     simplify = TRUE,event_type = event_type)
+
+  # convert ase to list in case of single sample_comparisons.
+  if(is.data.frame(ase)){
+    ase <- list(ase)
+    names(ase) <- sample_comparisons
+  }
+
 
   # give warning for the comparison to be discarded.
 
