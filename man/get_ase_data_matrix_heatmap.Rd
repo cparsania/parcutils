@@ -60,8 +60,8 @@ SpliceWiz::colData(se)$replicate <- rep(c("P","Q","R"), 2)
 res <- run_ase_diff_analysis(x = se, test_factor = "treatment", test_nom = "A" ,test_denom = "B",  IRmode ="annotated",  cutoff_lfc = 0.6, cutoff_padj = 1, regul_based_upon = 2)
 event_names = get_ASEsets_by_regulation(x = res, sample_comparisons = "A_VS_B", regul = "all") \%>\% unlist()
 
-get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment", summarise_groups = FALSE )
+get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition = "treatment", summarise_groups = FALSE )
 get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("A" ,"B"), column_condition    = "treatment", summarise_groups = TRUE )
 get_ase_data_matrix_heatmap(se, event_names = event_names, samples = c("P" ,"R","Q"), column_condition    = "replicate",method = "Z-score", cluster_rows = TRUE)
-
+get_ASE_data_matrix(se, event_names , samples = c("A", "B"), column_condition ="treatment")
 }

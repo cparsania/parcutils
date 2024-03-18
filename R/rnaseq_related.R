@@ -832,6 +832,7 @@ plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_d
 #' @param show_row_dend logical, default \code{TRUE}, indicating whether to show dendrogram in the heatmap or not.
 #' Internally this argument is passed to the function [ComplexHeatmap::Heatmap()].
 #' @param row_names_font_size a numeric value, default 10, indicating size of row names in the heatmap.
+#' @param label_specific_rows a character string denoting set of gene/s to be labelled in the heatmap. Label must match to the rownames of the final matrix supplied.
 #' @param show_column_names logical, default \code{TRUE}, indicating whether to show column names in the heatmap or not.
 #' Internally this argument is passed to the function [ComplexHeatmap::Heatmap()].
 #' @param cluster_columns logical, default \code{TRUE}, indicating whether to cluster columns in the heatmap or not.
@@ -868,7 +869,7 @@ plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_d
 #'                          group_denominator = c("control"))
 #'
 #' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both") %>% names()
-#' get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"), genes = genes)
+#' get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"), genes = genes, label_specific_rows = c("POU5F1","PTPN18","RABL3"),repair_genes = TRUE,show_row_names = TRUE)
 #'
 #' # plot raw expression values
 #'
@@ -918,6 +919,7 @@ get_gene_expression_heatmap <- function(x,
                                         cluster_rows = TRUE,
                                         show_row_dend = TRUE,
                                         row_names_font_size = 10,
+                                        label_specific_rows = NULL,
 
                                         show_column_names = TRUE,
                                         cluster_columns = TRUE,
@@ -1070,7 +1072,8 @@ get_gene_expression_heatmap <- function(x,
 
   # generate heatmap
 
-  hm <- ComplexHeatmap::Heatmap(expr_mat_wide,col = col,
+  hm <- ComplexHeatmap::Heatmap(expr_mat_wide,
+                                col = col,
                                 show_row_names = show_row_names,
                                 cluster_rows = cluster_rows,
                                 show_row_dend = show_row_dend,
@@ -1078,6 +1081,18 @@ get_gene_expression_heatmap <- function(x,
                                 show_column_names = show_column_names,
                                 cluster_columns = cluster_columns,
                                 show_heatmap_legend = show_heatmap_legend, ...)
+
+  # label specific row of the heatmap
+
+  if(!is.null(label_specific_rows)){
+    matched_indx = which(rownames(expr_mat_wide) %in% label_specific_rows)
+    if(length(matched_indx) == 0){
+      cli::cli_alert_warning(text = "None of the label form {.arg label_specific_rows} found in the data. Have you tried {.arg repair_genes} TRUE/FALSE?. Rows won't be labelled" )
+    } else{
+      hm <- hm + ComplexHeatmap::rowAnnotation(label = ComplexHeatmap::anno_mark(at = matched_indx, labels = label_specific_rows))
+    }
+
+  }
 
   return(hm)
 

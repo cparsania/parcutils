@@ -65,7 +65,7 @@ get_ASE_by_regulation(x = res, sample_comparisons = c("P_VS_Q") , regul = "up") 
 get_ASE_by_regulation(x = res, sample_comparisons = c("P_VS_Q") , regul = "down",event_type = "SE") \%>\% head()
 
 # get genes other than up and down
-get_ASE_by_regulation(x = res, sample_comparisons = c("A_VS_B") , regul = "other") \%>\% head()
+get_ASE_by_regulation(x = res, sample_comparisons = c("P_VS_Q") , regul = "other") \%>\% head()
 
 # Simplify output for multiple sample comparisons
 get_ASE_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify = TRUE, regul= "both",event_type = "IR")
@@ -73,6 +73,6 @@ get_ASE_by_regulation(x = res, sample_comparisons = res$de_comparisons, simplify
 
 # get genesets by regulation. It uses sample comparison and regulation to name each output geneset.
 
-get_ASEsets_by_regulation(x = res, sample_comparisons = "A_VS_B", regul = "both")
+get_ASEsets_by_regulation(x = res, sample_comparisons = "P_VS_Q", regul = "both")
 
 }
