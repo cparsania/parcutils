@@ -869,7 +869,7 @@ plot_deg_upsets <- function(x, sample_comparisons, color_up = "#b30000", color_d
 #'                          group_denominator = c("control"))
 #'
 #' genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both") %>% names()
-#' get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"), genes = genes, label_specific_rows = c("POU5F1","PTPN18","RABL3"),repair_genes = TRUE,show_row_names = TRUE)
+#' get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"), genes = genes, label_specific_rows = c("POU5F1","PTPN18","RABL3","PTPN19"),repair_genes = FALSE,show_row_names = FALSE)
 #'
 #' # plot raw expression values
 #'
@@ -1086,9 +1086,13 @@ get_gene_expression_heatmap <- function(x,
 
   if(!is.null(label_specific_rows)){
     matched_indx = which(rownames(expr_mat_wide) %in% label_specific_rows)
+    labels_not_found_in_the_data <- label_specific_rows[ which(!(label_specific_rows %in% rownames(expr_mat_wide))) ]
     if(length(matched_indx) == 0){
       cli::cli_alert_warning(text = "None of the label form {.arg label_specific_rows} found in the data. Have you tried {.arg repair_genes} TRUE/FALSE?. Rows won't be labelled" )
     } else{
+      if(length(labels_not_found_in_the_data) > 0 ){
+        cli::cli_alert_warning(text = "Label{?s} {labels_not_found_in_the_data} {?is/are} not found in the data." )
+      }
       hm <- hm + ComplexHeatmap::rowAnnotation(label = ComplexHeatmap::anno_mark(at = matched_indx, labels = label_specific_rows))
     }
 
