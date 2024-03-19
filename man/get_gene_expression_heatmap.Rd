@@ -22,6 +22,7 @@ get_gene_expression_heatmap(
   show_row_dend = TRUE,
   row_names_font_size = 10,
   label_specific_rows = NULL,
+  label_specific_rows_gp = gpar(fontface = "plain", fontsize = 10, col = "red"),
   show_column_names = TRUE,
   cluster_columns = TRUE,
   show_heatmap_legend = TRUE,
@@ -82,6 +83,8 @@ Internally this argument is passed to the function \code{\link[ComplexHeatmap:He
 
 \item{label_specific_rows}{a character string denoting set of gene/s to be labelled in the heatmap. Label must match to the rownames of the final matrix supplied.}
 
+\item{label_specific_rows_gp}{pass to  \code{labels_gp} of the function  \code{\link[ComplexHeatmap:anno_mark]{ComplexHeatmap::anno_mark()}}.}
+
 \item{show_column_names}{logical, default \code{TRUE}, indicating whether to show column names in the heatmap or not.
 Internally this argument is passed to the function \code{\link[ComplexHeatmap:Heatmap]{ComplexHeatmap::Heatmap()}}.}
 
@@ -138,7 +141,7 @@ res <- run_deseq_analysis(counts = count_data ,
                          group_denominator = c("control"))
 
 genes = parcutils::get_genes_by_regulation(x = res, sample_comparison = "treatment2_VS_control" , "both") \%>\% names()
-get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"), genes = genes, label_specific_rows = c("POU5F1","PTPN18","RABL3"),repair_genes = TRUE,show_row_names = TRUE)
+get_gene_expression_heatmap(x = res, samples = c("control" ,"treatment1" , "treatment2"), genes = genes, label_specific_rows = c("POU5F1","PTPN18","RABL3","PTPN19"),repair_genes = TRUE,show_row_names = FALSE)
 
 # plot raw expression values
 
