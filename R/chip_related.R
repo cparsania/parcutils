@@ -250,7 +250,6 @@ normalised_matrix_to_rpm <- function(x){
 #'
 #' @examples
 #' \dontrun{
-#' #// TO DO.
 #' }
 import_topn_bed_features <- function(bed_feature_file,topn = 5000, center = TRUE,...){
 
@@ -295,7 +294,6 @@ import_topn_bed_features <- function(bed_feature_file,topn = 5000, center = TRUE
 #'
 #' @examples
 #' \dontrun{
-#'
 #' }
 #'
 make_enriched_heatmap_list <- function(x,
@@ -473,7 +471,6 @@ make_enriched_heatmap_list <- function(x,
 #'
 #' @examples
 #' \dontrun{
-#' ##
 #' }
 #'
 get_chip_signal_heatmap <- function(path_to_bw_file ,

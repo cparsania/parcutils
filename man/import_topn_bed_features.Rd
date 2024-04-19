@@ -23,6 +23,5 @@ Import top features (ranked by score) from a bed file.
 }
 \examples{
 \dontrun{
-#// TO DO.
 }
 }

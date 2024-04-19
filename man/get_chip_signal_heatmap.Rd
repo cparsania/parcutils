@@ -63,7 +63,6 @@ To obtain the order of targets from the output heatmap the suggested approach is
 }
 \examples{
 \dontrun{
-##
 }
 
 }

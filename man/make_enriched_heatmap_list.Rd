@@ -63,7 +63,6 @@ Create a HeatmapList from parcutils_chip.
 }
 \examples{
 \dontrun{
-
 }
 
 }
