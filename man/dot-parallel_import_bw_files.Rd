@@ -18,22 +18,16 @@ Import several bw files using parallel processing.
 \details{
 This function uses \code{\link[furrr:future_map]{furrr::future_map()}} to import the bw files. Following code is recommended to activate the parallel processing.
 
-\code {future::plan(future::multisession(), workers = 50)}
-\code {.parallel_import_bw_files("path/do/bw/files)}
-\code {future::plan(future::sequential())}
+\preformatted{future::plan(future::multisession(), workers = 50)}
+\preformatted{ .parallel_import_bw_files("path/do/bw/files)}
+\preformatted{ future::plan(future::sequential())}
 
 Number of availabe threads/workers can be identified by  \code{\link[future:re-exports]{future::availableWorkers()}} and
 \code{\link[future:re-exports]{future::availableCores()}}.
 }
 \examples{
 \dontrun{
-<<<<<<< HEAD
-#// TODO
 }
+
 }
 \keyword{{internal}}
-=======
-// TODO
-}
-}
->>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2

@@ -79,11 +79,7 @@ make_parcutils_chip <- function(x,row_ranges){
 #' @keywords internal
 #' @examples
 #' \dontrun{
-<<<<<<< HEAD
-#' #// TO DO
-=======
-#' // TO DO
->>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2
+
 #' }
 parcutils_chip <- setClass(Class = "parcutils_chip", contains="RangedSummarizedExperiment")
 
@@ -99,11 +95,7 @@ parcutils_chip <- setClass(Class = "parcutils_chip", contains="RangedSummarizedE
 #'
 #' @examples
 #' \dontrun{
-<<<<<<< HEAD
-#' #// TODO
-=======
-#' // TODO
->>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2
+
 #' }
 normalised_matrix_to_rpm <- function(x){
 
@@ -142,17 +134,12 @@ normalised_matrix_to_rpm <- function(x){
 #' @param x a list of the object(s) of {.class normalisedMatrix}.
 #' @return a list of the object(s) of {.class normalisedMatrix}.
 #' @export
-<<<<<<< HEAD
+
 #' @keywords {internal}
 #' @examples
 #' \dontrun{
-#' #// TODO
-=======
-#'
-#' @examples
-#' \dontrun{
 #' // TODO
->>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2
+
 #' }
 .validate_a_list_of_normalised_matrix <- function(x){
 
@@ -205,27 +192,21 @@ normalised_matrix_to_rpm <- function(x){
 #' @param dir_path_to_bw_files a character string denoting a valid path to a parent directory in which several bw files are stored in a sample wise directory. Along with a file name (without extension)  name of the corresponding sample direcory will be used as name attribute.
 #' @details This function uses [furrr::future_map()] to import the bw files. Following code is recommended to activate the parallel processing.
 #'
-#' \code {future::plan(future::multisession(), workers = 50)}
-#' \code {.parallel_import_bw_files("path/do/bw/files)}
-#' \code {future::plan(future::sequential())}
+#' \preformatted{future::plan(future::multisession(), workers = 50)}
+#' \preformatted{ .parallel_import_bw_files("path/do/bw/files)}
+#' \preformatted{ future::plan(future::sequential())}
 #'
 #' Number of availabe threads/workers can be identified by  [future::availableWorkers()] and
 #' [future::availableCores()].
 #'
 #' @return a list of GRanges object. Each GRanges object is an output of the function [rtracklayer::import.bw()].
 #' @export
-<<<<<<< HEAD
+
 #' @keywords {internal}
 #' @examples
 #' \dontrun{
-#' #// TODO
-=======
-#'
-#' @examples
-#' \dontrun{
-#' // TODO
->>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2
 #' }
+#'
 .parallel_import_bw_files <- function(dir_path_to_bw_files){
 
   bw_signal_files <- fs::dir_ls(path = dir_path,regexp = "*.bw",recurse = T)
@@ -269,12 +250,7 @@ normalised_matrix_to_rpm <- function(x){
 #'
 #' @examples
 #' \dontrun{
-<<<<<<< HEAD
 #' #// TO DO.
-=======
-#'
-#' // TO DO.
->>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2
 #' }
 import_topn_bed_features <- function(bed_feature_file,topn = 5000, center = TRUE,...){
 
