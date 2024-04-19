@@ -17,7 +17,13 @@ Validate a list of normalised matrix.
 }
 \examples{
 \dontrun{
+<<<<<<< HEAD
 #// TODO
 }
 }
 \keyword{{internal}}
+=======
+// TODO
+}
+}
+>>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2

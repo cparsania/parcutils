@@ -23,6 +23,11 @@ Import top features (ranked by score) from a bed file.
 }
 \examples{
 \dontrun{
+<<<<<<< HEAD
 #// TO DO.
+=======
+
+// TO DO.
+>>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2
 }
 }

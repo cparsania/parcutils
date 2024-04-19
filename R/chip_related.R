@@ -79,7 +79,11 @@ make_parcutils_chip <- function(x,row_ranges){
 #' @keywords internal
 #' @examples
 #' \dontrun{
+<<<<<<< HEAD
 #' #// TO DO
+=======
+#' // TO DO
+>>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2
 #' }
 parcutils_chip <- setClass(Class = "parcutils_chip", contains="RangedSummarizedExperiment")
 
@@ -95,7 +99,11 @@ parcutils_chip <- setClass(Class = "parcutils_chip", contains="RangedSummarizedE
 #'
 #' @examples
 #' \dontrun{
+<<<<<<< HEAD
 #' #// TODO
+=======
+#' // TODO
+>>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2
 #' }
 normalised_matrix_to_rpm <- function(x){
 
@@ -134,10 +142,17 @@ normalised_matrix_to_rpm <- function(x){
 #' @param x a list of the object(s) of {.class normalisedMatrix}.
 #' @return a list of the object(s) of {.class normalisedMatrix}.
 #' @export
+<<<<<<< HEAD
 #' @keywords {internal}
 #' @examples
 #' \dontrun{
 #' #// TODO
+=======
+#'
+#' @examples
+#' \dontrun{
+#' // TODO
+>>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2
 #' }
 .validate_a_list_of_normalised_matrix <- function(x){
 
@@ -199,10 +214,17 @@ normalised_matrix_to_rpm <- function(x){
 #'
 #' @return a list of GRanges object. Each GRanges object is an output of the function [rtracklayer::import.bw()].
 #' @export
+<<<<<<< HEAD
 #' @keywords {internal}
 #' @examples
 #' \dontrun{
 #' #// TODO
+=======
+#'
+#' @examples
+#' \dontrun{
+#' // TODO
+>>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2
 #' }
 .parallel_import_bw_files <- function(dir_path_to_bw_files){
 
@@ -247,7 +269,12 @@ normalised_matrix_to_rpm <- function(x){
 #'
 #' @examples
 #' \dontrun{
+<<<<<<< HEAD
 #' #// TO DO.
+=======
+#'
+#' // TO DO.
+>>>>>>> 5c15ed662e9e47e5e08c1033089c800845d9f9d2
 #' }
 import_topn_bed_features <- function(bed_feature_file,topn = 5000, center = TRUE,...){
 
