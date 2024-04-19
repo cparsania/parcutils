@@ -60,6 +60,10 @@ reference:
 
   - title: "ChIP related"
     contents:
+    - make_parcutils_chip
+    - normalised_matrix_to_rpm
+    - import_topn_bed_features
+    - make_enriched_heatmap_list
     - get_chip_signal_heatmap
     - get_chip_signal_over_control_heatmap
     - get_five_prime_flank_motif
