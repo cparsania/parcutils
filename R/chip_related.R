@@ -288,7 +288,6 @@ import_topn_bed_features <- function(bed_feature_file,topn = 5000, center = TRUE
 #' @param heatmap_axis_name_rot internally passed to \code{axis_name_rot} argument of [EnrichedHeatmap::EnrichedHeatmap()].
 #' @param heatmap_axis_name_gp internally passed to \code{axis_name_gp} argument of [EnrichedHeatmap::EnrichedHeatmap()].
 #' @param heatmap_border internally passed to \code{border} argument of [EnrichedHeatmap::EnrichedHeatmap()].
-#' @param row_order internally passed to \code{row_order} argument of [EnrichedHeatmap::EnrichedHeatmap()].
 #'
 #' @return a HeatmapList.
 #' @export
@@ -298,7 +297,6 @@ import_topn_bed_features <- function(bed_feature_file,topn = 5000, center = TRUE
 #' }
 #'
 make_enriched_heatmap_list <- function(x,
-                                       row_order = NULL,
                                        cluster_targets_by_rpm = TRUE,
                                        cluster_by = NULL,
                                        n_clust = 2,
@@ -401,9 +399,7 @@ make_enriched_heatmap_list <- function(x,
                                                                             pos_line = heatmap_pos_line,
                                                                             pos_line_gp = heatmap_pos_line_gp,
                                                                             axis_name_rot = heatmap_axis_name_rot,
-                                                                            border = heatmap_border,
-                                                                            row_order = ifelse(is.null(row_order),
-                                                                                               order(enriched_score(assays(x)[[..1]]), decreasing = TRUE), row_order)))
+                                                                            border = heatmap_border))
 
 
 
@@ -430,13 +426,8 @@ make_enriched_heatmap_list <- function(x,
   }
 
   # if row_order NULL then split by clusters , else default row order
-  if(is.null(row_order)){
+
     hm_list_draw <- ComplexHeatmap::draw(hm_list, split = peak_clust$clust)
-  } else {
-    hm_list_draw <- ComplexHeatmap::draw(hm_list)
-  }
-
-
 
   return(hm_list_draw)
 

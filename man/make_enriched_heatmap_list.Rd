@@ -6,7 +6,6 @@
 \usage{
 make_enriched_heatmap_list(
   x,
-  row_order = NULL,
   cluster_targets_by_rpm = TRUE,
   cluster_by = NULL,
   n_clust = 2,
@@ -26,8 +25,6 @@ make_enriched_heatmap_list(
 }
 \arguments{
 \item{x}{an object of the class parcutils_chip.}
-
-\item{row_order}{internally passed to \code{row_order} argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
 
 \item{cluster_targets_by_rpm}{logical, denoting weather to cluster targets by RPM value.}
 
