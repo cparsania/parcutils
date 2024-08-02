@@ -399,7 +399,7 @@ make_enriched_heatmap_list <- function(x,
                                                                             pos_line = heatmap_pos_line,
                                                                             pos_line_gp = heatmap_pos_line_gp,
                                                                             axis_name_rot = heatmap_axis_name_rot,
-                                                                            border = heatmap_border))
+                                                                            border = heatmap_border, use_raster = TRUE))
 
 
 
