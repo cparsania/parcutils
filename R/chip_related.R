@@ -399,7 +399,8 @@ make_enriched_heatmap_list <- function(x,
                                                                             pos_line = heatmap_pos_line,
                                                                             pos_line_gp = heatmap_pos_line_gp,
                                                                             axis_name_rot = heatmap_axis_name_rot,
-                                                                            border = heatmap_border, use_raster = TRUE))
+                                                                            border = heatmap_border, use_raster = TRUE ,
+                                                                            split = peak_clust$clust))
 
 
 
@@ -425,11 +426,7 @@ make_enriched_heatmap_list <- function(x,
     hm_list = hm_list + i
   }
 
-  # if row_order NULL then split by clusters , else default row order
-
-    hm_list_draw <- ComplexHeatmap::draw(hm_list, split = peak_clust$clust)
-
-  return(hm_list_draw)
+  return(hm_list)
 
 }
 
