@@ -7,7 +7,7 @@
 make_parcutils_chip(x, row_ranges)
 }
 \arguments{
-\item{x}{a list of the object(s) of {.cls normalisedMatrix}.}
+\item{x}{a list of the object(s) of \code{normalisedMatrix}.}
 
 \item{row_ranges}{an object of the class GenomicRanges. Each range must be identified by an unique id stored in a column \code{name},}
 }
@@ -20,12 +20,12 @@ an object of the class parcutils_chip. Class parcutils_chip extends to RangedSum
 }
 }
 \description{
-This function creates an object of the  {.cls parcutils_chip.} parcutils_chip is an extension of the the {.cls RangedSummarizedExperiment}.
+This function creates an object of the  \code{parcutils_chip}. parcutils_chip is an extension of the the \code{RangedSummarizedExperiment}.
 This object make sure that it contains necessary elements to perform downstream chipseq analysis. Downstream exploratory and visualization functions will be based on this object.
 }
 \details{
 RPM is calculated by the function RowSums applied on the each row of the
-{.arg normalized_matrix}.
+\code{normalized_matrix}.
 }
 \examples{
 

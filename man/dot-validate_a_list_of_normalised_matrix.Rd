@@ -7,10 +7,10 @@
 .validate_a_list_of_normalised_matrix(x)
 }
 \arguments{
-\item{x}{a list of the object(s) of {.class normalisedMatrix}.}
+\item{x}{a list of the object(s) of \code{normalisedMatrix}.}
 }
 \value{
-a list of the object(s) of {.class normalisedMatrix}.
+a list of the object(s) of \code{normalisedMatrix}.
 }
 \description{
 Validate a list of normalised matrix.
@@ -20,4 +20,4 @@ Validate a list of normalised matrix.
 // TODO
 }
 }
-\keyword{{internal}}
+\keyword{internal}

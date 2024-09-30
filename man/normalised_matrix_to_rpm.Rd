@@ -7,17 +7,17 @@
 normalised_matrix_to_rpm(x)
 }
 \arguments{
-\item{x}{a list of the object(s) of {.class normalisedMatrix}.}
+\item{x}{a list of the object(s) of \code{normalisedMatrix}.}
 }
 \value{
-a dataframe of RPM values. Rows are the features and columns are samples. Row names will be set from the rownames of the {.arg x}. Column names are the attribute {.code names} the list {.arg x}.
+a dataframe of RPM values. Rows are the features and columns are samples. Row names will be set from the rownames of the \code{x}. Column names are the attribute \code{names} the list \code{x}.
 }
 \description{
 Convert normalised matrix into RPM signal
 }
 \details{
-RPM is calculated by the function RowSums applied on the each row of the
-{.arg x}.
+RPM is calculated by the function RowSums which is applied on the each row of the
+\code{x}.
 }
 \examples{
 \dontrun{

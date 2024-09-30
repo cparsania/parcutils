@@ -1,11 +1,11 @@
 
 #' Construct a parcutils_chip object
-#' @description This function creates an object of the  {.cls parcutils_chip.} parcutils_chip is an extension of the the {.cls RangedSummarizedExperiment}.
+#' @description This function creates an object of the  \code{parcutils_chip}. parcutils_chip is an extension of the the \code{RangedSummarizedExperiment}.
 #' This object make sure that it contains necessary elements to perform downstream chipseq analysis. Downstream exploratory and visualization functions will be based on this object.
-#' @param x a list of the object(s) of {.cls normalisedMatrix}.
+#' @param x a list of the object(s) of \code{normalisedMatrix}.
 #' @param row_ranges an object of the class GenomicRanges. Each range must be identified by an unique id stored in a column \code{name},
 #' @details RPM is calculated by the function RowSums applied on the each row of the
-#' {.arg normalized_matrix}.
+#' \code{normalized_matrix}.
 #' @return an object of the class parcutils_chip. Class parcutils_chip extends to RangedSummarizedExperiment. It contains data in the below format
 #' \itemize{
 #'  \item{"assay"} {These is the object of NormalisedMatrix for the sample.}
@@ -86,11 +86,10 @@ parcutils_chip <- setClass(Class = "parcutils_chip", contains="RangedSummarizedE
 
 
 #' Convert normalised matrix into RPM signal
-#'
-#' @param x a list of the object(s) of {.class normalisedMatrix}.
-#' @details RPM is calculated by the function RowSums applied on the each row of the
-#' {.arg x}.
-#' @return a dataframe of RPM values. Rows are the features and columns are samples. Row names will be set from the rownames of the {.arg x}. Column names are the attribute {.code names} the list {.arg x}.
+#' @param x a list of the object(s) of \code{normalisedMatrix}.
+#' @details RPM is calculated by the function RowSums which is applied on the each row of the
+#' \code{x}.
+#' @return a dataframe of RPM values. Rows are the features and columns are samples. Row names will be set from the rownames of the \code{x}. Column names are the attribute \code{names} the list \code{x}.
 #' @export
 #'
 #' @examples
@@ -103,7 +102,9 @@ normalised_matrix_to_rpm <- function(x){
 
   # prepare RPM for each peak
 
-  df_rpm <- furrr::future_map(norm_mats , ~ ..1 %>% rowSums() %>% set_names(rownames(..1))) %>%
+  df_rpm <- furrr::future_map(norm_mats , ~ ..1 %>%
+                                rowSums() %>%
+                                set_names(rownames(..1))) %>%
     # make it wide format
     tibble::enframe() %>%
     tidyr::unnest(cols = c(value)) %>%
@@ -131,15 +132,14 @@ normalised_matrix_to_rpm <- function(x){
 
 #' Validate a list of normalised matrix.
 #'
-#' @param x a list of the object(s) of {.class normalisedMatrix}.
-#' @return a list of the object(s) of {.class normalisedMatrix}.
+#' @param x a list of the object(s) of \code{normalisedMatrix}.
+#' @return a list of the object(s) of \code{normalisedMatrix}.
 #' @export
 
-#' @keywords {internal}
+#' @keywords internal
 #' @examples
 #' \dontrun{
 #' // TODO
-
 #' }
 .validate_a_list_of_normalised_matrix <- function(x){
 
@@ -242,10 +242,10 @@ normalised_matrix_to_rpm <- function(x){
 #' Import top features (ranked by score) from a bed file.
 #'
 #' @param bed_feature_file a character string denoting a valid bed file.
-#' @param topn a numeric value, default 5000, denoting number of top features to keep. Features are ranked by a column  {.code score}.
+#' @param topn a numeric value, default 5000, denoting number of top features to keep. Features are ranked by a column  \code{score}.
 #' @param center logical, denoting whether to align each feature by central position. If TRUE, default, it will return a ranges of single nucleotide (width = 0) denting a central position of each feature.
 #' @param ... Other arguments pass to the function [rtracklayer::import.bed()].
-#' @return an object of the {.class GRanges} containing {.arg topn} features.
+#' @return an object of the \code{GRanges} containing \code{topn} features.
 #' @export
 #'
 #' @examples
@@ -719,5 +719,105 @@ get_three_prime_flank_motif <-  function(x,
     ggplot2::theme_bw() + ggplot2::scale_x_continuous(breaks = 1:(extend*2), labels = c(-(extend):-1,1:extend))
 
   return(list(logo= m1, seq = for_motif))
+
+}
+
+
+
+
+
+#' Validate a class parcutils_chip
+#'
+#' @param x an object of the class \code{parcutils_chip}
+#'
+#' @keywords internal
+.validate_parcutils_chip <- function(x){
+  if (!is(x, "parcutils_chip")) {
+    cli::cli_abort("x must be an object of {.cls parcutils_chip}")
+  }
+}
+
+
+
+#' Generate a pairwise correlation for chipseq data.
+#' @description Given an object of the class \code{parcutils_chip} it generates correlation heatmap for selected samples and observations (peaks).
+#' @param x an object of the class \code{parcutils_chip}.
+#' @param samples a character vector denoting samples to show in the plot. Values must be a subset of \code{names(assays(x))}.
+#' @param peaks a character vector denoting peaks (observations) to use for correlation. Values must be a subset of \code{rownames(RowData(x))}.
+#' @param rename_samples a character vector denoting sample names to show in the plot. Values must be of same order and length of values given as an argument \code{sample}.
+#' @param scale_min a numeric value denoting a minimum value for the scale.
+#' @param scale_max a numeric value denoting a maximum value for the scale.
+#' @param col a character string of valid colors. Number of colors are not restricted.
+#' @param cor_method a character string denoting a method to calculate correlation values. Values can be one of \code{"pearson"} (default), \code{"kendall"}, or \code{"spearman"}.
+#' @param plot_title a character string denoting a plot title.
+#' @param ... other arguments pass to the function [ggcorrplot::ggcorrplot()].
+#'
+#' @return a plot
+#' @export
+#' @import ggcorrplot
+#' @examples
+#' \dontrun{
+#'
+#' }
+#'
+plot_chip_pairwise_correlation_heatmap <- function(x,
+                                                   samples=NULL,
+                                                   peaks = NULL,
+                                                   rename_samples = NULL,
+                                                   scale_min = 0,
+                                                   scale_max =1,
+                                                   col = c("blue","white","red"),
+                                                   cor_method = c("pearson"),
+                                                   plot_title = "title",...){
+
+
+  # validate x
+  .validate_parcutils_chip(x)
+
+  # validate samples
+  rpm_sample_names <- rowData(x) %>% colnames()
+  rpm_sample_names <- rpm_sample_names[grepl("^RPM-", rpm_sample_names)]
+
+  if (is.null(samples)) {
+    samples = rpm_sample_names
+  } else if(!all(samples %in% rpm_sample_names)) {
+    cli::cli_abort("{.arg samples} must be either {.cls NULL} or a {.cls character} vector of {.code colnames(rowData(x))} ")
+  }
+
+
+  # validate peaks
+  all_peaks <- rowData(x) %>% rownames()
+
+  if (is.null(peaks)) {
+    peaks = all_peaks
+  } else if(!all(peaks %in% all_peaks)) {
+    cli::cli_abort("{.arg peaks} must be either {.cls NULL} or a {.cls character} vector of {.code rownames(rowData(x))} ")
+  }
+
+  # validate rename samples
+  # rename_samples must be unique and have identical length to samples
+
+  if(!is.null(rename_samples)){
+    if(any(duplicated(rename_samples))){
+      cli::cli_abort("{.arg rename_samples} must be either {.cls NULL} or a {.cls character} vector of the length {.code samples}.")
+    } else if (!(length(rename_samples) == length(samples))){
+      cli::cli_abort("{.arg rename_samples} must be either {.cls NULL} or a {.cls character} vector of the length {.code samples}.")
+    }
+  } else { # default names
+    rename_samples = samples
+  }
+
+  rowData(x)[peaks, samples] %>%
+    tibble::as_tibble() %>%
+    dplyr::rename_all(.funs = ~ rename_samples) %>%
+    # remove rows with NA values
+    TidyWrappers::tbl_remove_rows_NA_any()  %>%
+    # convert Log2
+    TidyWrappers::tbl_convert_log2(frac = 1) %>%
+    cor(method = cor_method) %>%
+    ggcorrplot::ggcorrplot(lab = T,...) +
+    scale_fill_gradientn(colours = col,
+                         limits = c(scale_min, scale_max) , oob=scales::squish, name = "Cor") +
+    ggtitle(plot_title)
 
 }

@@ -68,6 +68,7 @@ reference:
     - get_chip_signal_over_control_heatmap
     - get_five_prime_flank_motif
     - get_three_prime_flank_motif
+    - plot_chip_pairwise_correlation_heatmap
 
 # figures:
 #   dev: ragg::agg_png
