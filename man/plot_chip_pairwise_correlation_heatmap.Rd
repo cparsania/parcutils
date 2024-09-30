@@ -44,6 +44,9 @@ a plot
 \description{
 Given an object of the class \code{parcutils_chip} it generates correlation heatmap for selected samples and observations (peaks).
 }
+\details{
+correlation is calculated based on RPM value of each feature. RPM is simply sum of values across the feature i.e. rowsum.
+}
 \examples{
 \dontrun{
 

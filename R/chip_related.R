@@ -741,6 +741,7 @@ get_three_prime_flank_motif <-  function(x,
 
 #' Generate a pairwise correlation for chipseq data.
 #' @description Given an object of the class \code{parcutils_chip} it generates correlation heatmap for selected samples and observations (peaks).
+#' @details correlation is calculated based on RPM value of each feature. RPM is simply sum of values across the feature i.e. rowsum.
 #' @param x an object of the class \code{parcutils_chip}.
 #' @param samples a character vector denoting samples to show in the plot. Values must be a subset of \code{names(assays(x))}.
 #' @param peaks a character vector denoting peaks (observations) to use for correlation. Values must be a subset of \code{rownames(RowData(x))}.
