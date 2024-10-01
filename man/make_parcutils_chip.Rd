@@ -9,14 +9,14 @@ make_parcutils_chip(x, row_ranges)
 \arguments{
 \item{x}{a list of the object(s) of \code{normalisedMatrix}.}
 
-\item{row_ranges}{an object of the class GenomicRanges. Each range must be identified by an unique id stored in a column \code{name},}
+\item{row_ranges}{an object of the class GenomicRanges. Each range must be identified by an unique id stored in a column \code{name}.}
 }
 \value{
 an object of the class parcutils_chip. Class parcutils_chip extends to RangedSummarizedExperiment. It contains data in the below format
 \itemize{
-\item{"assay"} {These is the object of NormalisedMatrix for the sample.}
-\item{"columns"} {Columns are the columns in each assays. In this case they are the bins described in NormalisedMatrix.}
-\item{"rowData"} {RPM value for each feature (row) across samples. }
+\item{"assay"} {These are objects of the class \code{NormalisedMatrix} for each sample.}
+\item{"columns"} {Columns are the columns in each assay. In this case they are the bins described in \code{NormalisedMatrix}.}
+\item{"rowData"} {RPM value for each feature (row) across samples. For each feature RPM is the sum of all bins within a row. }
 }
 }
 \description{
@@ -35,7 +35,8 @@ ranges = IRanges(start = c(1, 4, 7, 11, 14, 17, 21, 24, 27),
 score = c(1, 2, 3, 1, 2, 3, 1, 2, 3))
 target = GRanges(seqnames = "chr1", ranges = IRanges(start = 10, end = 20), name = "feat_1")
 x = normalizeToMatrix(signal, target, extend = 10, w = 2)
- rownames(x) <- "feat_1"
+rownames(x) <- "feat_1"
 make_parcutils_chip(x, target)
+
 
 }

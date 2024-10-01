@@ -20,9 +20,9 @@ plot_chip_pairwise_correlation_heatmap(
 \arguments{
 \item{x}{an object of the class \code{parcutils_chip}.}
 
-\item{samples}{a character vector denoting samples to show in the plot. Values must be a subset of \code{names(assays(x))}.}
+\item{samples}{a character vector denoting samples to show in the plot. Values must be a subset of \code{colnames(rowData(x))}.}
 
-\item{peaks}{a character vector denoting peaks (observations) to use for correlation. Values must be a subset of \code{rownames(RowData(x))}.}
+\item{peaks}{a character vector denoting peaks (observations) to use for correlation. Values must be a subset of \code{rownames(rowData(x))}.}
 
 \item{rename_samples}{a character vector denoting sample names to show in the plot. Values must be of same order and length of values given as an argument \code{sample}.}
 

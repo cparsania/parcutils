@@ -13,6 +13,7 @@ Set class parcutils_chip
 }
 \examples{
 \dontrun{
+# // todo
 }
 }
 \keyword{internal}

@@ -69,11 +69,11 @@
 
 
 <dt>samples</dt>
-<dd><p>a character vector denoting samples to show in the plot. Values must be a subset of <code>names(assays(x))</code>.</p></dd>
+<dd><p>a character vector denoting samples to show in the plot. Values must be a subset of <code>colnames(rowData(x))</code>.</p></dd>
 
 
 <dt>peaks</dt>
-<dd><p>a character vector denoting peaks (observations) to use for correlation. Values must be a subset of <code>rownames(RowData(x))</code>.</p></dd>
+<dd><p>a character vector denoting peaks (observations) to use for correlation. Values must be a subset of <code>rownames(rowData(x))</code>.</p></dd>
 
 
 <dt>rename_samples</dt>

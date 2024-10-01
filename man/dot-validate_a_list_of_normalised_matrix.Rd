@@ -17,7 +17,7 @@ Validate a list of normalised matrix.
 }
 \examples{
 \dontrun{
-// TODO
+# // TODO
 }
 }
 \keyword{internal}

@@ -52,7 +52,7 @@ an object of the class Heatmap from the package ComplexHeatmap.
 }
 \description{
 This function plots the ChIP signal heatmap for the given set of target region.
-ChIP signals shown in the plot is the ratio of the treatment over control. Ratio will be calculated for each bin of the target region. Prior to calculate the ratio integer 1 will be added to both numerator and denominator to avoid the Inf and NaN from the final matrix.
+ChIP signals shown in the plot are the ratio of the treatment over control. Ratio will be calculated for each bin of the target region. Prior to calculate the ratio integer 1 will be added to both numerator and denominator to avoid the Inf and NaN from the final matrix.
 }
 \details{
 To obtain the order of targets from the output heatmap the suggested approach is \verb{hm = ComplexHeatmap::draw(hm); ComplexHeatmap::row_order(hm)}.

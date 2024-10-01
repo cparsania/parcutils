@@ -9,7 +9,7 @@ import_topn_bed_features(bed_feature_file, topn = 5000, center = TRUE, ...)
 \arguments{
 \item{bed_feature_file}{a character string denoting a valid bed file.}
 
-\item{topn}{a numeric value, default 5000, denoting number of top features to keep. Features are ranked by a column  \code{score}.}
+\item{topn}{a numeric value, default 5000, denoting number of top features to keep. Top features are selected by a score column  \code{score}.}
 
 \item{center}{logical, denoting whether to align each feature by central position. If TRUE, default, it will return a ranges of single nucleotide (width = 0) denting a central position of each feature.}
 
@@ -23,5 +23,6 @@ Import top features (ranked by score) from a bed file.
 }
 \examples{
 \dontrun{
+# TODO
 }
 }

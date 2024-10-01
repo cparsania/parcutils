@@ -21,5 +21,6 @@ RPM is calculated by the function RowSums which is applied on the each row of th
 }
 \examples{
 \dontrun{
+#// TODO
 }
 }

@@ -3,14 +3,14 @@
 #' @description This function creates an object of the  \code{parcutils_chip}. parcutils_chip is an extension of the the \code{RangedSummarizedExperiment}.
 #' This object make sure that it contains necessary elements to perform downstream chipseq analysis. Downstream exploratory and visualization functions will be based on this object.
 #' @param x a list of the object(s) of \code{normalisedMatrix}.
-#' @param row_ranges an object of the class GenomicRanges. Each range must be identified by an unique id stored in a column \code{name},
+#' @param row_ranges an object of the class GenomicRanges. Each range must be identified by an unique id stored in a column \code{name}.
 #' @details RPM is calculated by the function RowSums applied on the each row of the
 #' \code{normalized_matrix}.
 #' @return an object of the class parcutils_chip. Class parcutils_chip extends to RangedSummarizedExperiment. It contains data in the below format
 #' \itemize{
-#'  \item{"assay"} {These is the object of NormalisedMatrix for the sample.}
-#'  \item{"columns"} {Columns are the columns in each assays. In this case they are the bins described in NormalisedMatrix.}
-#'  \item{"rowData"} {RPM value for each feature (row) across samples. }
+#'  \item{"assay"} {These are objects of the class \code{NormalisedMatrix} for each sample.}
+#'  \item{"columns"} {Columns are the columns in each assay. In this case they are the bins described in \code{NormalisedMatrix}.}
+#'  \item{"rowData"} {RPM value for each feature (row) across samples. For each feature RPM is the sum of all bins within a row. }
 #' }
 #' @export
 #'
@@ -22,8 +22,9 @@
 #' score = c(1, 2, 3, 1, 2, 3, 1, 2, 3))
 #' target = GRanges(seqnames = "chr1", ranges = IRanges(start = 10, end = 20), name = "feat_1")
 #' x = normalizeToMatrix(signal, target, extend = 10, w = 2)
-#'  rownames(x) <- "feat_1"
+#' rownames(x) <- "feat_1"
 #' make_parcutils_chip(x, target)
+#'
 #'
 make_parcutils_chip <- function(x,row_ranges){
 
@@ -79,7 +80,7 @@ make_parcutils_chip <- function(x,row_ranges){
 #' @keywords internal
 #' @examples
 #' \dontrun{
-
+#' # // todo
 #' }
 parcutils_chip <- setClass(Class = "parcutils_chip", contains="RangedSummarizedExperiment")
 
@@ -94,7 +95,7 @@ parcutils_chip <- setClass(Class = "parcutils_chip", contains="RangedSummarizedE
 #'
 #' @examples
 #' \dontrun{
-
+#' #// TODO
 #' }
 normalised_matrix_to_rpm <- function(x){
 
@@ -128,18 +129,17 @@ normalised_matrix_to_rpm <- function(x){
 
 }
 
-# a function to validate a list of normalised matrix.
 
 #' Validate a list of normalised matrix.
 #'
 #' @param x a list of the object(s) of \code{normalisedMatrix}.
 #' @return a list of the object(s) of \code{normalisedMatrix}.
 #' @export
-
+#'
 #' @keywords internal
 #' @examples
 #' \dontrun{
-#' // TODO
+#' # // TODO
 #' }
 .validate_a_list_of_normalised_matrix <- function(x){
 
@@ -196,13 +196,13 @@ normalised_matrix_to_rpm <- function(x){
 #' \preformatted{ .parallel_import_bw_files("path/do/bw/files)}
 #' \preformatted{ future::plan(future::sequential())}
 #'
-#' Number of availabe threads/workers can be identified by  [future::availableWorkers()] and
+#' Number of available threads/workers can be identified by  [future::availableWorkers()] and
 #' [future::availableCores()].
 #'
 #' @return a list of GRanges object. Each GRanges object is an output of the function [rtracklayer::import.bw()].
 #' @export
-
-#' @keywords {internal}
+#'
+#' @keywords internal
 #' @examples
 #' \dontrun{
 #' }
@@ -242,7 +242,7 @@ normalised_matrix_to_rpm <- function(x){
 #' Import top features (ranked by score) from a bed file.
 #'
 #' @param bed_feature_file a character string denoting a valid bed file.
-#' @param topn a numeric value, default 5000, denoting number of top features to keep. Features are ranked by a column  \code{score}.
+#' @param topn a numeric value, default 5000, denoting number of top features to keep. Top features are selected by a score column  \code{score}.
 #' @param center logical, denoting whether to align each feature by central position. If TRUE, default, it will return a ranges of single nucleotide (width = 0) denting a central position of each feature.
 #' @param ... Other arguments pass to the function [rtracklayer::import.bed()].
 #' @return an object of the \code{GRanges} containing \code{topn} features.
@@ -250,6 +250,7 @@ normalised_matrix_to_rpm <- function(x){
 #'
 #' @examples
 #' \dontrun{
+#' # TODO
 #' }
 import_topn_bed_features <- function(bed_feature_file,topn = 5000, center = TRUE,...){
 
@@ -272,11 +273,11 @@ import_topn_bed_features <- function(bed_feature_file,topn = 5000, center = TRUE
 
 #' Create a HeatmapList from parcutils_chip.
 #'
-#' @param x an object of the class parcutils_chip.
-#' @param cluster_targets_by_rpm logical, denoting weather to cluster targets by RPM value.
+#' @param x an object of the class \code{parcutils_chip}.
+#' @param cluster_targets_by_rpm logical, denoting whether to cluster targets by RPM value.
 #' @param cluster_by NULL (default) or character vector denoting RPM columns to be used for clustering.
 #' @param n_clust a numeric, default 2, denoting number of clusters for kmeans clustering.
-#' @param cluster_rows logical, default FALSE, denoting weather to cluster rows using default clustering. This must be always false as kmeans is implimented.
+#' @param cluster_rows logical, default FALSE, denoting whether to cluster rows using default clustering. This must be always false as kmeans is implimented.
 #' @param heatmap_columns NULL (default) or character vector denoting columns to be displayed in the heatmap.
 #' @param heatmap_column_title NULL (default) or character vector denoting title for each heatmap column.
 #' @param heatmap_pos_line logical, default FALSE, internally passed to \code{pos_line} argument of [EnrichedHeatmap::EnrichedHeatmap()].
@@ -432,21 +433,6 @@ make_enriched_heatmap_list <- function(x,
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #' Generate a ChIP signal heatmap for a given sample.
 #' #' @description This function plots the ChIP signal heatmap for the given set of target region. ChIP signals shown in the plot will be plotted as an output of [EnrichedHeatmap::normalizeToMatrix()].
 #' @details To obtain the order of targets from the output heatmap the suggested approach is `hm = ComplexHeatmap::draw(hm); ComplexHeatmap::row_order(hm)`.
@@ -533,7 +519,7 @@ get_chip_signal_heatmap <- function(path_to_bw_file ,
 
 #' Generate a ChIP signal heatmap of treatment over control.
 #' @description This function plots the ChIP signal heatmap for the given set of target region.
-#' ChIP signals shown in the plot is the ratio of the treatment over control. Ratio will be calculated for each bin of the target region. Prior to calculate the ratio integer 1 will be added to both numerator and denominator to avoid the Inf and NaN from the final matrix.
+#' ChIP signals shown in the plot are the ratio of the treatment over control. Ratio will be calculated for each bin of the target region. Prior to calculate the ratio integer 1 will be added to both numerator and denominator to avoid the Inf and NaN from the final matrix.
 #' @details To obtain the order of targets from the output heatmap the suggested approach is `hm = ComplexHeatmap::draw(hm); ComplexHeatmap::row_order(hm)`.
 #' @param path_control_bw a character string denoting a path to a bw file. String can be an absolute path or the valid URL pointing to bw file. Singals from this file will be used as numerator to calculate the fold change.
 #' @param path_treatment_bw a character string denoting a path to a bw file. String can be an absolute path or the valid URL pointing to bw file. Singals from this file will be used as denominator to calculate the fold change.
@@ -743,8 +729,8 @@ get_three_prime_flank_motif <-  function(x,
 #' @description Given an object of the class \code{parcutils_chip} it generates correlation heatmap for selected samples and observations (peaks).
 #' @details correlation is calculated based on RPM value of each feature. RPM is simply sum of values across the feature i.e. rowsum.
 #' @param x an object of the class \code{parcutils_chip}.
-#' @param samples a character vector denoting samples to show in the plot. Values must be a subset of \code{names(assays(x))}.
-#' @param peaks a character vector denoting peaks (observations) to use for correlation. Values must be a subset of \code{rownames(RowData(x))}.
+#' @param samples a character vector denoting samples to show in the plot. Values must be a subset of \code{colnames(rowData(x))}.
+#' @param peaks a character vector denoting peaks (observations) to use for correlation. Values must be a subset of \code{rownames(rowData(x))}.
 #' @param rename_samples a character vector denoting sample names to show in the plot. Values must be of same order and length of values given as an argument \code{sample}.
 #' @param scale_min a numeric value denoting a minimum value for the scale.
 #' @param scale_max a numeric value denoting a maximum value for the scale.

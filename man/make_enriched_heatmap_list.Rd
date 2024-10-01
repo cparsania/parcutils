@@ -24,15 +24,15 @@ make_enriched_heatmap_list(
 )
 }
 \arguments{
-\item{x}{an object of the class parcutils_chip.}
+\item{x}{an object of the class \code{parcutils_chip}.}
 
-\item{cluster_targets_by_rpm}{logical, denoting weather to cluster targets by RPM value.}
+\item{cluster_targets_by_rpm}{logical, denoting whether to cluster targets by RPM value.}
 
 \item{cluster_by}{NULL (default) or character vector denoting RPM columns to be used for clustering.}
 
 \item{n_clust}{a numeric, default 2, denoting number of clusters for kmeans clustering.}
 
-\item{cluster_rows}{logical, default FALSE, denoting weather to cluster rows using default clustering. This must be always false as kmeans is implimented.}
+\item{cluster_rows}{logical, default FALSE, denoting whether to cluster rows using default clustering. This must be always false as kmeans is implimented.}
 
 \item{heatmap_columns}{NULL (default) or character vector denoting columns to be displayed in the heatmap.}
 

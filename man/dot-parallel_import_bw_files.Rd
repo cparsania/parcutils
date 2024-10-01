@@ -22,7 +22,7 @@ This function uses \code{\link[furrr:future_map]{furrr::future_map()}} to import
 \preformatted{ .parallel_import_bw_files("path/do/bw/files)}
 \preformatted{ future::plan(future::sequential())}
 
-Number of availabe threads/workers can be identified by  \code{\link[future:re-exports]{future::availableWorkers()}} and
+Number of available threads/workers can be identified by  \code{\link[future:re-exports]{future::availableWorkers()}} and
 \code{\link[future:re-exports]{future::availableCores()}}.
 }
 \examples{
@@ -30,4 +30,4 @@ Number of availabe threads/workers can be identified by  \code{\link[future:re-e
 }
 
 }
-\keyword{{internal}}
+\keyword{internal}
