@@ -1511,9 +1511,9 @@ get_fold_change_scatter_plot <- function(x,
 # }
 
 
-#' Perform GSEA analysis.
-#' @description This is a wrapper around [clusterProfiler::GSEA()] to perform GSEA analysis for a given set of genes.
-#' @param gene_list a named numeric vector. Values in the vector will be used to rank the genes in GSEA analysis. Values can be normalised expression, log2FC, test statistics etc. Vector names denots gene names.
+#' Perform GSEA using Molecular Signature Database (MSigDB).
+#' @description This is a wrapper around [clusterProfiler::GSEA()] to perform GSEA analysis against MsigDB.
+#' @param gene_list a named numeric vector. Values in the vector will be used to rank the genes in GSEA analysis. Values can be normalised expression, log2FC, test statistics etc. Vector names denote gene names.
 #' @param from_type a character string, default "SYMBOL", denotes type of gene identifier. Possible values could be one of those available as keys of OrgDB object.
 #' @param orgdb an object of the class OrgDB. Default org.Mm.eg.db::org.Mm.eg.db
 #' @param msigdb_category a character string, default "H", denoting one of the nine catagories of geneList given in the msigdb. Possible values are: "H","C1","C2","C3","C4","C5","C6","C7", and "C8".
@@ -1530,7 +1530,7 @@ get_fold_change_scatter_plot <- function(x,
 #' \dontrun{
 #'
 #' }
-gsea_analysis <- function(gene_list, from_type = "SYMBOL",
+gsea_msigdb <- function(gene_list, from_type = "SYMBOL",
                           orgdb = org.Mm.eg.db::org.Mm.eg.db,
                           msigdb_category = "H", species = "Mus musculus",...){
 
@@ -1588,5 +1588,33 @@ gsea_analysis <- function(gene_list, from_type = "SYMBOL",
 }
 
 
+#' Perform GSEA using Molecular Signature Database (MSigDB).
+#' @description This is a wrapper around [clusterProfiler::GSEA()] to perform GSEA analysis against MsigDB.
+#' @param gene_list a named numeric vector. Values in the vector will be used to rank the genes in GSEA analysis. Values can be normalised expression, log2FC, test statistics etc. Vector names denote gene names.
+#' @param from_type a character string, default "SYMBOL", denotes type of gene identifier. Possible values could be one of those available as keys of OrgDB object.
+#' @param orgdb an object of the class OrgDB. Default org.Mm.eg.db::org.Mm.eg.db
+#' @param msigdb_category a character string, default "H", denoting one of the nine catagories of geneList given in the msigdb. Possible values are: "H","C1","C2","C3","C4","C5","C6","C7", and "C8".
+#' @param species a character string denoting name of the species. Default "Mus musculus". Possible values can be found via the function [msigdbr::msigdbr_species()].
+#' @param ... other arguments to be passed to [clusterProfiler::GSEA()].
+#'
+#' @return an output of [clusterProfiler::GSEA()]
+#' @import clusterProfiler
+#' @import msigdbr
+#' @import org.Mm.eg.db
+#' @export
+#' @seealso [parcutils::gsea_msigdb()].
+#' @examples
+#' \dontrun{
+#'
+#' }
+gsea_analysis <- function(gene_list, from_type = "SYMBOL",
+                          orgdb = org.Mm.eg.db::org.Mm.eg.db,
+                          msigdb_category = "H", species = "Mus musculus",...){
+  cli::cli_warn("{.fun gsea_analysis} is depricated. Please use {.fun gsea_analysis} instead.")
+  gsea_msigdb(gene_list = gene_list, from_type = from_type,
+              orgdb = orgdb ,
+              msigdb_category =msigdb_category , species= species,
+              ...)
+}
 
 
