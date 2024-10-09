@@ -13,8 +13,9 @@ reference:
       - get_go_emap_plot
       - save_go_data
       - save_go_plots
-      - gsea_msigdb
       - gsea_analysis
+      - enrichMsigDB
+      - gseMsigDB
 
   - title: "Visualization related"
     contents:
