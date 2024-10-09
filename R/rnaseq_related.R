@@ -1513,14 +1513,19 @@ get_fold_change_scatter_plot <- function(x,
 
 #' Perform GSEA using Molecular Signature Database (MSigDB).
 #' @description This is a wrapper around [clusterProfiler::GSEA()] to perform GSEA analysis against MsigDB.
+#'
 #' @param gene_list a named numeric vector. Values in the vector will be used to rank the genes in GSEA analysis. Values can be normalised expression, log2FC, test statistics etc. Vector names denote gene names.
 #' @param from_type a character string, default "SYMBOL", denotes type of gene identifier. Possible values could be one of those available as keys of OrgDB object.
 #' @param orgdb an object of the class OrgDB. Default org.Mm.eg.db::org.Mm.eg.db
 #' @param msigdb_category a character string, default "H", denoting one of the nine catagories of geneList given in the msigdb. Possible values are: "H","C1","C2","C3","C4","C5","C6","C7", and "C8".
 #' @param species a character string denoting name of the species. Default "Mus musculus". Possible values can be found via the function [msigdbr::msigdbr_species()].
 #' @param ... other arguments to be passed to [clusterProfiler::GSEA()].
+#' @param background \code{NULL} or a string \code{feature_type}. If \code{NULL}, genes from the selected database will be used as a background. If \code{feature_type}, genes for will be selected for the \code{feature_type}
+#' mentioned  under argument \code{feature_type}.
+#' @param col_genetype A string denoting a column name to filter \code{feature_type}.Valid only if the argument \code{background} is \code{feature_type}.
+#' @param feature_type A string denoting a value to filter the column mentioned by the argument \code{col_genetype}.Valid only if the argument \code{background} is \code{feature_type}.
 #'
-#' @return an output of [clusterProfiler::GSEA()]
+#' @return an output of [clusterProfiler::GSEA()].
 #' @import clusterProfiler
 #' @import msigdbr
 #' @import org.Mm.eg.db
@@ -1532,7 +1537,10 @@ get_fold_change_scatter_plot <- function(x,
 #' }
 gsea_msigdb <- function(gene_list, from_type = "SYMBOL",
                           orgdb = org.Mm.eg.db::org.Mm.eg.db,
-                          msigdb_category = "H", species = "Mus musculus",...){
+                          msigdb_category = "H", species = "Mus musculus",
+                        background = "feature_type",
+                        col_genetype = "GENETYPE",
+                        feature_type = "protein-coding",...){
 
   # validate gene list. It must be a named numeric list. Values are to rank the genes and names are the gene names.
 
@@ -1575,17 +1583,70 @@ gsea_msigdb <- function(gene_list, from_type = "SYMBOL",
 
   # prepare target geneset from msigdbr
 
-  hallmark_t2g  <- msigdbr::msigdbr(species= species,
+  msigdb_t2g  <- msigdbr::msigdbr(species= species,
                                     category = msigdb_category) %>%
     dplyr::select(gs_name, entrez_gene)
 
+  # by default the column `entrez_gene` of msigdb_t2g will be used as a background set of genes for GSEA analysis.
+  # This represents very narrow population of background genes, hence most of the queried genesets won't have significant enrichment.
+  # Instead use all protein-coding genes as background make more sense.
+  if(is.null(background)){
+    msigdb_t2g <- msigdb_t2g
+  } else if(background == "feature_type"){
+
+    # get ENTREZID filtered by given featyre-type
+    new_bg <- .filter_orgdb_by_genetype(orgdb = orgdb,
+                              col_genetype = col_genetype,
+                              feature_type = feature_type,
+                              col_return = "ENTREZID")
+
+    msigdb_t2g <- dplyr::bind_rows(msigdb_t2g,tibble::tibble(gs_name = "UN_ANNOTATED", entrez_gene = new_bg[!new_bg %in% msigdb_t2g$entrez_gene] %>% as.numeric()))
+  } else {
+    cli::cli_abort("The argument {.arg background} must be an either {.val NULL} or a string {.val feature_type}." )
+  }
+
+
+
   # perform GSEA
 
-  gseq_rslt <- clusterProfiler::GSEA(geneList = magrittr::set_names(symb_to_entrez$rank_val,value = symb_to_entrez$ENTREZID) , TERM2GENE = hallmark_t2g, eps = 1e-100, ...)
+  gseq_rslt <- clusterProfiler::GSEA(geneList = magrittr::set_names(symb_to_entrez$rank_val,value = symb_to_entrez$ENTREZID) , TERM2GENE = msigdb_t2g, eps = 1e-100, ...)
 
   return(gseq_rslt)
 
 }
+
+
+#' Filter selected orgdb columns by gene-type
+#'
+#' @param orgdb an OrgDB
+#' @param col_genetype a column name to filter by the value given in \code{feature_type}
+#' @param feature_type a string denoting value to filter the column mentioned by \code{col_genetype}.
+#' @param col_return a character string denoting a column to return from an OrgDB.
+#' @keywords {internal}.
+#' @return a character string of the column mentioned in \code{col_return}.
+#' @export
+#'
+#' @examples
+#' .filter_orgdb_by_genetype(orgdb = org.Hs.eg.db::org.Hs.eg.db ,col_return = "ENTREZID",feature_type = "snRNA")
+#' .filter_orgdb_by_genetype(orgdb = org.Hs.eg.db::org.Hs.eg.db ,col_return = "ENTREZID",feature_type = "protein-coding")
+#' .filter_orgdb_by_genetype(orgdb = org.Hs.eg.db::org.Hs.eg.db ,col_return = "ENTREZID",feature_type = "awdfd")
+#'
+.filter_orgdb_by_genetype <- function(orgdb, col_genetype = "GENETYPE", feature_type = "protein-coding", col_return = "ENTREZID"){
+
+
+  stopifnot(`orgdb must be an object of class 'OrgDb'.` = is(orgdb, "OrgDb"))
+
+  col_genetype_quo <- rlang::sym(col_genetype)
+  col_return_quo <- rlang::sym(col_return)
+
+  AnnotationDbi::select(orgdb,
+         keys = AnnotationDbi::keys(orgdb),columns = c(col_genetype,col_return)) %>%
+    tibble::as_tibble() %>%
+  dplyr::filter(!!col_genetype_quo == feature_type) %>%
+    dplyr::pull(!!col_return_quo) %>% unique()
+
+}
+
 
 
 #' Perform GSEA using Molecular Signature Database (MSigDB).
