@@ -1645,11 +1645,17 @@ enrichMsigDB <- function(gene_list,
 
 
   # Convert input gene id(default SYMBOL) into desired format(default ENTREZ).
+  if(from_type == "ENTREZID"){
+    fromtype_to_entrez = tibble::tibble(ENTREZID = gene_list)
+  } else {
+    fromtype_to_entrez <- clusterProfiler::bitr(gene_list,
+                                                OrgDb = orgdb,
+                                                fromType=from_type,
+                                                toType="ENTREZID") %>% tibble::as_tibble()
+  }
 
-  fromtype_to_entrez <- clusterProfiler::bitr(gene_list,
-                                          OrgDb = orgdb,
-                                          fromType=from_type,
-                                          toType="ENTREZID") %>% tibble::as_tibble()
+
+
 
 
   # prepare target geneset from msigdbr
@@ -1678,10 +1684,15 @@ enrichMsigDB <- function(gene_list,
 
 
     # converts input background id to entrez id.
-    bg_to_entrez <- clusterProfiler::bitr(background,
-                                                OrgDb = orgdb,
-                                                fromType=from_type,
-                                                toType="ENTREZID")
+    if(from_type == "ENTREZID"){
+      bg_to_entrez <- tibble::tibble(ENTREZID = unique(background))
+    } else {
+      bg_to_entrez <- clusterProfiler::bitr(background,
+                                            OrgDb = orgdb,
+                                            fromType=from_type,
+                                            toType="ENTREZID")
+    }
+
 
 
     # msigdb_t2g <- dplyr::bind_rows(msigdb_t2g,tibble::tibble(gs_name = "UN_ANNOTATED",
