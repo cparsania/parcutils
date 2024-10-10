@@ -1687,7 +1687,7 @@ enrichMsigDB <- function(gene_list,
     # msigdb_t2g <- dplyr::bind_rows(msigdb_t2g,tibble::tibble(gs_name = "UN_ANNOTATED",
     #                                                          entrez_gene = bg_to_entrez$ENTREZID[!bg_to_entrez$ENTREZID %in% msigdb_t2g$entrez_gene] %>% as.numeric()))
 
-    msigdb_t2g <- msigdb_t2g %>% dplyr::filter(entrez_gene %>% dplyr::filter(bg_to_entrez$ENTREZID))
+    msigdb_t2g <- msigdb_t2g %>% dplyr::filter(entrez_gene %in% bg_to_entrez$ENTREZID)
 
 
   }
