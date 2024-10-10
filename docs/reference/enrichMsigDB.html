@@ -54,7 +54,7 @@
 <span>  orgdb <span class="op">=</span> <span class="fu">org.Mm.eg.db</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/org.Mm.eg.db/man/org.Mm.egBASE.html" class="external-link">org.Mm.eg.db</a></span>,</span>
 <span>  msigdb_category <span class="op">=</span> <span class="st">"H"</span>,</span>
 <span>  species <span class="op">=</span> <span class="st">"Mus musculus"</span>,</span>
-<span>  background <span class="op">=</span> <span class="st">"feature_type"</span>,</span>
+<span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  col_genetype <span class="op">=</span> <span class="st">"GENETYPE"</span>,</span>
 <span>  feature_type <span class="op">=</span> <span class="st">"protein-coding"</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -84,16 +84,17 @@
 
 
 <dt>background</dt>
-<dd><p><code>NULL</code> or a string <code>feature_type</code>. If <code>NULL</code>, genes from the selected database will be used as a background. If <code>feature_type</code>, genes for will be selected for the <code>feature_type</code>
-mentioned  under argument <code>feature_type</code>.</p></dd>
+<dd><p><code>NULL</code> (default) or a character vector. If <code>NULL</code>, all features filtered by <code>feature_type</code> will be selected as background.
+In case of character vector, values will be used as it is for background set. In case of user provided background set it is assumed that id type is same as queried <code>genes_list</code> (i.e. <code>from_type</code>).
+NOTE: In both scenarios values obtained from MSigDB catagory database will always remain as a part of background set.</p></dd>
 
 
 <dt>col_genetype</dt>
-<dd><p>A string denoting a column name to filter <code>feature_type</code>.Valid only if the argument <code>background</code> is <code>feature_type</code>.</p></dd>
+<dd><p>A string denoting a column name to filter <code>feature_type</code>.Valid only if the argument <code>background</code> is <code>NULL</code>.</p></dd>
 
 
 <dt>feature_type</dt>
-<dd><p>A string denoting a value to filter the column mentioned by the argument <code>col_genetype</code>.Valid only if the argument <code>background</code> is <code>feature_type</code>.</p></dd>
+<dd><p>A string denoting a value to filter the column mentioned by the argument <code>col_genetype</code>.Valid only if the argument <code>background</code> is <code>NULL</code>.</p></dd>
 
 
 <dt>...</dt>

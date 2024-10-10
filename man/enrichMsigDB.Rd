@@ -10,7 +10,7 @@ enrichMsigDB(
   orgdb = org.Mm.eg.db::org.Mm.eg.db,
   msigdb_category = "H",
   species = "Mus musculus",
-  background = "feature_type",
+  background = NULL,
   col_genetype = "GENETYPE",
   feature_type = "protein-coding",
   ...
@@ -27,12 +27,13 @@ enrichMsigDB(
 
 \item{species}{a character string denoting name of the species. Default "Mus musculus". Possible values can be found via the function \code{\link[msigdbr:msigdbr_species]{msigdbr::msigdbr_species()}}.}
 
-\item{background}{\code{NULL} or a string \code{feature_type}. If \code{NULL}, genes from the selected database will be used as a background. If \code{feature_type}, genes for will be selected for the \code{feature_type}
-mentioned  under argument \code{feature_type}.}
+\item{background}{\code{NULL} (default) or a character vector. If \code{NULL}, all features filtered by \code{feature_type} will be selected as background.
+In case of character vector, values will be used as it is for background set. In case of user provided background set it is assumed that id type is same as queried \code{genes_list} (i.e. \code{from_type}).
+NOTE: In both scenarios values obtained from MSigDB catagory database will always remain as a part of background set.}
 
-\item{col_genetype}{A string denoting a column name to filter \code{feature_type}.Valid only if the argument \code{background} is \code{feature_type}.}
+\item{col_genetype}{A string denoting a column name to filter \code{feature_type}.Valid only if the argument \code{background} is \code{NULL}.}
 
-\item{feature_type}{A string denoting a value to filter the column mentioned by the argument \code{col_genetype}.Valid only if the argument \code{background} is \code{feature_type}.}
+\item{feature_type}{A string denoting a value to filter the column mentioned by the argument \code{col_genetype}.Valid only if the argument \code{background} is \code{NULL}.}
 
 \item{...}{Other parameters to pass \code{\link[clusterProfiler:enricher]{clusterProfiler::enricher()}}.}
 }

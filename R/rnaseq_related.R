@@ -1598,10 +1598,11 @@ gseMsigDB <- function(gene_list,
 #' @param orgdb an object of the class OrgDB. Default org.Mm.eg.db::org.Mm.eg.db.
 #' @param msigdb_category a character string, default "H", denoting one of the nine catagories of geneList given in the msigdb. Possible values are: "H","C1","C2","C3","C4","C5","C6","C7", and "C8".
 #' @param species a character string denoting name of the species. Default "Mus musculus". Possible values can be found via the function [msigdbr::msigdbr_species()].
-#' @param background \code{NULL} or a string \code{feature_type}. If \code{NULL}, genes from the selected database will be used as a background. If \code{feature_type}, genes for will be selected for the \code{feature_type}
-#' mentioned  under argument \code{feature_type}.
-#' @param col_genetype A string denoting a column name to filter \code{feature_type}.Valid only if the argument \code{background} is \code{feature_type}.
-#' @param feature_type A string denoting a value to filter the column mentioned by the argument \code{col_genetype}.Valid only if the argument \code{background} is \code{feature_type}.
+#' @param background \code{NULL} (default) or a character vector. If \code{NULL}, all features filtered by \code{feature_type} will be selected as background.
+#' In case of character vector, values will be used as it is for background set. In case of user provided background set it is assumed that id type is same as queried \code{genes_list} (i.e. \code{from_type}).
+#' NOTE: In both scenarios values obtained from MSigDB catagory database will always remain as a part of background set.
+#' @param col_genetype A string denoting a column name to filter \code{feature_type}.Valid only if the argument \code{background} is \code{NULL}.
+#' @param feature_type A string denoting a value to filter the column mentioned by the argument \code{col_genetype}.Valid only if the argument \code{background} is \code{NULL}.
 
 #' @param ... Other parameters to pass [clusterProfiler::enricher()].
 #'
@@ -1615,8 +1616,9 @@ gseMsigDB <- function(gene_list,
 enrichMsigDB <- function(gene_list,
                          from_type = "SYMBOL",
                          orgdb = org.Mm.eg.db::org.Mm.eg.db,
-                         msigdb_category = "H", species = "Mus musculus",
-                         background = "feature_type",
+                         msigdb_category = "H",
+                         species = "Mus musculus",
+                         background = NULL,
                          col_genetype = "GENETYPE",
                          feature_type = "protein-coding",...){
 
@@ -1638,19 +1640,12 @@ enrichMsigDB <- function(gene_list,
   rlang::arg_match0(msigdb_category, c("H",paste("C",1:8, sep = "")))
 
 
-  from_type_quo <- rlang::enquo(from_type)
-
-
   # Convert input gene id(default SYMBOL) into desired format(default ENTREZ).
 
-  symb_to_entrez <- clusterProfiler::bitr(gene_list,
+  fromtype_to_entrez <- clusterProfiler::bitr(gene_list,
                                           OrgDb = orgdb,
                                           fromType=from_type,
                                           toType="ENTREZID") %>% tibble::as_tibble()
-
-  # add given matrix value to above dataframe
-  symb_to_entrez <- symb_to_entrez %>%
-    dplyr::left_join(tibble::tibble(!!from_type_quo := gene_list),by = from_type)
 
 
   # prepare target geneset from msigdbr
@@ -1660,11 +1655,9 @@ enrichMsigDB <- function(gene_list,
 
   # by default the column `entrez_gene` of msigdb_t2g will be used as a background set of genes for GSEA analysis.
   # This represents very narrow population of background genes, hence most of the queried genesets won't have significant enrichment.
-  # Instead use all protein-coding genes as background make more sense.
+  # Instead use all protein-coding genes as background (when background= NULL) make more sense.
 
   if(is.null(background)){
-    msigdb_t2g <- msigdb_t2g
-  } else if(background == "feature_type"){
 
     # get ENTREZID filtered by given featyre-type
     new_bg <- parcutils:::.filter_orgdb_by_genetype(orgdb = orgdb,
@@ -1672,12 +1665,27 @@ enrichMsigDB <- function(gene_list,
                                                     feature_type = feature_type,
                                                     col_return = "ENTREZID")
 
-    msigdb_t2g <- dplyr::bind_rows(msigdb_t2g,tibble::tibble(gs_name = "UN_ANNOTATED", entrez_gene = new_bg[!new_bg %in% msigdb_t2g$entrez_gene] %>% as.numeric()))
-  } else {
-    cli::cli_abort("The argument {.arg background} must be an either {.val NULL} or a string {.val feature_type}." )
+    msigdb_t2g <- dplyr::bind_rows(msigdb_t2g,tibble::tibble(gs_name = "UN_ANNOTATED",
+                                                             entrez_gene = new_bg[!new_bg %in% msigdb_t2g$entrez_gene] %>% as.numeric()))
+
+
+  } else { # assumes that user proveds character vector of background.
+
+
+    # converts input background id to entrez id.
+    bg_to_entrez <- clusterProfiler::bitr(background,
+                                                OrgDb = orgdb,
+                                                fromType=from_type,
+                                                toType="ENTREZID")
+
+
+    msigdb_t2g <- dplyr::bind_rows(msigdb_t2g,tibble::tibble(gs_name = "UN_ANNOTATED",
+                                                             entrez_gene = background[!background %in% msigdb_t2g$entrez_gene] %>% as.numeric()))
+
+
   }
 
-  clusterProfiler::enricher(gene = symb_to_entrez$ENTREZID %>% unique(),
+  clusterProfiler::enricher(gene = fromtype_to_entrez$ENTREZID %>% unique(),
                             TERM2GENE  = msigdb_t2g %>% dplyr::distinct(),
                             universe= NULL,...)
 
