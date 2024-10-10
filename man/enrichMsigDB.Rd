@@ -9,6 +9,7 @@ enrichMsigDB(
   from_type = "SYMBOL",
   orgdb = org.Mm.eg.db::org.Mm.eg.db,
   msigdb_category = "H",
+  msigdb_subcategory = NULL,
   species = "Mus musculus",
   background = NULL,
   col_genetype = "GENETYPE",
@@ -23,9 +24,13 @@ enrichMsigDB(
 
 \item{orgdb}{an object of the class OrgDB. Default org.Mm.eg.db::org.Mm.eg.db.}
 
-\item{msigdb_category}{a character string, default "H", denoting one of the nine catagories of geneList given in the msigdb. Possible values are: "H","C1","C2","C3","C4","C5","C6","C7", and "C8".}
+\item{msigdb_category}{a character string, default "H", denoting one of the nine catagories of geneList given in the msigdb. Possible values are: "H","C1","C2","C3","C4","C5","C6","C7", and "C8".
+Values will be passed to the argument \code{category} of the function \code{\link[msigdbr:msigdbr]{msigdbr::msigdbr()}}.}
 
-\item{species}{a character string denoting name of the species. Default "Mus musculus". Possible values can be found via the function \code{\link[msigdbr:msigdbr_species]{msigdbr::msigdbr_species()}}.}
+\item{msigdb_subcategory}{a character string, default NULL, denoting MSigDB sub-collection abbreviation, such as CGP or BP. Values will be passed to the argument \code{subcategory} of the function \code{\link[msigdbr:msigdbr]{msigdbr::msigdbr()}}.}
+
+\item{species}{a character string denoting name of the species. Default "Mus musculus". Possible values can be found via the function \code{\link[msigdbr:msigdbr_species]{msigdbr::msigdbr_species()}}.
+Values will be passed to the argument \code{species} of the function \code{\link[msigdbr:msigdbr]{msigdbr::msigdbr()}}.}
 
 \item{background}{\code{NULL} (default) or a character vector. If \code{NULL}, all features filtered by \code{feature_type} will be selected as background.
 In case of character vector, values will be used as it is for background set. In case of user provided background set it is assumed that id type is same as queried \code{genes_list} (i.e. \code{from_type}).

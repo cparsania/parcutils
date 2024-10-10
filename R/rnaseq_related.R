@@ -1597,7 +1597,10 @@ gseMsigDB <- function(gene_list,
 #' @param from_type a string, default SYMBOL, denoting the type of input gene_list (e.g SYMBOL, ENTREZID).
 #' @param orgdb an object of the class OrgDB. Default org.Mm.eg.db::org.Mm.eg.db.
 #' @param msigdb_category a character string, default "H", denoting one of the nine catagories of geneList given in the msigdb. Possible values are: "H","C1","C2","C3","C4","C5","C6","C7", and "C8".
+#' Values will be passed to the argument \code{category} of the function [msigdbr::msigdbr()].
+#' @param msigdb_subcategory a character string, default NULL, denoting MSigDB sub-collection abbreviation, such as CGP or BP. Values will be passed to the argument \code{subcategory} of the function [msigdbr::msigdbr()].
 #' @param species a character string denoting name of the species. Default "Mus musculus". Possible values can be found via the function [msigdbr::msigdbr_species()].
+#' Values will be passed to the argument \code{species} of the function [msigdbr::msigdbr()].
 #' @param background \code{NULL} (default) or a character vector. If \code{NULL}, all features filtered by \code{feature_type} will be selected as background.
 #' In case of character vector, values will be used as it is for background set. In case of user provided background set it is assumed that id type is same as queried \code{genes_list} (i.e. \code{from_type}).
 #' NOTE: In both scenarios values obtained from MSigDB catagory database will always remain as a part of background set.
@@ -1617,6 +1620,7 @@ enrichMsigDB <- function(gene_list,
                          from_type = "SYMBOL",
                          orgdb = org.Mm.eg.db::org.Mm.eg.db,
                          msigdb_category = "H",
+                         msigdb_subcategory = NULL,
                          species = "Mus musculus",
                          background = NULL,
                          col_genetype = "GENETYPE",
@@ -1650,7 +1654,8 @@ enrichMsigDB <- function(gene_list,
 
   # prepare target geneset from msigdbr
   msigdb_t2g  <- msigdbr::msigdbr(species= species,
-                                  category = msigdb_category) %>%
+                                  category = msigdb_category,
+                                  subcategory = msigdb_subcategory) %>%
     dplyr::select(gs_name, entrez_gene)
 
   # by default the column `entrez_gene` of msigdb_t2g will be used as a background set of genes for GSEA analysis.

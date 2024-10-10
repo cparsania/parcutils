@@ -53,6 +53,7 @@
 <span>  from_type <span class="op">=</span> <span class="st">"SYMBOL"</span>,</span>
 <span>  orgdb <span class="op">=</span> <span class="fu">org.Mm.eg.db</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/org.Mm.eg.db/man/org.Mm.egBASE.html" class="external-link">org.Mm.eg.db</a></span>,</span>
 <span>  msigdb_category <span class="op">=</span> <span class="st">"H"</span>,</span>
+<span>  msigdb_subcategory <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  species <span class="op">=</span> <span class="st">"Mus musculus"</span>,</span>
 <span>  background <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  col_genetype <span class="op">=</span> <span class="st">"GENETYPE"</span>,</span>
@@ -76,11 +77,17 @@
 
 
 <dt>msigdb_category</dt>
-<dd><p>a character string, default "H", denoting one of the nine catagories of geneList given in the msigdb. Possible values are: "H","C1","C2","C3","C4","C5","C6","C7", and "C8".</p></dd>
+<dd><p>a character string, default "H", denoting one of the nine catagories of geneList given in the msigdb. Possible values are: "H","C1","C2","C3","C4","C5","C6","C7", and "C8".
+Values will be passed to the argument <code>category</code> of the function <code><a href="https://igordot.github.io/msigdbr/reference/msigdbr.html" class="external-link">msigdbr::msigdbr()</a></code>.</p></dd>
+
+
+<dt>msigdb_subcategory</dt>
+<dd><p>a character string, default NULL, denoting MSigDB sub-collection abbreviation, such as CGP or BP. Values will be passed to the argument <code>subcategory</code> of the function <code><a href="https://igordot.github.io/msigdbr/reference/msigdbr.html" class="external-link">msigdbr::msigdbr()</a></code>.</p></dd>
 
 
 <dt>species</dt>
-<dd><p>a character string denoting name of the species. Default "Mus musculus". Possible values can be found via the function <code><a href="https://igordot.github.io/msigdbr/reference/msigdbr_species.html" class="external-link">msigdbr::msigdbr_species()</a></code>.</p></dd>
+<dd><p>a character string denoting name of the species. Default "Mus musculus". Possible values can be found via the function <code><a href="https://igordot.github.io/msigdbr/reference/msigdbr_species.html" class="external-link">msigdbr::msigdbr_species()</a></code>.
+Values will be passed to the argument <code>species</code> of the function <code><a href="https://igordot.github.io/msigdbr/reference/msigdbr.html" class="external-link">msigdbr::msigdbr()</a></code>.</p></dd>
 
 
 <dt>background</dt>
