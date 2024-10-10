@@ -34,7 +34,7 @@ Values will be passed to the argument \code{species} of the function \code{\link
 
 \item{background}{\code{NULL} (default) or a character vector. If \code{NULL}, all features filtered by \code{feature_type} will be selected as background.
 In case of character vector, values will be used as it is for background set. In case of user provided background set it is assumed that id type is same as queried \code{genes_list} (i.e. \code{from_type}).
-NOTE: In both scenarios values obtained from MSigDB catagory database will always remain as a part of background set.}
+NOTE: In both scenarios values obtained from MSigDB category database will always remain as a part of background set.}
 
 \item{col_genetype}{A string denoting a column name to filter \code{feature_type}.Valid only if the argument \code{background} is \code{NULL}.}
 

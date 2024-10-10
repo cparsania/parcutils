@@ -1603,7 +1603,7 @@ gseMsigDB <- function(gene_list,
 #' Values will be passed to the argument \code{species} of the function [msigdbr::msigdbr()].
 #' @param background \code{NULL} (default) or a character vector. If \code{NULL}, all features filtered by \code{feature_type} will be selected as background.
 #' In case of character vector, values will be used as it is for background set. In case of user provided background set it is assumed that id type is same as queried \code{genes_list} (i.e. \code{from_type}).
-#' NOTE: In both scenarios values obtained from MSigDB catagory database will always remain as a part of background set.
+#' NOTE: In both scenarios values obtained from MSigDB category database will always remain as a part of background set.
 #' @param col_genetype A string denoting a column name to filter \code{feature_type}.Valid only if the argument \code{background} is \code{NULL}.
 #' @param feature_type A string denoting a value to filter the column mentioned by the argument \code{col_genetype}.Valid only if the argument \code{background} is \code{NULL}.
 
@@ -1687,7 +1687,12 @@ enrichMsigDB <- function(gene_list,
     # msigdb_t2g <- dplyr::bind_rows(msigdb_t2g,tibble::tibble(gs_name = "UN_ANNOTATED",
     #                                                          entrez_gene = bg_to_entrez$ENTREZID[!bg_to_entrez$ENTREZID %in% msigdb_t2g$entrez_gene] %>% as.numeric()))
 
-    msigdb_t2g <- msigdb_t2g %>% dplyr::filter(entrez_gene %in% bg_to_entrez$ENTREZID)
+    msigdb_t2g <- msigdb_t2g %>%
+      dplyr::filter(entrez_gene %in% bg_to_entrez$ENTREZID)
+
+    # add un-annotated genes
+    msigdb_t2g <- msigdb_t2g%>%
+      dplyr::bind_rows(tibble::tibble(gs_name = "UN_ANNOTATED",entrez_gene = bg_to_entrez$ENTREZID[!bg_to_entrez$ENTREZID %in% msigdb_t2g$entrez_gene] %>% as.numeric()))
 
 
   }
