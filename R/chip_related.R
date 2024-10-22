@@ -313,8 +313,7 @@ make_enriched_heatmap_list <- function(x,
                                        heatmap_axis_name= c("-3KB","Summit","+3KB"),
                                        heatmap_axis_name_rot = 0,
                                        heatmap_axis_name_gp = gpar(fontsize = 10),
-                                       heatmap_border = TRUE,
-                                       ...){
+                                       heatmap_border = TRUE){
 
 
   # validate x
@@ -401,8 +400,9 @@ make_enriched_heatmap_list <- function(x,
                                                                             pos_line = heatmap_pos_line,
                                                                             pos_line_gp = heatmap_pos_line_gp,
                                                                             axis_name_rot = heatmap_axis_name_rot,
-                                                                            border = heatmap_border, use_raster = TRUE ,
-                                                                            split = peak_clust$clust,...))
+                                                                            border = heatmap_border,
+                                                                            use_raster = TRUE,
+                                                                            split = peak_clust$clust))
 
 
 
