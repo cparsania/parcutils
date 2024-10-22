@@ -20,7 +20,8 @@ make_enriched_heatmap_list(
   heatmap_axis_name = c("-3KB", "Summit", "+3KB"),
   heatmap_axis_name_rot = 0,
   heatmap_axis_name_gp = gpar(fontsize = 10),
-  heatmap_border = TRUE
+  heatmap_border = TRUE,
+  ...
 )
 }
 \arguments{
@@ -54,6 +55,8 @@ Default \code{circlize::colorRamp2(breaks = c(0,0.5,1),colors = c('#fee6ce','#e6
 \item{heatmap_axis_name_gp}{internally passed to \code{axis_name_gp} argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
 
 \item{heatmap_border}{internally passed to \code{border} argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
+
+\item{...}{Other arguments passed to \code{...} argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
 }
 \value{
 a HeatmapList.

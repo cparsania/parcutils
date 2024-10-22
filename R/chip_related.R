@@ -289,7 +289,7 @@ import_topn_bed_features <- function(bed_feature_file,topn = 5000, center = TRUE
 #' @param heatmap_axis_name_rot internally passed to \code{axis_name_rot} argument of [EnrichedHeatmap::EnrichedHeatmap()].
 #' @param heatmap_axis_name_gp internally passed to \code{axis_name_gp} argument of [EnrichedHeatmap::EnrichedHeatmap()].
 #' @param heatmap_border internally passed to \code{border} argument of [EnrichedHeatmap::EnrichedHeatmap()].
-#'
+#' @param ... 	Other arguments passed to \code{...} argument of [EnrichedHeatmap::EnrichedHeatmap()].
 #' @return a HeatmapList.
 #' @export
 #'
@@ -313,7 +313,8 @@ make_enriched_heatmap_list <- function(x,
                                        heatmap_axis_name= c("-3KB","Summit","+3KB"),
                                        heatmap_axis_name_rot = 0,
                                        heatmap_axis_name_gp = gpar(fontsize = 10),
-                                       heatmap_border = TRUE){
+                                       heatmap_border = TRUE,
+                                       ...){
 
 
   # validate x
@@ -401,7 +402,7 @@ make_enriched_heatmap_list <- function(x,
                                                                             pos_line_gp = heatmap_pos_line_gp,
                                                                             axis_name_rot = heatmap_axis_name_rot,
                                                                             border = heatmap_border, use_raster = TRUE ,
-                                                                            split = peak_clust$clust))
+                                                                            split = peak_clust$clust,...))
 
 
 
