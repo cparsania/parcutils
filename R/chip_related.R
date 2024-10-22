@@ -278,18 +278,18 @@ import_topn_bed_features <- function(bed_feature_file,topn = 5000, center = TRUE
 #' @param cluster_by NULL (default) or character vector denoting RPM columns to be used for clustering.
 #' @param n_clust a numeric, default 2, denoting number of clusters for kmeans clustering.
 #' @param cluster_rows logical, default FALSE, denoting whether to cluster rows using default clustering. This must be always false as kmeans is implimented.
-#' @param heatmap_columns NULL (default) or character vector denoting columns to be displayed in the heatmap.
+#' @param heatmap_columns NULL (default, all columns) or character vector denoting columns to be displayed in the heatmap.
 #' @param heatmap_column_title NULL (default) or character vector denoting title for each heatmap column.
 #' @param heatmap_pos_line logical, default FALSE, internally passed to \code{pos_line} argument of [EnrichedHeatmap::EnrichedHeatmap()].
 #' @param heatmap_pos_line_gp logical, default FALSE, internally passed to \code{pos_line_gp} argument of [EnrichedHeatmap::EnrichedHeatmap()].
-#' @param heatmap_colors internally passed to \code{col} argument of [EnrichedHeatmap::EnrichedHeatmap()].
-#' Default \code{circlize::colorRamp2(breaks = c(0,0.5,1),colors = c('#fee6ce','#e6550d','#E31A1C'))}.
 #' @param heatmap_top_annotations internally passed to \code{top_annotations} argument of [EnrichedHeatmap::EnrichedHeatmap()].
 #' @param heatmap_axis_name internally passed to \code{axis_name} argument of [EnrichedHeatmap::EnrichedHeatmap()].
 #' @param heatmap_axis_name_rot internally passed to \code{axis_name_rot} argument of [EnrichedHeatmap::EnrichedHeatmap()].
 #' @param heatmap_axis_name_gp internally passed to \code{axis_name_gp} argument of [EnrichedHeatmap::EnrichedHeatmap()].
+#' @param heatmap_color_palette a character vector denoting a valid color palette(s) from [grDevices::hcl.pals()]. More than one will be used to color each heatmap. Default \code{Oranges}.
+#' @param heatmap_scale a numeric vector denoting a heatmap scale. Default (0,0.5,1).
 #' @param heatmap_border internally passed to \code{border} argument of [EnrichedHeatmap::EnrichedHeatmap()].
-#' @param ... 	Other arguments passed to \code{...} argument of [EnrichedHeatmap::EnrichedHeatmap()].
+#'
 #' @return a HeatmapList.
 #' @export
 #'
@@ -307,8 +307,8 @@ make_enriched_heatmap_list <- function(x,
 
                                        heatmap_pos_line = FALSE,
                                        heatmap_pos_line_gp = grid::gpar(lty = 2),
-                                       heatmap_colors = circlize::colorRamp2(breaks = c(0,0.5,1),
-                                                                             colors = c('#fee6ce','#e6550d','#E31A1C')),
+                                       heatmap_color_palette = "Oranges",
+                                       heatmap_scale = c(0,0.5,1),
                                        heatmap_top_annotations = NULL,
                                        heatmap_axis_name= c("-3KB","Summit","+3KB"),
                                        heatmap_axis_name_rot = 0,
@@ -336,24 +336,29 @@ make_enriched_heatmap_list <- function(x,
     }
   }
 
-  # validate heatmap_column_title
-
-  if(!is.null(heatmap_column_title)){
-    if(!length(heatmap_column_title) <= length(heatmap_columns)){
-      cli::cli_abort("{.arg heatmap_column_title} must have length <= length of {.arg heatmap_columns} ")
-    }
-  }
 
 
   # validate heatmap_columns
 
   heatmap_column_names <- assays(x) %>% names()
 
-  if(!is.null(heatmap_columns)){
+  if(is.null(heatmap_columns)){
+    heatmap_columns <- heatmap_column_names
+  } else {
     if(!all(heatmap_columns %in% heatmap_column_names)){
       cli::cli_abort("{.arg heatmap_columns} must be either {.cls NULL} or a {.cls character} vector of {.code assays(x) %>% names()} ")
     }
   }
+
+  # validate heatmap_column_title
+
+  if(!is.null(heatmap_column_title)){
+    if(!length(heatmap_column_title) == length(heatmap_columns)){
+      cli::cli_abort("{.arg heatmap_column_title} must be equal to the length of {.arg heatmap_columns} ")
+    }
+  }
+
+
 
   # perform clustering
 
@@ -377,6 +382,28 @@ make_enriched_heatmap_list <- function(x,
 
 
 
+
+  # validate palette
+
+  if(!all(heatmap_color_palette %in% hcl.pals())){
+      cli::cli_abort("{.arg heatmap_color_palette} must be one of these palettes {.code hcl.pals()}.")
+    }
+
+  if(length(heatmap_color_palette) > 1 ) {
+    if(length(heatmap_color_palette) != heatmap_columns){
+      cli::cli_abort("{.arg heatmap_color_palette} must be equal to the length of {.arg heatmap_columns} ")
+    }
+
+  }
+
+  # prepare heatmap colors
+
+  heatmap_colors <- purrr::map(heatmap_color_palette, ~ circlize::colorRamp2(breaks = heatmap_scale,
+                                                              colors = hcl.colors(n = length(heatmap_scale), palette = ..1)))
+
+
+
+
   # # heatmap top annotations
   # hm_top_anno <- ComplexHeatmap::HeatmapAnnotation(
   #   enriched = EnrichedHeatmap::anno_enriched(
@@ -388,11 +415,12 @@ make_enriched_heatmap_list <- function(x,
   #   )))
 
 
+
   # plot heatmaps
 
-  heatmaps <- purrr::map(heatmap_columns, ~EnrichedHeatmap::EnrichedHeatmap(mat = assays(x)[[..1]] ,
+  heatmaps <- purrr::map2(heatmap_columns,heatmap_colors, ~EnrichedHeatmap::EnrichedHeatmap(mat = assays(x)[[..1]] ,
                                                                             name = ..1,
-                                                                            col = heatmap_colors,
+                                                                            col = ..2,
                                                                             column_title = ..1,
                                                                             axis_name = heatmap_axis_name,
                                                                             top_annotation = heatmap_top_annotations,

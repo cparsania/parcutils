@@ -58,14 +58,13 @@
 <span>  heatmap_column_title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  heatmap_pos_line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  heatmap_pos_line_gp <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
-<span>  heatmap_colors <span class="op">=</span> <span class="fu">circlize</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/circlize/man/colorRamp2.html" class="external-link">colorRamp2</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>, colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#fee6ce"</span>,</span>
-<span>    <span class="st">"#e6550d"</span>, <span class="st">"#E31A1C"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  heatmap_color_palette <span class="op">=</span> <span class="st">"Oranges"</span>,</span>
+<span>  heatmap_scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  heatmap_top_annotations <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  heatmap_axis_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-3KB"</span>, <span class="st">"Summit"</span>, <span class="st">"+3KB"</span><span class="op">)</span>,</span>
 <span>  heatmap_axis_name_rot <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  heatmap_axis_name_gp <span class="op">=</span> <span class="fu">gpar</span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span>
-<span>  heatmap_border <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  heatmap_border <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -92,7 +91,7 @@
 
 
 <dt>heatmap_columns</dt>
-<dd><p>NULL (default) or character vector denoting columns to be displayed in the heatmap.</p></dd>
+<dd><p>NULL (default, all columns) or character vector denoting columns to be displayed in the heatmap.</p></dd>
 
 
 <dt>heatmap_column_title</dt>
@@ -107,9 +106,12 @@
 <dd><p>logical, default FALSE, internally passed to <code>pos_line_gp</code> argument of <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/EnrichedHeatmap.html" class="external-link">EnrichedHeatmap::EnrichedHeatmap()</a></code>.</p></dd>
 
 
-<dt>heatmap_colors</dt>
-<dd><p>internally passed to <code>col</code> argument of <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/EnrichedHeatmap.html" class="external-link">EnrichedHeatmap::EnrichedHeatmap()</a></code>.
-Default <code>circlize::colorRamp2(breaks = c(0,0.5,1),colors = c('#fee6ce','#e6550d','#E31A1C'))</code>.</p></dd>
+<dt>heatmap_color_palette</dt>
+<dd><p>a character vector denoting a valid color palette(s) from <code><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">grDevices::hcl.pals()</a></code>. More than one will be used to color each heatmap. Default <code>Oranges</code>.</p></dd>
+
+
+<dt>heatmap_scale</dt>
+<dd><p>a numeric vector denoting a heatmap scale. Default (0,0.5,1).</p></dd>
 
 
 <dt>heatmap_top_annotations</dt>
@@ -130,10 +132,6 @@ Default <code>circlize::colorRamp2(breaks = c(0,0.5,1),colors = c('#fee6ce','#e6
 
 <dt>heatmap_border</dt>
 <dd><p>internally passed to <code>border</code> argument of <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/EnrichedHeatmap.html" class="external-link">EnrichedHeatmap::EnrichedHeatmap()</a></code>.</p></dd>
-
-
-<dt>...</dt>
-<dd><p>Other arguments passed to <code>...</code> argument of <code><a href="https://rdrr.io/pkg/EnrichedHeatmap/man/EnrichedHeatmap.html" class="external-link">EnrichedHeatmap::EnrichedHeatmap()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

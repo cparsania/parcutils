@@ -14,14 +14,13 @@ make_enriched_heatmap_list(
   heatmap_column_title = NULL,
   heatmap_pos_line = FALSE,
   heatmap_pos_line_gp = grid::gpar(lty = 2),
-  heatmap_colors = circlize::colorRamp2(breaks = c(0, 0.5, 1), colors = c("#fee6ce",
-    "#e6550d", "#E31A1C")),
+  heatmap_color_palette = "Oranges",
+  heatmap_scale = c(0, 0.5, 1),
   heatmap_top_annotations = NULL,
   heatmap_axis_name = c("-3KB", "Summit", "+3KB"),
   heatmap_axis_name_rot = 0,
   heatmap_axis_name_gp = gpar(fontsize = 10),
-  heatmap_border = TRUE,
-  ...
+  heatmap_border = TRUE
 )
 }
 \arguments{
@@ -35,7 +34,7 @@ make_enriched_heatmap_list(
 
 \item{cluster_rows}{logical, default FALSE, denoting whether to cluster rows using default clustering. This must be always false as kmeans is implimented.}
 
-\item{heatmap_columns}{NULL (default) or character vector denoting columns to be displayed in the heatmap.}
+\item{heatmap_columns}{NULL (default, all columns) or character vector denoting columns to be displayed in the heatmap.}
 
 \item{heatmap_column_title}{NULL (default) or character vector denoting title for each heatmap column.}
 
@@ -43,8 +42,9 @@ make_enriched_heatmap_list(
 
 \item{heatmap_pos_line_gp}{logical, default FALSE, internally passed to \code{pos_line_gp} argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
 
-\item{heatmap_colors}{internally passed to \code{col} argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.
-Default \code{circlize::colorRamp2(breaks = c(0,0.5,1),colors = c('#fee6ce','#e6550d','#E31A1C'))}.}
+\item{heatmap_color_palette}{a character vector denoting a valid color palette(s) from \code{\link[grDevices:palettes]{grDevices::hcl.pals()}}. More than one will be used to color each heatmap. Default \code{Oranges}.}
+
+\item{heatmap_scale}{a numeric vector denoting a heatmap scale. Default (0,0.5,1).}
 
 \item{heatmap_top_annotations}{internally passed to \code{top_annotations} argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
 
@@ -55,8 +55,6 @@ Default \code{circlize::colorRamp2(breaks = c(0,0.5,1),colors = c('#fee6ce','#e6
 \item{heatmap_axis_name_gp}{internally passed to \code{axis_name_gp} argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
 
 \item{heatmap_border}{internally passed to \code{border} argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
-
-\item{...}{Other arguments passed to \code{...} argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
 }
 \value{
 a HeatmapList.
