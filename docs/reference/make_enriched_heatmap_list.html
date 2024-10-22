@@ -59,6 +59,7 @@
 <span>  heatmap_pos_line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  heatmap_pos_line_gp <span class="op">=</span> <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
 <span>  heatmap_color_palette <span class="op">=</span> <span class="st">"Oranges"</span>,</span>
+<span>  reverse_palette <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  heatmap_scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  heatmap_top_annotations <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  heatmap_axis_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-3KB"</span>, <span class="st">"Summit"</span>, <span class="st">"+3KB"</span><span class="op">)</span>,</span>
@@ -108,6 +109,10 @@
 
 <dt>heatmap_color_palette</dt>
 <dd><p>a character vector denoting a valid color palette(s) from <code><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">grDevices::hcl.pals()</a></code>. More than one will be used to color each heatmap. Default <code>Oranges</code>.</p></dd>
+
+
+<dt>reverse_palette</dt>
+<dd><p>Logical, FALSE, denoting whether to reverse the color palette.</p></dd>
 
 
 <dt>heatmap_scale</dt>

@@ -289,6 +289,7 @@ import_topn_bed_features <- function(bed_feature_file,topn = 5000, center = TRUE
 #' @param heatmap_color_palette a character vector denoting a valid color palette(s) from [grDevices::hcl.pals()]. More than one will be used to color each heatmap. Default \code{Oranges}.
 #' @param heatmap_scale a numeric vector denoting a heatmap scale. Default (0,0.5,1).
 #' @param heatmap_border internally passed to \code{border} argument of [EnrichedHeatmap::EnrichedHeatmap()].
+#' @param reverse_palette Logical, FALSE, denoting whether to reverse the color palette.
 #'
 #' @return a HeatmapList.
 #' @export
@@ -308,6 +309,7 @@ make_enriched_heatmap_list <- function(x,
                                        heatmap_pos_line = FALSE,
                                        heatmap_pos_line_gp = grid::gpar(lty = 2),
                                        heatmap_color_palette = "Oranges",
+                                       reverse_palette = FALSE,
                                        heatmap_scale = c(0,0.5,1),
                                        heatmap_top_annotations = NULL,
                                        heatmap_axis_name= c("-3KB","Summit","+3KB"),
@@ -399,7 +401,7 @@ make_enriched_heatmap_list <- function(x,
   # prepare heatmap colors
 
   heatmap_colors <- purrr::map(heatmap_color_palette, ~ circlize::colorRamp2(breaks = heatmap_scale,
-                                                              colors = hcl.colors(n = length(heatmap_scale), palette = ..1)))
+                                                              colors = hcl.colors(n = length(heatmap_scale), palette = ..1,rev = reverse_palette)))
 
 
 

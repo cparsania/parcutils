@@ -15,6 +15,7 @@ make_enriched_heatmap_list(
   heatmap_pos_line = FALSE,
   heatmap_pos_line_gp = grid::gpar(lty = 2),
   heatmap_color_palette = "Oranges",
+  reverse_palette = FALSE,
   heatmap_scale = c(0, 0.5, 1),
   heatmap_top_annotations = NULL,
   heatmap_axis_name = c("-3KB", "Summit", "+3KB"),
@@ -43,6 +44,8 @@ make_enriched_heatmap_list(
 \item{heatmap_pos_line_gp}{logical, default FALSE, internally passed to \code{pos_line_gp} argument of \code{\link[EnrichedHeatmap:EnrichedHeatmap]{EnrichedHeatmap::EnrichedHeatmap()}}.}
 
 \item{heatmap_color_palette}{a character vector denoting a valid color palette(s) from \code{\link[grDevices:palettes]{grDevices::hcl.pals()}}. More than one will be used to color each heatmap. Default \code{Oranges}.}
+
+\item{reverse_palette}{Logical, FALSE, denoting whether to reverse the color palette.}
 
 \item{heatmap_scale}{a numeric vector denoting a heatmap scale. Default (0,0.5,1).}
 
