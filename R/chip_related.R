@@ -390,7 +390,7 @@ make_enriched_heatmap_list <- function(x,
     }
 
   if(length(heatmap_color_palette) > 1 ) {
-    if(length(heatmap_color_palette) != heatmap_columns){
+    if(length(heatmap_color_palette) != length(heatmap_columns)){
       cli::cli_abort("{.arg heatmap_color_palette} must be equal to the length of {.arg heatmap_columns} ")
     }
 
