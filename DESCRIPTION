@@ -52,21 +52,26 @@ Imports:
     tools (>= 3.6.2),
     UpSetR (>= 1.4.0),
     viridis,
-    writexl,
-    BSgenome,
-    clusterProfiler,
-    ComplexHeatmap,
-    DESeq2,
-    EnhancedVolcano,
-    EnrichedHeatmap,
-    enrichplot,
-    plyranges
+    writexl
 Suggests: 
     BSgenome.Hsapiens.UCSC.hg38,
     org.Hs.eg.db
 Remotes: 
     cparsania/TidyWrappers,
-    jokergoo/circlize
+    jokergoo/circlize,
+    plyranges,
+    enrichplot,
+    EnrichedHeatmap,
+    EnhancedVolcano,
+    DESeq2,
+    ComplexHeatmap,
+    clusterProfiler,
+    BSgenome,
+    rtracklayer,
+    org.Mm.eg.db,
+    GenomicRanges,
+    AnnotationDbi
+    
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
