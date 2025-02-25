@@ -54,6 +54,7 @@ Imports:
     viridis,
     writexl,
     GO.db
+    
 Suggests: 
     BSgenome.Hsapiens.UCSC.hg38,
     org.Hs.eg.db
