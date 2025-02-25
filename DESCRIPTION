@@ -52,7 +52,15 @@ Imports:
     tools (>= 3.6.2),
     UpSetR (>= 1.4.0),
     viridis,
-    writexl
+    writexl,
+    BSgenome,
+    clusterProfiler,
+    ComplexHeatmap,
+    DESeq2,
+    EnhancedVolcano,
+    EnrichedHeatmap,
+    enrichplot,
+    plyranges
 Suggests: 
     BSgenome.Hsapiens.UCSC.hg38,
     org.Hs.eg.db
