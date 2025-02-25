@@ -52,7 +52,8 @@ Imports:
     tools (>= 3.6.2),
     UpSetR (>= 1.4.0),
     viridis,
-    writexl
+    writexl,
+    GO.db
 Suggests: 
     BSgenome.Hsapiens.UCSC.hg38,
     org.Hs.eg.db
