@@ -58,19 +58,7 @@ Suggests:
     org.Hs.eg.db
 Remotes: 
     cparsania/TidyWrappers,
-    jokergoo/circlize,
-    plyranges,
-    enrichplot,
-    EnrichedHeatmap,
-    EnhancedVolcano,
-    DESeq2,
-    ComplexHeatmap,
-    clusterProfiler,
-    BSgenome,
-    rtracklayer,
-    org.Mm.eg.db,
-    GenomicRanges,
-    AnnotationDbi
+    jokergoo/circlize
     
 Encoding: UTF-8
 LazyData: true
