@@ -1677,7 +1677,7 @@ enrichMsigDB <- function(gene_list,
                                                     col_return = "ENTREZID")
 
     msigdb_t2g <- dplyr::bind_rows(msigdb_t2g,tibble::tibble(gs_name = "UN_ANNOTATED",
-                                                             entrez_gene = new_bg[!new_bg %in% msigdb_t2g$entrez_gene] %>% as.numeric()))
+                                                             entrez_gene = new_bg[!new_bg %in% msigdb_t2g$entrez_gene]))
 
 
   } else { # assumes that user proveds character vector of background.
