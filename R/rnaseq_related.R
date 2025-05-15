@@ -1703,7 +1703,7 @@ enrichMsigDB <- function(gene_list,
 
     # add un-annotated genes
     msigdb_t2g <- msigdb_t2g%>%
-      dplyr::bind_rows(tibble::tibble(gs_name = "UN_ANNOTATED",entrez_gene = bg_to_entrez$ENTREZID[!bg_to_entrez$ENTREZID %in% msigdb_t2g$entrez_gene] %>% as.numeric()))
+      dplyr::bind_rows(tibble::tibble(gs_name = "UN_ANNOTATED",entrez_gene = bg_to_entrez$ENTREZID[!bg_to_entrez$ENTREZID %in% msigdb_t2g$entrez_gene]))
 
 
   }
