@@ -701,4 +701,9 @@ parcutils::get_star_align_log_summary_plot(x = star_align_log_files,
 
 ![](man/figures/README-unnamed-chunk-25-1.png)<!-- -->
 
-## 
+##
+
+## Building and checking the package
+
+To run `R CMD build` or `R CMD check` you must have R installed and accessible in your `PATH`. These commands are used by our CI pipeline and should also be used when testing the package locally.
+
