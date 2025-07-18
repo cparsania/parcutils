@@ -19,6 +19,7 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v1
 
+      # Install R; required for commands like `R CMD build` and `R CMD check`
       - uses: r-lib/actions/setup-r@v1
         with:
           use-public-rspm: true
