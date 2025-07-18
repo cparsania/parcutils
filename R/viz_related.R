@@ -99,28 +99,40 @@ sort_geom_box <- function(x, decreasing = TRUE){
 #' @param col_up a character string denoting color for up genes, works only when col_by_regul = `TRUE`.
 #' @param col_down  a character string denoting color for down genes, works only when col_by_regul = `TRUE`.
 #' @param col_others a character string denoting color for other genes, works only when col_by_regul = `TRUE`.
+#' @param pCutoffCol a character string denoting the column of p-values used to
+#'   apply the cutoff supplied by \code{pCutoff}. Defaults to the column used for
+#'   \code{y} when \code{NULL}.
 #'
 #' @return a volcano plot
 #' @export
-EnhancedVolcano2 <- function(toptable, lab, x, y, pCutoff = 10e-4,FCcutoff = 1.5,col_by_regul = TRUE,
-                             col_up = "#b2182b" ,col_down = "#2166ac", col_others = "#e0e0e0" ,...){
+EnhancedVolcano2 <- function(toptable, lab, x, y, pCutoff = 10e-4, FCcutoff = 1.5,
+                             col_by_regul = TRUE,
+                             col_up = "#b2182b", col_down = "#2166ac",
+                             col_others = "#e0e0e0", pCutoffCol = NULL, ...){
 
-  if(col_by_regul) {
+  if (is.null(pCutoffCol)) {
+    pCutoffCol <- y
+  }
+
+  if (col_by_regul) {
 
     keyvals <- ifelse(
-      toptable[[x]] <= -FCcutoff  & toptable[[y]] <= pCutoff , col_down,
-      ifelse(toptable[[x]] >= FCcutoff &  toptable[[y]] <= pCutoff, col_up,
+      toptable[[x]] <= -FCcutoff  & toptable[[pCutoffCol]] <= pCutoff, col_down,
+      ifelse(toptable[[x]] >= FCcutoff &  toptable[[pCutoffCol]] <= pCutoff, col_up,
              col_others))
     keyvals[is.na(keyvals)] <- col_others
     names(keyvals)[keyvals == col_down ] <- 'Down'
     names(keyvals)[keyvals == col_others] <- 'Other'
     names(keyvals)[keyvals == col_up] <- 'Up'
 
-    plot  <- EnhancedVolcano::EnhancedVolcano(toptable = toptable, lab = lab,x = x,y = y,
-                                              pCutoff = pCutoff, FCcutoff = FCcutoff, colCustom  = keyvals, ...)
+    plot  <- EnhancedVolcano::EnhancedVolcano(
+      toptable = toptable, lab = lab, x = x, y = y,
+      pCutoffCol = pCutoffCol, pCutoff = pCutoff, FCcutoff = FCcutoff,
+      colCustom  = keyvals, ...)
   } else {
-    plot  <- EnhancedVolcano::EnhancedVolcano(toptable = toptable, lab = lab,x = x,y = y,
-                                              pCutoff = pCutoff, FCcutoff = FCcutoff, ...)
+    plot  <- EnhancedVolcano::EnhancedVolcano(
+      toptable = toptable, lab = lab, x = x, y = y,
+      pCutoffCol = pCutoffCol, pCutoff = pCutoff, FCcutoff = FCcutoff, ...)
   }
   plot
 }
