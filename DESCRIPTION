@@ -54,14 +54,12 @@ Imports:
     viridis,
     writexl,
     GO.db
-    
 Suggests: 
     BSgenome.Hsapiens.UCSC.hg38,
     org.Hs.eg.db
 Remotes: 
     cparsania/TidyWrappers,
     jokergoo/circlize
-    
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

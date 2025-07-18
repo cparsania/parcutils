@@ -5,3 +5,5 @@ lock/
 library/
 python/
 staging/
+settings.json
+activate.R
