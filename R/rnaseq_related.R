@@ -1088,6 +1088,7 @@ get_gene_expression_heatmap <- function(x,
 
   if(!is.null(label_specific_rows)){
     matched_indx = which(rownames(expr_mat_wide) %in% label_specific_rows)
+
     labels_not_found_in_the_data <- label_specific_rows[ which(!(label_specific_rows %in% rownames(expr_mat_wide))) ]
     if(length(matched_indx) == 0){
       cli::cli_alert_warning(text = "None of the label form {.arg label_specific_rows} found in the data. Have you tried {.arg repair_genes} TRUE/FALSE?. Rows won't be labelled" )
@@ -1095,7 +1096,10 @@ get_gene_expression_heatmap <- function(x,
       if(length(labels_not_found_in_the_data) > 0 ){
         cli::cli_alert_warning(text = "Label{?s} {labels_not_found_in_the_data} {?is/are} not found in the data." )
       }
-      hm <- hm + ComplexHeatmap::rowAnnotation(label = ComplexHeatmap::anno_mark(at = matched_indx, labels = label_specific_rows, labels_gp = label_specific_rows_gp))
+      hm <- hm +
+        ComplexHeatmap::rowAnnotation(label = ComplexHeatmap::anno_mark(at = matched_indx,
+                                                                        labels = rownames(expr_mat_wide)[matched_indx],
+                                                                        labels_gp = label_specific_rows_gp))
     }
 
   }
